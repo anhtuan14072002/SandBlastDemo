@@ -27,7 +27,6 @@ namespace Sand
                 for (int j = 0; j < _poolSizePerPrefab; j++)
                 {
                     var obj = Instantiate(_prefabBlock[i], transform.position, Quaternion.identity);
-                    obj.transform.localScale = new Vector3(0.75f, 0.75f, 0.75f);
                     obj.transform.SetParent(transform);
                     obj.SetActive(false);
                     _pool.Enqueue(obj);
@@ -68,7 +67,6 @@ namespace Sand
         public void ReturnBlock(GameObject obj)
         {
             obj.SetActive(false);
-            obj.transform.localScale = Vector3.one;
             _pool.Enqueue(obj);
 
             for (int i = 0; i < _currentBlocks.Length; i++)

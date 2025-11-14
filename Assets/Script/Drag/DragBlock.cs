@@ -88,7 +88,6 @@ namespace Sand
                 {
                     // đặt được thì trả block về pool, sinh block mới
                     var spawnSystem = FindObjectOfType<SpawnVisual>();
-                    _objDrag.transform.localScale = new Vector3(0.75f, 0.75f, 0.75f);
                     spawnSystem.ReturnBlock(_objDrag);
                 }
                 else
