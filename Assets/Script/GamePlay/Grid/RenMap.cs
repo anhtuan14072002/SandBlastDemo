@@ -8,9 +8,7 @@ namespace Sand
     [RequireComponent(typeof(SpriteRenderer))]
     public class RenMap : MonoBehaviour
     {
-        [Header("Setting")] 
-        [SerializeField] private BlockManager _blockManager;
-        [SerializeField] private GridOverlayTexture _gridOverlay;
+        [Header("Setting")] [SerializeField] private BlockManager _blockManager;
         [SerializeField] private Color32 _backgroundColor;
         [SerializeField] public int _hight;
         [SerializeField] public int _wight;
@@ -26,7 +24,7 @@ namespace Sand
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
             if (_spriteRenderer == null) _spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-            _map = new Map(_wight, _hight, _backgroundColor);
+            _map = new Map(_wight, _hight);
             Application.targetFrameRate = 60;
         }
 
@@ -34,8 +32,6 @@ namespace Sand
         {
             _map.SetUpMap(_backgroundColor);
             _map.ApplyTexture(_spriteRenderer);
-            SetupGridOverlay();
-            // _sandUpdateSub = Observable.EveryUpdate().Subscribe(_ => SandUpdate());
 
             _sandSpawnSub = Observable.EveryUpdate()
                 .Where(_ => Input.GetMouseButton(1))
@@ -47,10 +43,6 @@ namespace Sand
 
             // _mouseClickSub = Observable.EveryUpdate()
             //     .Where(_ => Input.GetMouseButtonDown(0))
-            //     .TimeInterval()
-            //     .Chunk(2, 1)
-            //     .Where(clicks => clicks[1].Interval.TotalSeconds <= 0.5f)
-            //     .ThrottleFirst(TimeSpan.FromSeconds(0.25f))
             //     .Subscribe(_ => LogMousePositionOnMap());
         }
 
@@ -71,11 +63,14 @@ namespace Sand
                     _isSettled = true;
                 }
             }
+            
             _map.UpdateTexture();
         }
 
         private void LogMousePositionOnMap()
         {
+            if (_spriteRenderer.sprite == null) return;
+
             Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector3 localPos = transform.InverseTransformPoint(mouseWorldPos);
             var spriteWidth = _spriteRenderer.sprite.bounds.size.x;
@@ -121,30 +116,17 @@ namespace Sand
                     }
                 }
             }
+
             return count;
         }
-        private void SetupGridOverlay()
-        {
-            if (_gridOverlay == null) return;
 
-            // Cập nhật kích thước logic
-            _gridOverlay.Init(_wight, _hight);
+       
 
-            // Đặt overlay trùng vị trí / scale với map
-            _gridOverlay.transform.position = transform.position;
-            _gridOverlay.transform.rotation = transform.rotation;
-            _gridOverlay.transform.localScale = Vector3.one;
-
-            var overlaySR = _gridOverlay.GetComponent<SpriteRenderer>();
-
-            overlaySR.sortingLayerName = _spriteRenderer.sortingLayerName;
-            overlaySR.sortingOrder     = _spriteRenderer.sortingOrder + 1; // vẽ trên sand
-        }
-        
         private bool SameColor(Color32 a, Color32 b)
         {
             return a.r == b.r && a.g == b.g && a.b == b.b;
         }
+
         private void OnDestroy()
         {
             _map?.Dispose();

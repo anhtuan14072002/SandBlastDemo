@@ -11,7 +11,6 @@ public class GridOutlineOnly : MonoBehaviour
     public float cellSize = 0.5f;
 
     [Header("Line")]
-    [Tooltip("Độ dày viền (đơn vị world)")]
     public float thickness = 0.02f;
     public Color lineColor = Color.black;
 
@@ -68,7 +67,6 @@ public class GridOutlineOnly : MonoBehaviour
         var mat = _mr.sharedMaterial;
         if (mat == null)
         {
-            // Ưu tiên Unlit/Color; fallback Sprites/Default nếu không có
             var shader = Shader.Find("Unlit/Color");
             if (shader == null) shader = Shader.Find("Sprites/Default");
             mat = new Material(shader);

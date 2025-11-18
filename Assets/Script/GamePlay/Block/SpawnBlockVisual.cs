@@ -41,7 +41,7 @@ namespace Sand
             for (int i = 0; i < _pool.Count; i++)
             {
                 var obj = _pool.Dequeue();
-                obj.transform.localScale = Vector3.one * 0.75f;
+                obj.transform.localScale = Vector3.one *6.5f;
                 if (i == randomIndex) result = obj;
                 else _pool.Enqueue(obj);
             }
@@ -67,7 +67,7 @@ namespace Sand
 
         public void ReturnBlock(GameObject obj)
         {
-            obj.transform.localScale = Vector3.one * 0.75f;
+            obj.transform.localScale = Vector3.one * 6.5f;
             obj.SetActive(false);
             _pool.Enqueue(obj);
 
