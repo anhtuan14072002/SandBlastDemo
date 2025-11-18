@@ -4,7 +4,7 @@ using Random = UnityEngine.Random;
 
 namespace Sand
 {
-    public class SpawnVisual : MonoBehaviour
+    public class SpawnBlockVisual : MonoBehaviour
     {
         [SerializeField] private GameObject[] _prefabBlock;
         [SerializeField] private Transform[] _posSpawn;
@@ -41,9 +41,11 @@ namespace Sand
             for (int i = 0; i < _pool.Count; i++)
             {
                 var obj = _pool.Dequeue();
+                obj.transform.localScale = Vector3.one * 0.75f;
                 if (i == randomIndex) result = obj;
                 else _pool.Enqueue(obj);
             }
+
             return result;
         }
 
@@ -60,12 +62,12 @@ namespace Sand
             var obj = GetRandomFromPool();
             obj.transform.position = _posSpawn[slot].position;
             obj.SetActive(true);
-
             _currentBlocks[slot] = obj;
         }
 
         public void ReturnBlock(GameObject obj)
         {
+            obj.transform.localScale = Vector3.one * 0.75f;
             obj.SetActive(false);
             _pool.Enqueue(obj);
 
