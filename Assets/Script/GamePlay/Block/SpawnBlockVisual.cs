@@ -8,6 +8,7 @@ namespace Sand
     {
         [SerializeField] private GameObject[] _prefabBlock;
         [SerializeField] private Transform[] _posSpawn;
+        [SerializeField] private Transform _posParentSpawn;
         [SerializeField] private int _poolSizePerPrefab = 5;
 
         private Queue<GameObject> _pool = new();
@@ -27,7 +28,7 @@ namespace Sand
                 for (int j = 0; j < _poolSizePerPrefab; j++)
                 {
                     var obj = Instantiate(_prefabBlock[i], transform.position, Quaternion.identity);
-                    obj.transform.SetParent(transform);
+                    obj.transform.SetParent(_posParentSpawn.transform);
                     obj.SetActive(false);
                     _pool.Enqueue(obj);
                 }
@@ -41,7 +42,7 @@ namespace Sand
             for (int i = 0; i < _pool.Count; i++)
             {
                 var obj = _pool.Dequeue();
-                obj.transform.localScale = Vector3.one *6.5f;
+                obj.transform.localScale = Vector3.one * 6.6f;
                 if (i == randomIndex) result = obj;
                 else _pool.Enqueue(obj);
             }
@@ -67,7 +68,7 @@ namespace Sand
 
         public void ReturnBlock(GameObject obj)
         {
-            obj.transform.localScale = Vector3.one * 6.5f;
+            obj.transform.localScale = Vector3.one * 6.6f;
             obj.SetActive(false);
             _pool.Enqueue(obj);
 

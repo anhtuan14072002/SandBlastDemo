@@ -78,7 +78,7 @@ namespace Sand
                 Vector3 snappedLocal = new Vector3(fx, fy, 0);
                 Vector3 snappedWorld = _map.transform.TransformPoint(snappedLocal);
 
-                _objDrag.transform.localScale = Vector3.one*6.5f;
+                _objDrag.transform.localScale = Vector3.one * 10;
                 
                 snappedWorld.z = _objDrag.transform.position.z;
                 _objDrag.transform.position = snappedWorld;
@@ -117,7 +117,7 @@ namespace Sand
                 else
                 {
                     _objDrag.transform.position = _startPos;
-                    _objDrag.transform.localScale = Vector3.one * 6.5f;
+                    _objDrag.transform.localScale = Vector3.one * 6.6f;
                 }
 
                 _objDrag = null;

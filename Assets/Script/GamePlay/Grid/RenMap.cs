@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using R3;
 using UnityEngine;
@@ -16,6 +17,9 @@ namespace Sand
         [HideInInspector] public SpriteRenderer _spriteRenderer;
         public Map _map;
         private bool _isSettled = false;
+        private int Idx(int x, int y) => y * _wight + x;
+        private List<(int x, int y)> connectedComponentDel = new();
+
         IDisposable _sandSpawnSub;
         IDisposable _sandUpdateSub;
         IDisposable _mouseClickSub;
@@ -41,9 +45,9 @@ namespace Sand
                 .ThrottleFirst(TimeSpan.FromSeconds(0.25f))
                 .Subscribe(_ => _blockManager.SpawnSandWithRandomShape(_map, _spriteRenderer));
 
-            // _mouseClickSub = Observable.EveryUpdate()
-            //     .Where(_ => Input.GetMouseButtonDown(0))
-            //     .Subscribe(_ => LogMousePositionOnMap());
+            _mouseClickSub = Observable.EveryUpdate()
+                .Where(_ => Input.GetMouseButton(3))
+                .Subscribe(_ => LogMousePositionOnMap());
         }
 
         private void Update()
@@ -53,7 +57,7 @@ namespace Sand
 
         private void SandUpdate()
         {
-            bool isTick = _map.Tick(5);
+            bool isTick = _map.Tick(4);
             if (isTick) _isSettled = false;
             else
             {
@@ -63,7 +67,7 @@ namespace Sand
                     _isSettled = true;
                 }
             }
-            
+
             _map.UpdateTexture();
         }
 
@@ -80,31 +84,13 @@ namespace Sand
             var mapY = Mathf.RoundToInt((localPos.y / spriteHeight + 0.5f) * _hight);
             mapX = Mathf.Clamp(mapX, 0, _wight - 1);
             mapY = Mathf.Clamp(mapY, 0, _hight - 1);
-
             var cell = _map.GetCell(mapX, mapY);
-            Debug.Log($"Cell info - HasValue: {cell.hasValue}, Color: {cell.color}, IsBorder: {cell.isBorder}");
             if (cell.hasValue == 1)
-            {
-                TestSameColorCompleteBands(cell.color);
-            }
+                RemoveSameColorCompleteBands(cell.color);
         }
 
-        private void TestSameColorCompleteBands(Color32 targetColor)
+        private void RemoveSameColorCompleteBands(Color32 targetColor)
         {
-            int cellCountBefore = CountCellsWithColor(targetColor);
-            Debug.Log($"Số cell có màu {targetColor} trước khi test: {cellCountBefore}");
-            _map.SameColorCompleteBands(_backgroundColor).Forget();
-            int cellCountAfter = CountCellsWithColor(targetColor);
-            Debug.Log($"Số cell có màu {targetColor} sau khi test: {cellCountAfter}");
-            if (cellCountBefore > cellCountAfter)
-                Debug.Log($"đã xóa {cellCountBefore - cellCountAfter} cell màu {targetColor}");
-            else
-                Debug.Log($"không xóa cell nào có màu {targetColor} ");
-        }
-
-        private int CountCellsWithColor(Color32 targetColor)
-        {
-            int count = 0;
             for (int x = 0; x < _wight; x++)
             {
                 for (int y = 0; y < _hight; y++)
@@ -112,15 +98,37 @@ namespace Sand
                     var cell = _map.GetCell(x, y);
                     if (cell.hasValue == 1 && SameColor(cell.color, targetColor))
                     {
-                        count++;
+                        _map.SetPixelCell(x, y, _backgroundColor);
+                        var idx = y * _wight + x;
+                        var c = _map.Cells[idx];
+                        c.hasValue = 0;
+                        c.color = _backgroundColor;
                     }
                 }
             }
+        }
+        /*private void RemoveSameColorCompleteBands(Color32 targetColor)
+        {
+            connectedComponentDel.Clear();
+            CountCellsWithColor(targetColor);
+            if (connectedComponentDel.Count > 0)
+                _map.ShrinkEffect(connectedComponentDel, _backgroundColor).Forget();
+        }*/
 
-            return count;
+
+        private void CountCellsWithColor(Color32 targetColor)
+        {
+            for (int x = 0; x < _wight; x++)
+            {
+                for (int y = 0; y < _hight; y++)
+                {
+                    var cell = _map.GetCell(x, y);
+                    if (cell.hasValue == 1 && SameColor(cell.color, targetColor))
+                        connectedComponentDel.Add((x, y));
+                }
+            }
         }
 
-       
 
         private bool SameColor(Color32 a, Color32 b)
         {
