@@ -4,10 +4,10 @@ namespace Sand
 {
     public class RewardSystem
     {
-        [Inject] private UserData _userData;
-        [Inject] private SaveService _saveService;
+        [Inject] UserData _userData;
+        [Inject] SaveService _saveService;
         
-        public void AddGems(double gem)
+        public void AddGems(int gem)
         {
             _userData.Gems.Value += gem;
             _saveService.Save();

@@ -11,7 +11,7 @@ namespace Sand
         [SerializeField] 
         public SerializableReactiveProperty<int> HighScore = new(0);
         [SerializeField] 
-        public SerializableReactiveProperty<double> Gems = new(0);
+        public SerializableReactiveProperty<int> Gems = new(0);
 
         public void OnDeserialized()
         {

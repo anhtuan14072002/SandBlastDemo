@@ -11,7 +11,7 @@ namespace Sand
     public class HighScoreView : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _highScoreText;
-        [Inject] private UserData _userData;
+        [Inject] UserData _userData;
         private int _currentHighScore = 0;
         private float _originalFontSize;
         IDisposable _sub;
@@ -36,13 +36,9 @@ namespace Sand
         private void AdjustFontSize(int score)
         {
             if (score > 99999999)
-            {
                 _highScoreText.fontSize = 30f;
-            }
             else
-            {
                 _highScoreText.fontSize = _originalFontSize;
-            }
         }
 
         private void OnDestroy()
