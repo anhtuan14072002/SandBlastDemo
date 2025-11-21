@@ -10,7 +10,7 @@ namespace Sand
         [SerializeField] public Color32 _color2;
         [SerializeField] public Color32 _color3;
         [SerializeField] public Color32 _color4;
-        [SerializeField] private RenMap _renMap;
+        [SerializeField] private RenderMap renderMap;
 
         private Sprite _currentSprite;
         public Sprite CurrentSprite => _currentSprite;
@@ -34,126 +34,13 @@ namespace Sand
         }
 
         // theo type
-        public bool[,] GetTypeShapeData(TypeBlock type)
+        public bool[,] GetTypeShapeData(BlockType blockType)
         {
             if (_sprite == null || _sprite.Length == 0) return null;
-            var id = GetBlockWithType(type);
+            var id = GetBlockWithType(blockType);
             var selectedSprite = _sprite[id];
             if (selectedSprite == null) return null;
             return ExtractShapeData(selectedSprite);
-        }
-
-        // ... ExtractShapeData giữ nguyên ...
-
-        public void SpawnSandWithRandomShape(Map map, MeshRenderer meshRenderer)
-        {
-            if (map == null || meshRenderer == null ) return;
-            var shapeData = GetRandomShapeData();
-            if (shapeData == null) return;
-
-            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector3 localPos = transform.InverseTransformPoint(mouseWorldPos);
-
-            var bounds = meshRenderer.bounds;
-            var spriteWidth = bounds.size.x;
-            var spriteHeight = bounds.size.y;
-
-            if (spriteWidth <= 0 || spriteHeight <= 0) return;
-
-            var centerX = Mathf.RoundToInt((localPos.x / spriteWidth + 0.5f) * _renMap._wight);
-            var centerY = Mathf.RoundToInt((localPos.y / spriteHeight + 0.5f) * _renMap._hight);
-
-            var shapeWidth = shapeData.GetLength(0);
-            var shapeHeight = shapeData.GetLength(1);
-
-            if (shapeWidth <= 0 || shapeHeight <= 0) return;
-            var colorRandom = RandomColor();
-            try
-            {
-                for (int x = 0; x < shapeWidth; x++)
-                {
-                    for (int y = 0; y < shapeHeight; y++)
-                    {
-                        if (shapeData[x, y])
-                        {
-                            var targetX = centerX - shapeWidth / 2 + x;
-                            var targetY = centerY - shapeHeight / 2 + y;
-
-                            if (targetX >= 0 && targetX < _renMap._wight && targetY >= 0 && targetY < _renMap._hight)
-                            {
-                                map.SetPixelCell(targetX, targetY, colorRandom);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (System.IndexOutOfRangeException)
-            {
-                Debug.Log("khong to duoc mau");
-            }
-        }
-
-        public bool SpawnSandWithType(Map map, MeshRenderer meshRenderer, int id, TypeBlock type)
-        {
-            if (map == null || meshRenderer == null )
-                return false;
-
-            var shapeData = GetTypeShapeData(type);
-            if (shapeData == null)
-                return false;
-
-            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector3 localPos = transform.InverseTransformPoint(mouseWorldPos);
-
-            var bounds = meshRenderer.bounds;
-            var spriteWidth = bounds.size.x;
-            var spriteHeight = bounds.size.y;
-
-            if (spriteWidth <= 0 || spriteHeight <= 0)
-                return false;
-
-            var centerX = Mathf.RoundToInt((localPos.x / spriteWidth + 0.5f) * _renMap._wight);
-            var centerY = Mathf.RoundToInt((localPos.y / spriteHeight + 0.5f) * _renMap._hight);
-
-            var shapeWidth = shapeData.GetLength(0);
-            var shapeHeight = shapeData.GetLength(1);
-
-            if (shapeWidth <= 0 || shapeHeight <= 0)
-                return false;
-
-            // check va chạm
-            for (int x = 0; x < shapeWidth; x++)
-            {
-                for (int y = 0; y < shapeHeight; y++)
-                {
-                    if (!shapeData[x, y]) continue;
-                    var targetX = centerX - shapeWidth / 2 + x;
-                    var targetY = centerY - shapeHeight / 2 + y;
-
-                    var cell = map.GetCell(targetX, targetY);
-                    if (cell.hasValue == 1 || cell.isBorder == 1)
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            var color = GetColorWithId(id);
-            for (int x = 0; x < shapeWidth; x++)
-            {
-                for (int y = 0; y < shapeHeight; y++)
-                {
-                    if (!shapeData[x, y])
-                        continue;
-
-                    var targetX = centerX - shapeWidth / 2 + x;
-                    var targetY = centerY - shapeHeight / 2 + y;
-
-                    map.SetPixelCell(targetX, targetY, color);
-                }
-            }
-
-            return true;
         }
         
         private bool[,] ExtractShapeData(Sprite sprite)
@@ -210,8 +97,8 @@ namespace Sand
 
             if (spriteWidth <= 0 || spriteHeight <= 0) return;
 
-            var centerX = Mathf.RoundToInt((localPos.x / spriteWidth + 0.5f) * _renMap._wight);
-            var centerY = Mathf.RoundToInt((localPos.y / spriteHeight + 0.5f) * _renMap._hight);
+            var centerX = Mathf.RoundToInt((localPos.x / spriteWidth + 0.5f) * renderMap._wight);
+            var centerY = Mathf.RoundToInt((localPos.y / spriteHeight + 0.5f) * renderMap._hight);
 
             var shapeWidth = shapeData.GetLength(0);
             var shapeHeight = shapeData.GetLength(1);
@@ -229,7 +116,7 @@ namespace Sand
                             var targetX = centerX - shapeWidth / 2 + x;
                             var targetY = centerY - shapeHeight / 2 + y;
 
-                            if (targetX >= 0 && targetX < _renMap._wight && targetY >= 0 && targetY < _renMap._hight)
+                            if (targetX >= 0 && targetX < renderMap._wight && targetY >= 0 && targetY < renderMap._hight)
                             {
                                 map.SetPixelCell(targetX, targetY, colorRandom);
                             }
@@ -239,16 +126,16 @@ namespace Sand
             }
             catch (System.IndexOutOfRangeException e)
             {
-                Debug.Log("khong to duoc mau");
+                Debug.Log("loi to mau block spawn");
             }
         }
 
-        public bool SpawnSandWithType(Map map, SpriteRenderer spriteRenderer, int id, TypeBlock type)
+        public bool SpawnSandWithType(Map map, SpriteRenderer spriteRenderer, int id, BlockType blockType)
         {
             if (map == null || spriteRenderer == null || spriteRenderer.sprite == null)
                 return false;
 
-            var shapeData = GetTypeShapeData(type);
+            var shapeData = GetTypeShapeData(blockType);
             if (shapeData == null)
                 return false;
 
@@ -261,8 +148,8 @@ namespace Sand
             if (spriteWidth <= 0 || spriteHeight <= 0)
                 return false;
 
-            var centerX = Mathf.RoundToInt((localPos.x / spriteWidth + 0.5f) * _renMap._wight);
-            var centerY = Mathf.RoundToInt((localPos.y / spriteHeight + 0.5f) * _renMap._hight);
+            var centerX = Mathf.RoundToInt((localPos.x / spriteWidth + 0.5f) * renderMap._wight);
+            var centerY = Mathf.RoundToInt((localPos.y / spriteHeight + 0.5f) * renderMap._hight);
 
             var shapeWidth = shapeData.GetLength(0);
             var shapeHeight = shapeData.GetLength(1);
@@ -335,15 +222,15 @@ namespace Sand
             }
         }
 
-        private int GetBlockWithType(TypeBlock type)
+        private int GetBlockWithType(BlockType blockType)
         {
-            return type switch
+            return blockType switch
             {
-                TypeBlock.Cross => 0,
-                TypeBlock.Square => 1,
-                TypeBlock.Line => 2,
-                TypeBlock.LShape => 3,
-                TypeBlock.Stair => 4,
+                BlockType.Cross => 0,
+                BlockType.Square => 1,
+                BlockType.Line => 2,
+                BlockType.LShape => 3,
+                BlockType.Stair => 4,
             };
         }
     }

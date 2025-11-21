@@ -9,6 +9,12 @@
       },
       "hash": "24d04125d68719816e24dfb79c60dd97ca396038"
     },
+    "com.kyrylokuzyk.primetween": {
+      "version": "file:../Assets/Plugins/PrimeTween/internal/com.kyrylokuzyk.primetween.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {}
+    },
     "com.tuna.config": {
       "version": "file:../../TunaCore/com.tuna.config",
       "depth": 0,

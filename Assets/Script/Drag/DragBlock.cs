@@ -8,7 +8,8 @@ namespace Sand
     public class DragBlock : MonoBehaviour
     {
         [SerializeField] private BlockManager _blockManager;
-        [SerializeField] private RenMap _map;
+        [SerializeField] private RenderMap _map;
+        
         private GameObject _objDrag;
         private Vector3 _startPos;
         private Vector3 _offset;
@@ -24,17 +25,11 @@ namespace Sand
         private void HandleDragInput()
         {
             if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
-            {
                 StartDrag();
-            }
             else if (Input.GetMouseButton(0) && _isDragging)
-            {
                 Drag();
-            }
             else if (Input.GetMouseButtonUp(0) && _isDragging)
-            {
                 EndDrag();
-            }
         }
 
         private void StartDrag()
@@ -46,6 +41,7 @@ namespace Sand
             _objDrag = hit.collider.gameObject;
             _isDragging = true;
             _startPos = _objDrag.transform.position;
+            _objDrag.transform.localScale = Vector3.one * 8f;
 
             Vector3 objectWorldPos = _objDrag.transform.position;
             Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -78,7 +74,7 @@ namespace Sand
                 Vector3 snappedLocal = new Vector3(fx, fy, 0);
                 Vector3 snappedWorld = _map.transform.TransformPoint(snappedLocal);
 
-                _objDrag.transform.localScale = Vector3.one * 10;
+                _objDrag.transform.localScale = Vector3.one * 8f;
                 
                 snappedWorld.z = _objDrag.transform.position.z;
                 _objDrag.transform.position = snappedWorld;
@@ -97,27 +93,27 @@ namespace Sand
 
                 if (IsDroppedOnMap())
                 {
-                    var block = _objDrag.GetComponent<BlockTittle>();
+                    var block = _objDrag.GetComponent<BlockInfo>();
                     if (block != null && _blockManager != null && _map != null)
                     {
                         placedOnMap = _blockManager.SpawnSandWithType(
                             _map._map,
                             _map._spriteRenderer,
                             block.IdColor,
-                            block.TypeBlock
+                            block.BlockType
                         );
                     }
                 }
 
                 if (placedOnMap)
                 {
-                    var spawnSystem = FindObjectOfType<SpawnBlockVisual>();
+                    var spawnSystem = FindObjectOfType<BlockSpawn>();
                     spawnSystem.ReturnBlock(_objDrag);
                 }
                 else
                 {
                     _objDrag.transform.position = _startPos;
-                    _objDrag.transform.localScale = Vector3.one * 6.6f;
+                    _objDrag.transform.localScale = Vector3.one * 5f;
                 }
 
                 _objDrag = null;
