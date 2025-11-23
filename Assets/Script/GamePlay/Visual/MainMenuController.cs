@@ -6,10 +6,10 @@ using UnityEngine.UI;
 
 namespace Sand
 {
-    public class MainMenuController : GameElement
+    public class MainMenuController : GameElement,
+        IReceive<SignalOpenPopupGameOver>
     {
-        [Header("MainMenu")]
-        [SerializeField] private LayoutElement[] _layoutElement;
+        [Header("MainMenu")] [SerializeField] private LayoutElement[] _layoutElement;
         [SerializeField] private GameObject[] _focus;
         [SerializeField] private GameObject[] _iconMenu;
         [SerializeField] private GameObject[] _popupCategory;
@@ -17,6 +17,7 @@ namespace Sand
         [SerializeField] private Button _btnPlay;
         [SerializeField] private GameObject _groupMenu;
         [SerializeField] private GameObject _groupCategory;
+        [SerializeField] private GameObject _popupGameOver;
         [SerializeField] private GameObject _currenScore;
         [SerializeField] private GameObject _topUI;
         [SerializeField] private GameObject _backGround;
@@ -28,19 +29,23 @@ namespace Sand
         [SerializeField] private Animator _animLoad;
         private static readonly int LoadGame = Animator.StringToHash("Load");
         private static readonly int EndMenu = Animator.StringToHash("End");
-        
-        [Header("GamePlayUI")]
-        [SerializeField] private GameObject _pauseMenu;
+
+        [Header("GamePlayUI")] [SerializeField]
+        private GameObject _pauseMenu;
+
         [SerializeField] private Button _btnPauseGame;
         [SerializeField] private Button _btnResumeGame;
         [SerializeField] private Button _btnRestartGame;
+        [SerializeField] private Button _btnRestartGameOver;
         [SerializeField] private Button _btnQuitGame;
+        [SerializeField] private Button _btnQuitGameOver;
+
         private void Start()
         {
             for (int i = 0; i < _btnSelection.Length; i++)
             {
                 var i1 = i;
-                _btnSelection[i].onClick.AddListener(()=>
+                _btnSelection[i].onClick.AddListener(() =>
                 {
                     OpenCategory(i1);
                     CloseCategory(i1);
@@ -48,29 +53,37 @@ namespace Sand
                     DisableCategory(i1);
                 });
             }
+
             _btnPlay.onClick.AddListener(() => PlayGame().Forget());
             //popupGamePlay
             _btnPauseGame.onClick.AddListener(PauseGame);
-            _btnResumeGame.onClick.AddListener(ResumeGame );
-            _btnRestartGame.onClick.AddListener(ResetGame );
-            _btnQuitGame.onClick.AddListener(() => QuitGame().Forget());;
+            _btnResumeGame.onClick.AddListener(ResumeGame);
+
+            _btnRestartGame.onClick.AddListener(ResetGame);
+            _btnRestartGameOver.onClick.AddListener(ResetGame);
+
+            _btnQuitGame.onClick.AddListener(() => ReturnHomeMenu().Forget());
+            _btnQuitGameOver.onClick.AddListener(() => ReturnHomeGameOver().Forget());
         }
+
         private void IncreaseElement(int index)
         {
             _layoutElement[index].flexibleWidth = 1.5f;
-            
+
             for (int i = 0; i < _layoutElement.Length; i++)
             {
                 if (i != index) _layoutElement[i].flexibleWidth = 1;
             }
         }
+
         private void OpenCategory(int index)
         {
             OpenHome(index);
             Tween.PositionY(_focus[index].transform, _targetFocus, 0.25f, Ease.Linear);
             IncreaseElement(index);
             Tween.PositionY(_iconMenu[index].transform, _targetIconMenu, 0.25f, Ease.Linear).OnComplete(() =>
-                Tween.Scale(_iconMenu[index].transform, _iconMenu[index].transform.localScale, Vector3.one * 1.5f, 0.25f, Ease.Linear)
+                Tween.Scale(_iconMenu[index].transform, _iconMenu[index].transform.localScale, Vector3.one * 1.5f,
+                    0.25f, Ease.Linear)
             );
         }
 
@@ -81,14 +94,15 @@ namespace Sand
                 if (i != index)
                 {
                     var i1 = i;
-                    Tween.PositionY(_focus[i].transform,_currentFocus , 0.1f, Ease.Linear);
-                    Tween.PositionY(_iconMenu[i].transform,_currentIconMenu , 0.1f, Ease.Linear)
+                    Tween.PositionY(_focus[i].transform, _currentFocus, 0.1f, Ease.Linear);
+                    Tween.PositionY(_iconMenu[i].transform, _currentIconMenu, 0.1f, Ease.Linear)
                         .OnComplete(() =>
-                            Tween.Scale(_iconMenu[i1].transform, _iconMenu[i1].transform.localScale, Vector3.one, 0.1f, Ease.Linear));
+                            Tween.Scale(_iconMenu[i1].transform, _iconMenu[i1].transform.localScale, Vector3.one, 0.1f,
+                                Ease.Linear));
                 }
             }
         }
-        
+
         private void EnableCategory(int index)
         {
             _popupCategory[index].SetActive(true);
@@ -112,6 +126,7 @@ namespace Sand
             else
                 _topUI.gameObject.SetActive(false);
         }
+
         public async UniTask PlayGame()
         {
             _animLoad.gameObject.SetActive(true);
@@ -141,19 +156,18 @@ namespace Sand
             _btnPauseGame.gameObject.SetActive(true);
         }
 
-        private void ResetGame()
+        public void ResetGame()
         {
             _pauseMenu.SetActive(false);
             _btnPauseGame.gameObject.SetActive(true);
+            DisablePopupGameOver();
             if (_renderMap != null)
-            {
                 _renderMap.Reset();
-            }
             Global.Send(new SignalResetAllBlocks());
             Global.Send(new SignalRestCurrenScore());
         }
-        
-        private async UniTask QuitGame()
+
+        public async UniTask ReturnHomeMenu()
         {
             _pauseMenu.SetActive(false);
             _btnPauseGame.gameObject.SetActive(false);
@@ -167,6 +181,34 @@ namespace Sand
             await UniTask.WaitForSeconds(1f);
             _animLoad.gameObject.SetActive(false);
         }
-        
+
+        private async UniTask ReturnHomeGameOver()
+        {
+            _pauseMenu.SetActive(false);
+            _btnPauseGame.gameObject.SetActive(false);
+            _animLoad.gameObject.SetActive(true);
+            DisablePopupGameOver();
+            Global.Send(new SignalResetAllBlocks());
+            Global.Send(new SignalRestCurrenScore());
+            await UniTask.WaitForSeconds(1f);
+            _currenScore.SetActive(false);
+            _groupMenu.SetActive(true);
+            _groupCategory.SetActive(true);
+            _backGround.SetActive(true);
+            _animLoad.SetTrigger(LoadGame);
+            await UniTask.WaitForSeconds(1f);
+            _animLoad.gameObject.SetActive(false);
+        }
+
+        private void DisablePopupGameOver()
+        {
+            if (_renderMap != null) _renderMap.Reset();
+            if (_popupGameOver.activeSelf) _popupGameOver.SetActive(false);
+        }
+
+        public void Receive(in SignalOpenPopupGameOver signal)
+        {
+            _popupGameOver.SetActive(true);
+        }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Core;
 using Cysharp.Threading.Tasks;
 using R3;
 using UnityEngine;
@@ -11,6 +13,7 @@ namespace Sand
         [Header("Setting")] [SerializeField] public Color32 _backgroundColor;
         [SerializeField] public int _hight;
         [SerializeField] public int _wight;
+        [SerializeField] public int _hightGameOver;
         [SerializeField] private BlockManager _blockManager;
         [HideInInspector] public SpriteRenderer _spriteRenderer;
 
@@ -81,6 +84,7 @@ namespace Sand
             {
                 if (!_isSettled && !_map.IsMovePause)
                 {
+                    CheckSandLosingLine();
                     ProcessSettledSand().Forget();
                     _isSettled = true;
                 }
@@ -92,6 +96,64 @@ namespace Sand
         private async UniTask ProcessSettledSand()
         {
             await _colorMap.SameColorCompleteBands(_backgroundColor);
+            await UniTask.Delay(TimeSpan.FromSeconds(1f));
+            CheckSandLosingLine();
+        }
+
+        private void CheckSandLosingLine()
+        {
+            if (_hight <= _hightGameOver) return;
+            bool foundSand = false;
+            int sandCount = 0;
+
+            List<(int x, int y)> sandCells = new List<(int x, int y)>();
+            for (int y = _hightGameOver; y < _hight; y++)
+            {
+                for (int x = 0; x < _wight; x++)
+                {
+                    var cell = _map.GetCell(x, y);
+                    if (cell.hasValue == 1)
+                    {
+                        foundSand = true;
+                        sandCount++;
+                        sandCells.Add((x, y));
+                    }
+                }
+            }
+
+            if (foundSand)
+            {
+                CheckSandLosingLineWithEffect().Forget();
+            }
+        }
+
+        private async UniTask CheckSandLosingLineWithEffect()
+        {
+            _map.IsMovePause = true;
+            Color32 grayColor = new Color32(128, 128, 128, 255);
+
+            for (int y = _hight - 1; y >= 0; y--)
+            {
+                bool hasChangedInRow = false;
+
+                for (int x = 0; x < _wight; x++)
+                {
+                    var cell = _map.GetCell(x, y);
+                    if (cell.hasValue == 1)
+                    {
+                        _map.SetPixelCell(x, y, grayColor);
+                        hasChangedInRow = true;
+                    }
+                }
+
+                if (!hasChangedInRow) continue;
+                _map.Dirty = true;
+                _map.UpdateTexture();
+                await UniTask.Delay(TimeSpan.FromMilliseconds(10));
+            }
+
+            _map.IsMovePause = false;
+            Global.Send(new SignalOpenPopupGameOver());
         }
 
         private void OnDestroy()

@@ -11,6 +11,7 @@ namespace Sand
     public class HighScoreView : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _highScoreText;
+        [SerializeField] private TextMeshProUGUI _highScoreTextPopupGameOver;
         [Inject] UserData _userData;
         private int _currentHighScore = 0;
         private float _originalFontSize;
@@ -22,12 +23,13 @@ namespace Sand
             _currentHighScore = _userData.HighScore.Value;
             _highScoreText.text = _currentHighScore.ToString();
             AdjustFontSize(_currentHighScore);
-
+            
             _sub = _userData.HighScore.Subscribe(value =>
             {
                 AnimText.AnimateNumberChange(_highScoreText, _currentHighScore, value, 0.5f, 2,
                         _highScoreText.gameObject)
                     .Forget();
+                _highScoreTextPopupGameOver.text = value.ToString();
                 _currentHighScore = value;
                 AdjustFontSize(value);
             });

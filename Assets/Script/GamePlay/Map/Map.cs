@@ -193,7 +193,6 @@ namespace Sand
             return x >= 0 && y >= 0 && x < m_width && y < m_height;
         }
         
-        
         public void SetPixelCell(int x, int y, Color32 color32)
         {
             if (OutOfBound(x, y)) return;

@@ -12,6 +12,7 @@ namespace Sand
         IReceive<SignalRestCurrenScore>
     {
         [SerializeField] private TextMeshProUGUI _scoreText;
+        [SerializeField] private TextMeshProUGUI _scoreTextPopupGameOver;
         [Inject] RewardSystem _rewardSystem;
         private int _score = 0;
         
@@ -26,6 +27,7 @@ namespace Sand
             _score += score;
             _scoreText.text = score.ToString();
             AnimText.AnimateNumberChange(_scoreText, currentScore, _score, 0.5f, 8,_scoreText.gameObject).Forget();
+            _scoreTextPopupGameOver.text = _score.ToString();
             _rewardSystem.AddScore(_score);
         }
 
