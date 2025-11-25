@@ -64,6 +64,7 @@ namespace Sand
                 _renderMap.MapGameOver();
                 await UniTask.Delay(TimeSpan.FromSeconds(2.5f));
                 Global.Send(new SignalOpenPopupGameOver());
+                _imageRevive.fillAmount = 0f;
             }
         }
 
@@ -95,7 +96,15 @@ namespace Sand
             _isRevived = true;
             _isEndTimeTriggered = true;
         }
-
+        public void ResetReviveUI()
+        {
+            _imageRevive.fillAmount = 0f;
+            _isEndTimeTriggered = false;
+            _isPopupOpen = false;
+            _isRevived = false;
+            _cancellationTokenSource?.Cancel();
+            _popupRevive.SetActive(false);
+        }
         private void OnDestroy()
         {
             _cancellationTokenSource?.Cancel();

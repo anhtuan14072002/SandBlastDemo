@@ -36,10 +36,16 @@ namespace Sand
             _scoreTextPopupGameOver.text = _score.ToString();
             _rewardSystem.AddScore(_score);
         }
+        public void ResetScore()
+        {
+            _score = 0;
+            _scoreText.text = "0";
+            _scoreTextPopupGameOver.text = "0";
+        }
 
         public void Receive(in SignalRestCurrenScore signal)
         {
-            _scoreText.text = "0";
+            ResetScore();
         }
     }
 }

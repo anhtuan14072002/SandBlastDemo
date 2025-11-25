@@ -19,7 +19,7 @@ namespace Sand
             set => m_isMovePause = value;
         }
 
-        private bool _dirty = true;
+        public bool _dirty = true;
         public bool Dirty
         {
             get => _dirty;

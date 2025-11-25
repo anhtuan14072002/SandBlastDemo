@@ -29,6 +29,10 @@ namespace Sand
             Container.Bind<RenderMap>()
                 .FromComponentInHierarchy()
                 .AsSingle();
+            
+            Container.Bind<CheckLevelScore>()
+                .FromComponentInHierarchy()
+                .AsSingle();
         }
     }
 }

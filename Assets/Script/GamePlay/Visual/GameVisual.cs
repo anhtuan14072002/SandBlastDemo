@@ -22,13 +22,11 @@ namespace Sand
         [SerializeField] private GameObject _backGround;
         [SerializeField] private GameObject _topUI;
         [SerializeField] private GameObject _scoreBar;
-        // [SerializeField] private GameObject _popupLevelUp;
         [SerializeField] private GameObject _effectClaimGem;
+        [SerializeField] private GameObject[] _skill;
 
         [SerializeField] private Button[] _btnSelection;
         [SerializeField] private Button _btnPlay;
-        // [SerializeField] private Button _claimRewardLevelUp;
-        // [SerializeField] private Button _claimCoreRewardLevelUp;
 
         [SerializeField] private float _targetIconMenu;
         [SerializeField] private float _targetFocus;
@@ -39,8 +37,9 @@ namespace Sand
         private static readonly int LoadGame = Animator.StringToHash("Load");
         private static readonly int EndMenu = Animator.StringToHash("End");
 
-        [Header("GamePlayUI")] 
-        [SerializeField] private GameObject _pauseMenu;
+        [Header("GamePlayUI")] [SerializeField]
+        private GameObject _pauseMenu;
+
         [SerializeField] private Button _btnPauseGame;
         [SerializeField] private Button _btnResumeGame;
         [SerializeField] private Button _btnRestartGame;
@@ -48,7 +47,7 @@ namespace Sand
         [SerializeField] private Button _btnQuitGame;
         [SerializeField] private Button _btnQuitGameOver;
         [SerializeField] private Button _btnReviveGems;
-        
+
         [Inject] GameResources _gameResources;
         [Inject] GameRevive _gameRevive;
 
@@ -79,7 +78,7 @@ namespace Sand
 
             // _claimRewardLevelUp.onClick.AddListener(() => ClaimReward().Forget());
             // _claimCoreRewardLevelUp.onClick.AddListener(() => ClaimCoreReward().Forget());
-            
+
             _btnReviveGems.onClick.AddListener(ReviveGems);
         }
 
@@ -161,6 +160,7 @@ namespace Sand
             _currenScore.SetActive(true);
             _scoreBar.SetActive(true);
             _btnPauseGame.gameObject.SetActive(true);
+            EnableSkill();
             _animLoad.SetTrigger(LoadGame);
             await UniTask.WaitForSeconds(1f);
             if (_renderMap != null)
@@ -184,12 +184,15 @@ namespace Sand
         {
             _pauseMenu.SetActive(false);
             _btnPauseGame.gameObject.SetActive(true);
+            EnableSkill();
             DisablePopupGameOver();
+            _gameRevive.ResetReviveUI();
             if (_renderMap != null)
                 _renderMap.Reset();
             Global.Send(new SignalResetAllBlocks());
             Global.Send(new SignalRestCurrenScore());
         }
+
         public void ReviveGems()
         {
             _gameResources.ReviveGame();
@@ -197,12 +200,13 @@ namespace Sand
             if (_renderMap != null) _renderMap.Reset();
             Global.Send(new SignalResetAllBlocks());
         }
-        
+
 
         public async UniTask ReturnHomeMenu()
         {
             _pauseMenu.SetActive(false);
             _btnPauseGame.gameObject.SetActive(false);
+            DisableSkill();
             _animLoad.gameObject.SetActive(true);
             await UniTask.WaitForSeconds(1f);
             _currenScore.SetActive(false);
@@ -219,8 +223,10 @@ namespace Sand
         {
             _pauseMenu.SetActive(false);
             _btnPauseGame.gameObject.SetActive(false);
+            DisableSkill();
             _animLoad.gameObject.SetActive(true);
             DisablePopupGameOver();
+            _gameRevive.ResetReviveUI();
             Global.Send(new SignalResetAllBlocks());
             Global.Send(new SignalRestCurrenScore());
             await UniTask.WaitForSeconds(1f);
@@ -243,22 +249,8 @@ namespace Sand
         public void Receive(in SignalOpenPopupGameOver signal)
         {
             _popupGameOver.SetActive(true);
+            
         }
-
-        //Popup LevelUp
-
-        /*public void OpenPopupLevelUp()
-        {
-            _popupLevelUp.SetActive(true);
-            _gameResources.ResetCoreAnimation(); 
-        }
-
-        private async UniTask ClosePopupLevelUp()
-        {
-            await UniTask.Delay(TimeSpan.FromSeconds(1.25f));
-            DisableEffectClaimGem();
-            _popupLevelUp.SetActive(false);
-        }*/
 
         public void EnableEffectClaimGem()
         {
@@ -270,24 +262,21 @@ namespace Sand
             _effectClaimGem.SetActive(false);
         }
 
-        /*private async UniTask ClaimReward()
+        //Skill
+        private void EnableSkill()
         {
-            EnableEffectClaimGem();
-            await UniTask.Delay(TimeSpan.FromSeconds(1.65f));
-            _gameResources.ClaimGemsLevelUp();
-            ClosePopupLevelUp().Forget();
+            for (int i = 0; i < _skill.Length; i++)
+            {
+                _skill[i].SetActive(true);
+            }
         }
-        
-        private async UniTask ClaimCoreReward()
+
+        private void DisableSkill()
         {
-            EnableEffectClaimGem();
-            _gameResources.StopCoreAnimation().Forget();
-            await UniTask.Delay(TimeSpan.FromSeconds(0.75f));
-            ClosePopupLevelUp().Forget();
-        }*/
-        
-        //REVIVE
-        
-        
+            for (int i = 0; i < _skill.Length; i++)
+            {
+                _skill[i].SetActive(false);
+            }
+        }
     }
 }

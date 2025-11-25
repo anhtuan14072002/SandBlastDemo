@@ -24,6 +24,7 @@ namespace Sand
         [SerializeField] private float _fillTweenDuration = 0.3f;
 
         private int _currentLevelScoreValue;
+        public int CurrentLevel => _level;
         private int _nextLevelScoreValue;
         private int _lastCheckedScore = 0;
         private int _level = 0;

@@ -8,15 +8,12 @@ namespace Sand
 {
     public class EffectBlock : MonoBehaviour
     {
-        [Header("Shrink Effect Settings")] [SerializeField]
-        private Color32 _shrinkEffectColor;
-
-        [SerializeField] private float _shrinkEffectDuration;
+        [Header("Shrink Effect Settings")] 
         [SerializeField] private AnimationCurve _shrinkEffectCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
+        [SerializeField] private Color32 _shrinkEffectColor;
         [SerializeField] private Color32 _shrinkEffectWaveColor;
-        [Inject] GameRevive _gameRevive;
-        private List<CellSnapshot> _cellSnapshots = new();
-
+        [SerializeField] private float _shrinkEffectDuration;
+        
         public async UniTask CheckSandLosingLineWithEffect(Map _map, int _hight, int _wight)
         {
             _map.IsMovePause = true;
@@ -82,107 +79,87 @@ namespace Sand
             map.Dirty = true;
             map.UpdateTexture();
         }
-        
-        public async UniTask ShrinkEffectWave(Map map, List<(int x, int y)> cellsList,
-            Color32 backgroundColor)
+
+        public async UniTask ShrinkEffectFadeOut(Map map, List<(int x, int y)> cellsList, Color32 originalColor, Color32 finalColor)
         {
-            var localCells = new List<(int x, int y)>(cellsList);
-            float duration = 0.4f;
+            float elapsed = 0f;
+            while (elapsed < _shrinkEffectDuration)
+            {
+                elapsed += Time.deltaTime;
+                var normalizedTime = elapsed / _shrinkEffectDuration;
+                var curveValue = _shrinkEffectCurve.Evaluate(normalizedTime);
+                var alpha = (byte)(255 * curveValue);
+
+                var r = _shrinkEffectColor.r;
+                var g = _shrinkEffectColor.g;
+                var b = _shrinkEffectColor.b;
+                var a = alpha;
+
+                foreach (var (cx, cy) in cellsList)
+                {
+                    map.SetPixelCell(cx, cy, new Color32(r, g, b, a));
+                }
+
+                map.Dirty = true;
+                map.UpdateTexture();
+                await UniTask.Yield();
+            }
+
+            foreach (var (cx, cy) in cellsList)
+            {
+                map.SetPixelCell(cx, cy, originalColor);
+                map.ClearPixelCell(cx, cy, finalColor);
+            }
+            
+            map.Dirty = true;
+            map.UpdateTexture();
+        }
+        
+        public async UniTask ShrinkEffectWave(Map map, List<(int x, int y)> cellsList, Color32 finalColor)
+        {
+            float duration = 0.5f;
             int minX = int.MaxValue;
             int maxX = int.MinValue;
+
             foreach (var (cx, _) in cellsList)
             {
                 if (cx < minX) minX = cx;
                 if (cx > maxX) maxX = cx;
             }
 
-            if (minX > maxX)
-                return;
-
-            for (int i = 0; i < 2; i++)
+            if (minX > maxX) return;
+            map.IsMovePause = true;
+            while (true) 
             {
                 float elapsed = 0f;
+
                 while (elapsed < duration)
                 {
                     elapsed += Time.deltaTime;
                     float t = Mathf.Clamp01(elapsed / duration);
+
                     float threshold = Mathf.Lerp(minX - 1, maxX + 1, t);
 
-                    foreach (var (cx, cy) in localCells)
+                    foreach (var (cx, cy) in cellsList)
                     {
                         if (cx <= threshold)
                         {
-                            map.SetPixelCell(cx, cy, Color.white);
-
+                            map.SetPixelCell(cx, cy, finalColor); 
                         }
                         else
                         {
-                            var snap = _cellSnapshots.Find(s => s.x == cx && s.y == cy);
-                            map.SetPixelCell(cx, cy, snap.color);
-                            
+                            map.SetPixelCell(cx, cy, new Color32(255,255,255,255)); 
                         }
                     }
 
                     map.Dirty = true;
                     map.UpdateTexture();
+
                     await UniTask.Yield();
                 }
-                RestoreOriginalColors(map, backgroundColor);;
-                map.Dirty = true;
-                map.UpdateTexture();
-
-                await UniTask.Delay(TimeSpan.FromSeconds(0.25f));
-            }
-            RestoreOriginalColors(map, backgroundColor);
-
-            map.Dirty = true;
-            map.UpdateTexture();
-        }
-
-        public void CacheSnapshot(Map map, List<(int x, int y)> cellsList)
-        {
-            _cellSnapshots.Clear();
-
-            foreach (var (cx, cy) in cellsList)
-            {
-                var cell = map.GetCell(cx, cy);
-                _cellSnapshots.Add(new CellSnapshot
-                {
-                    x = cx,
-                    y = cy,
-                    color = cell.color,
-                    hasValue = cell.hasValue
-                });
+                await UniTask.Delay(TimeSpan.FromMilliseconds(50));
             }
         }
 
-        public async UniTask OnClickColor(Map map, List<(int x, int y)> selectedCells,
-            Color32 backgroundColor)
-        {
-            CacheSnapshot(map, selectedCells);
-            await ShrinkEffectWave(map, selectedCells, backgroundColor);
-        }
-        private void RestoreOriginalColors(Map map, Color32 backgroundColor)
-        {
-            foreach (var snap in _cellSnapshots)
-            {
-                if (snap.hasValue == 1)
-                {
-                    map.SetPixelCell(snap.x, snap.y, snap.color);
-                }
-                else
-                {
-                    map.ClearPixelCell(snap.x, snap.y, backgroundColor);
-                }
-            }
-        }
-
-    }
-
-    public struct CellSnapshot
-    {
-        public int x, y;
-        public Color32 color;
-        public int hasValue;
     }
 }
