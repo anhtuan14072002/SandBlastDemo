@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Core;
-using Cysharp.Threading.Tasks;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
@@ -177,7 +175,6 @@ namespace Sand
             else
             {
                 CheckGameOver();
-                //
             }
 
             return moved;
@@ -204,6 +201,20 @@ namespace Sand
             c.x = x;
             c.y = y;
             _cells[idx] = c;
+            _dirty = true;
+        }
+
+        public void ClearPixelCell(int x, int y, Color32 color32)
+        {
+            if (OutOfBound(x, y)) return;
+            int idx = Idx(x, y);
+            var cell = _cells[idx];
+            cell.color = color32;
+            cell.hasValue = 0;
+            cell.isBorder = 0;
+            cell.x = x;
+            cell.y = y;
+            _cells[idx] = cell;
             _dirty = true;
         }
 
@@ -236,103 +247,6 @@ namespace Sand
             return _cells[Idx(x, y)];
         }
         
-        public async UniTask ShrinkEffect(List<(int x, int y)> cellsList, Color32 finalColor)
-        {
-            float duration = 0.5f;
-            float elapsed = 0f;
-
-            while (elapsed < duration)
-            {
-                elapsed += Time.deltaTime;
-                var progress = elapsed / duration;
-                var alpha = (byte)(255 * (1f - progress));
-
-                foreach (var (cx, cy) in cellsList)
-                {
-                    int idx = Idx(cx, cy);
-                    var c = _cells[idx];
-                    c.color = new Color32(255, 255, 255, alpha);
-                    _cells[idx] = c;
-                }
-
-                _dirty = true;
-                UpdateTexture();
-                await UniTask.Yield();
-            }
-
-            foreach (var (cx, cy) in cellsList)
-            {
-                int idx = Idx(cx, cy);
-                var c = _cells[idx];
-                c.color = finalColor;
-                c.hasValue = 0;
-                _cells[idx] = c;
-            }
-
-            _dirty = true;
-            UpdateTexture();
-        }
-
-        public async UniTask ShrinkEffectWave(List<(int x, int y)> cellsList, Color32 finalColor)
-        {
-            float duration = 0.4f;
-            int minX = int.MaxValue;
-            int maxX = int.MinValue;
-            foreach (var (cx, _) in cellsList)
-            {
-                if (cx < minX) minX = cx;
-                if (cx > maxX) maxX = cx;
-            }
-
-            if (minX > maxX)
-                return;
-
-            for (int i = 0; i < 10; i++)
-            {
-                float elapsed = 0f;
-                while (elapsed < duration)
-                {
-                    elapsed += Time.deltaTime;
-                    
-                    float t = Mathf.Clamp01(elapsed / duration);
-
-                    float threshold = Mathf.Lerp(minX - 1, maxX + 1, t);
-
-                    foreach (var (cx, cy) in cellsList)
-                    {
-                        int idx = Idx(cx, cy);
-                        var c = _cells[idx];
-                        if (cx <= threshold)
-                        {
-                            c.color = m_backgroundColor;
-                        }
-                        else
-                        {
-                            c.color = new Color32(255, 255, 255, 255);
-                        }
-
-                        _cells[idx] = c;
-                    }
-                    _dirty = true;
-                    UpdateTexture();
-                    await UniTask.Yield();
-                }
-                await UniTask.Delay(TimeSpan.FromSeconds(0.25f));
-            }
-
-            /*foreach (var (cx, cy) in cellsList)
-            {
-                int idx = Idx(cx, cy);
-                var c = _cells[idx];
-                c.color = finalColor;
-                c.hasValue = 0;
-                _cells[idx] = c;
-            }
-            */
-
-            _dirty = true;
-            UpdateTexture();
-        }
     }
 
     public struct Cell

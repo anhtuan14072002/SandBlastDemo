@@ -13,8 +13,14 @@ namespace Sand
     {
         [SerializeField] private TextMeshProUGUI _scoreText;
         [SerializeField] private TextMeshProUGUI _scoreTextPopupGameOver;
-        [Inject] RewardSystem _rewardSystem;
-        private int _score = 0;
+        private RewardSystem _rewardSystem;
+        public int _score = 0;
+
+        [Inject]
+        void Construct(RewardSystem rewardSystem)
+        {
+            _rewardSystem = rewardSystem;
+        }
         
         public void Receive(in SignalScoreOnGame signal)
         {

@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using R3;
 using UnityEngine;
+using Zenject;
 
 namespace Sand
 {
     public class PowerUpClickDelColor : MonoBehaviour
     {
         [SerializeField] private RenderMap _renderMaps;
-        [HideInInspector] private SpriteRenderer _spriteRenderer;
+        private SpriteRenderer _spriteRenderer;
         private List<(int x, int y)> connectedComponentDel = new();
+
+        [Inject] private EffectBlock _effectBlock;
 
         IDisposable _mouseClickSub;
         IDisposable _mouseClickSubWave;
@@ -19,9 +22,9 @@ namespace Sand
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
             if (_spriteRenderer == null) _spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-            _mouseClickSub = Observable.EveryUpdate()
+            /*_mouseClickSub = Observable.EveryUpdate()
                 .Where(_ => Input.GetMouseButton(2))
-                .Subscribe(_ => MousePositionOnMap());
+                .Subscribe(_ => MousePositionOnMap());*/
 
             _mouseClickSubWave = Observable.EveryUpdate()
                 .Where(_ => Input.GetMouseButton(3))
@@ -54,7 +57,7 @@ namespace Sand
         private async UniTask RemoveSameColorCompleteBands(Color32 targetColor)
         {
             _renderMaps._map.IsMovePause = true;
-            var colorManager = new SandColorMap(_renderMaps._map, _renderMaps._hight, _renderMaps._wight);
+            var colorManager = new SandColorMap(_renderMaps._map, _renderMaps._hight, _renderMaps._wight, _effectBlock);
             connectedComponentDel.Clear();
             for (int x = 0; x < _renderMaps._wight; x++)
             {
@@ -69,7 +72,10 @@ namespace Sand
             }
 
             if (connectedComponentDel.Count > 0)
-                await _renderMaps._map.ShrinkEffectWave(connectedComponentDel, _renderMaps._backgroundColor);
+            {
+                // await _effectBlock.ShrinkEffectWave(_renderMaps._map, connectedComponentDel, _renderMaps._backgroundColor);
+                await _effectBlock.OnClickColor(_renderMaps._map, connectedComponentDel, _renderMaps._backgroundColor);
+            }
             await UniTask.Delay(TimeSpan.FromSeconds(0.25f));
             _renderMaps._map.IsMovePause = false;
         }

@@ -15,8 +15,7 @@ namespace Sand
                 .AsSingle()
                 .NonLazy();
             Container.Bind<SaveService>()
-                .AsSingle()
-                .NonLazy();
+                .AsSingle();
             Container.Bind<RewardSystem>()
                 .AsSingle()
                 .NonLazy();

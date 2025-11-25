@@ -10,11 +10,14 @@ namespace Sand
         private readonly Map _map;
         private readonly int _width;
         private readonly int _height;
-        public SandColorMap(Map map, int width, int height)
+        private readonly EffectBlock _effectBlock;
+
+        public SandColorMap(Map map, int width, int height, EffectBlock effectBlock)
         {
             _map = map;
             _width = width;
             _height = height;
+            _effectBlock = effectBlock;
         }
 
         public async UniTask SameColorCompleteBands(Color32 color)
@@ -97,7 +100,7 @@ namespace Sand
 
             foreach (var (_, connectedComponent) in completedCollectionMap)
             {
-                await _map.ShrinkEffect(connectedComponent, color);
+                await _effectBlock.ShrinkEffect(_map, connectedComponent, color);
             }
             
             _map.IsMovePause = false;

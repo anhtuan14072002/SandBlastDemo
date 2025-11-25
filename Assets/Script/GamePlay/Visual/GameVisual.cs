@@ -1,26 +1,35 @@
-﻿using Core;
+﻿using System;
+using Core;
 using Cysharp.Threading.Tasks;
 using PrimeTween;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 namespace Sand
 {
-    public class MainMenuController : GameElement,
+    public class GameVisual : GameElement,
         IReceive<SignalOpenPopupGameOver>
     {
         [Header("MainMenu")] [SerializeField] private LayoutElement[] _layoutElement;
         [SerializeField] private GameObject[] _focus;
         [SerializeField] private GameObject[] _iconMenu;
         [SerializeField] private GameObject[] _popupCategory;
-        [SerializeField] private Button[] _btnSelection;
-        [SerializeField] private Button _btnPlay;
         [SerializeField] private GameObject _groupMenu;
         [SerializeField] private GameObject _groupCategory;
         [SerializeField] private GameObject _popupGameOver;
         [SerializeField] private GameObject _currenScore;
-        [SerializeField] private GameObject _topUI;
         [SerializeField] private GameObject _backGround;
+        [SerializeField] private GameObject _topUI;
+        [SerializeField] private GameObject _scoreBar;
+        // [SerializeField] private GameObject _popupLevelUp;
+        [SerializeField] private GameObject _effectClaimGem;
+
+        [SerializeField] private Button[] _btnSelection;
+        [SerializeField] private Button _btnPlay;
+        // [SerializeField] private Button _claimRewardLevelUp;
+        // [SerializeField] private Button _claimCoreRewardLevelUp;
+
         [SerializeField] private float _targetIconMenu;
         [SerializeField] private float _targetFocus;
         [SerializeField] private float _currentIconMenu;
@@ -30,15 +39,18 @@ namespace Sand
         private static readonly int LoadGame = Animator.StringToHash("Load");
         private static readonly int EndMenu = Animator.StringToHash("End");
 
-        [Header("GamePlayUI")] [SerializeField]
-        private GameObject _pauseMenu;
-
+        [Header("GamePlayUI")] 
+        [SerializeField] private GameObject _pauseMenu;
         [SerializeField] private Button _btnPauseGame;
         [SerializeField] private Button _btnResumeGame;
         [SerializeField] private Button _btnRestartGame;
         [SerializeField] private Button _btnRestartGameOver;
         [SerializeField] private Button _btnQuitGame;
         [SerializeField] private Button _btnQuitGameOver;
+        [SerializeField] private Button _btnReviveGems;
+        
+        [Inject] GameResources _gameResources;
+        [Inject] GameRevive _gameRevive;
 
         private void Start()
         {
@@ -64,6 +76,11 @@ namespace Sand
 
             _btnQuitGame.onClick.AddListener(() => ReturnHomeMenu().Forget());
             _btnQuitGameOver.onClick.AddListener(() => ReturnHomeGameOver().Forget());
+
+            // _claimRewardLevelUp.onClick.AddListener(() => ClaimReward().Forget());
+            // _claimCoreRewardLevelUp.onClick.AddListener(() => ClaimCoreReward().Forget());
+            
+            _btnReviveGems.onClick.AddListener(ReviveGems);
         }
 
         private void IncreaseElement(int index)
@@ -79,12 +96,14 @@ namespace Sand
         private void OpenCategory(int index)
         {
             OpenHome(index);
-            Tween.PositionY(_focus[index].transform, _targetFocus, 0.25f, Ease.Linear);
+            var focusRt = _focus[index].GetComponent<RectTransform>();
+            var iconRt = _iconMenu[index].GetComponent<RectTransform>();
+
+            focusRt.TweenAnchoredY(_targetFocus, 0.25f, Ease.Linear);
             IncreaseElement(index);
-            Tween.PositionY(_iconMenu[index].transform, _targetIconMenu, 0.25f, Ease.Linear).OnComplete(() =>
+            iconRt.TweenAnchoredY(_targetIconMenu, 0.25f, Ease.Linear).OnComplete(() =>
                 Tween.Scale(_iconMenu[index].transform, _iconMenu[index].transform.localScale, Vector3.one * 1.5f,
-                    0.25f, Ease.Linear)
-            );
+                    0.25f, Ease.Linear));
         }
 
         private void CloseCategory(int index)
@@ -94,11 +113,15 @@ namespace Sand
                 if (i != index)
                 {
                     var i1 = i;
-                    Tween.PositionY(_focus[i].transform, _currentFocus, 0.1f, Ease.Linear);
-                    Tween.PositionY(_iconMenu[i].transform, _currentIconMenu, 0.1f, Ease.Linear)
+                    var focusRt = _focus[i].GetComponent<RectTransform>();
+                    var iconRt = _iconMenu[i].GetComponent<RectTransform>();
+
+                    focusRt.TweenAnchoredY(_currentFocus, 0.1f, Ease.Linear);
+                    iconRt.TweenAnchoredY(_currentIconMenu, 0.1f, Ease.Linear)
                         .OnComplete(() =>
                             Tween.Scale(_iconMenu[i1].transform, _iconMenu[i1].transform.localScale, Vector3.one, 0.1f,
-                                Ease.Linear));
+                                Ease.Linear)
+                        );
                 }
             }
         }
@@ -136,6 +159,7 @@ namespace Sand
             _groupCategory.SetActive(false);
             _backGround.SetActive(false);
             _currenScore.SetActive(true);
+            _scoreBar.SetActive(true);
             _btnPauseGame.gameObject.SetActive(true);
             _animLoad.SetTrigger(LoadGame);
             await UniTask.WaitForSeconds(1f);
@@ -166,6 +190,14 @@ namespace Sand
             Global.Send(new SignalResetAllBlocks());
             Global.Send(new SignalRestCurrenScore());
         }
+        public void ReviveGems()
+        {
+            _gameResources.ReviveGame();
+            _gameRevive.SetRevived();
+            if (_renderMap != null) _renderMap.Reset();
+            Global.Send(new SignalResetAllBlocks());
+        }
+        
 
         public async UniTask ReturnHomeMenu()
         {
@@ -174,6 +206,7 @@ namespace Sand
             _animLoad.gameObject.SetActive(true);
             await UniTask.WaitForSeconds(1f);
             _currenScore.SetActive(false);
+            _scoreBar.SetActive(false);
             _groupMenu.SetActive(true);
             _groupCategory.SetActive(true);
             _backGround.SetActive(true);
@@ -192,6 +225,7 @@ namespace Sand
             Global.Send(new SignalRestCurrenScore());
             await UniTask.WaitForSeconds(1f);
             _currenScore.SetActive(false);
+            _scoreBar.SetActive(false);
             _groupMenu.SetActive(true);
             _groupCategory.SetActive(true);
             _backGround.SetActive(true);
@@ -210,5 +244,50 @@ namespace Sand
         {
             _popupGameOver.SetActive(true);
         }
+
+        //Popup LevelUp
+
+        /*public void OpenPopupLevelUp()
+        {
+            _popupLevelUp.SetActive(true);
+            _gameResources.ResetCoreAnimation(); 
+        }
+
+        private async UniTask ClosePopupLevelUp()
+        {
+            await UniTask.Delay(TimeSpan.FromSeconds(1.25f));
+            DisableEffectClaimGem();
+            _popupLevelUp.SetActive(false);
+        }*/
+
+        public void EnableEffectClaimGem()
+        {
+            _effectClaimGem.SetActive(true);
+        }
+
+        public void DisableEffectClaimGem()
+        {
+            _effectClaimGem.SetActive(false);
+        }
+
+        /*private async UniTask ClaimReward()
+        {
+            EnableEffectClaimGem();
+            await UniTask.Delay(TimeSpan.FromSeconds(1.65f));
+            _gameResources.ClaimGemsLevelUp();
+            ClosePopupLevelUp().Forget();
+        }
+        
+        private async UniTask ClaimCoreReward()
+        {
+            EnableEffectClaimGem();
+            _gameResources.StopCoreAnimation().Forget();
+            await UniTask.Delay(TimeSpan.FromSeconds(0.75f));
+            ClosePopupLevelUp().Forget();
+        }*/
+        
+        //REVIVE
+        
+        
     }
 }

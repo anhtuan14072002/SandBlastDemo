@@ -36,6 +36,7 @@ MonoBehaviour:
     assemblyNames:
     - Assembly-CSharp
     - Assembly-CSharp-firstpass
+    - ParticleImage
     - PrimeTween.Debug
     - PrimeTween.Demo
     - PrimeTween.Runtime

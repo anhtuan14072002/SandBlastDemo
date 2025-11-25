@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Core;
 using Cysharp.Threading.Tasks;
 using R3;
 using UnityEngine;
+using Zenject;
 
 namespace Sand
 {
@@ -16,16 +16,23 @@ namespace Sand
         [SerializeField] public int _hightGameOver;
         [SerializeField] private BlockManager _blockManager;
         [HideInInspector] public SpriteRenderer _spriteRenderer;
-
+        
+        EffectBlock _effectBlock;
+        GameRevive _gameRevive;
+        
         public Map _map;
         private SandColorMap _colorMap;
         private bool _isSettled = false;
         private bool _isGameStarted = false;
-
         private int Idx(int x, int y) => y * _wight + x;
-
         IDisposable _sandSpawnSub;
 
+        [Inject]
+        void Construct(GameRevive gameRevive, EffectBlock effectBlock)
+        {
+            _gameRevive = gameRevive;
+            _effectBlock = effectBlock;
+        }
         private void Awake()
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -51,7 +58,7 @@ namespace Sand
             }
 
             if (_colorMap != null)
-                _colorMap = new SandColorMap(_map, _wight, _hight);
+                _colorMap = new SandColorMap(_map, _wight, _hight, _effectBlock);;
             StartGame();
         }
 
@@ -59,7 +66,7 @@ namespace Sand
         {
             _map.SetUpMap(_backgroundColor);
             _map.ApplyTexture(_spriteRenderer);
-            _colorMap = new SandColorMap(_map, _wight, _hight);
+            _colorMap = new SandColorMap(_map, _wight, _hight, _effectBlock);
 
             _sandSpawnSub = Observable.EveryUpdate()
                 .Where(_ => Input.GetMouseButton(1))
@@ -84,7 +91,7 @@ namespace Sand
             {
                 if (!_isSettled && !_map.IsMovePause)
                 {
-                    CheckSandLosingLine();
+                    // CheckSandLosingLine();
                     ProcessSettledSand().Forget();
                     _isSettled = true;
                 }
@@ -123,39 +130,16 @@ namespace Sand
 
             if (foundSand)
             {
-                CheckSandLosingLineWithEffect().Forget();
+                _gameRevive.OpenPopupRevive();
+                // _effectBlock.CheckSandLosingLineWithEffect(_map,_hight, _wight).Forget();
             }
         }
 
-        private async UniTask CheckSandLosingLineWithEffect()
+        public void MapGameOver()
         {
-            _map.IsMovePause = true;
-            Color32 grayColor = new Color32(128, 128, 128, 255);
-
-            for (int y = _hight - 1; y >= 0; y--)
-            {
-                bool hasChangedInRow = false;
-
-                for (int x = 0; x < _wight; x++)
-                {
-                    var cell = _map.GetCell(x, y);
-                    if (cell.hasValue == 1)
-                    {
-                        _map.SetPixelCell(x, y, grayColor);
-                        hasChangedInRow = true;
-                    }
-                }
-
-                if (!hasChangedInRow) continue;
-                _map.Dirty = true;
-                _map.UpdateTexture();
-                await UniTask.Delay(TimeSpan.FromMilliseconds(10));
-            }
-
-            _map.IsMovePause = false;
-            Global.Send(new SignalOpenPopupGameOver());
+            _effectBlock.CheckSandLosingLineWithEffect(_map,_hight, _wight).Forget();
         }
-
+        
         private void OnDestroy()
         {
             _map?.Dispose();
