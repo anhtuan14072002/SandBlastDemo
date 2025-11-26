@@ -1,7 +1,10 @@
 ﻿using System;
+using Core;
+using Cysharp.Threading.Tasks;
 using R3;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Random = UnityEngine.Random;
 
 namespace Sand
 {
@@ -9,7 +12,7 @@ namespace Sand
     {
         [SerializeField] private BlockManager _blockManager;
         [SerializeField] private RenderMap _map;
-        
+
         private GameObject _objDrag;
         private Vector3 _startPos;
         private Vector3 _offset;
@@ -75,7 +78,7 @@ namespace Sand
                 Vector3 snappedWorld = _map.transform.TransformPoint(snappedLocal);
 
                 _objDrag.transform.localScale = Vector3.one * 8f;
-                
+
                 snappedWorld.z = _objDrag.transform.position.z;
                 _objDrag.transform.position = snappedWorld;
             }
@@ -85,28 +88,38 @@ namespace Sand
                 _objDrag.transform.position = mouseWorldPos + _offset;
             }
         }
+
         private void EndDrag()
         {
             if (_objDrag != null)
             {
                 bool placedOnMap = false;
+                Vector3 dropPosition = _objDrag.transform.position;
 
                 if (IsDroppedOnMap())
                 {
                     var block = _objDrag.GetComponent<BlockInfo>();
+                    var sr = _objDrag.GetComponent<SpriteRenderer>();
+
                     if (block != null && _blockManager != null && _map != null)
                     {
-                        placedOnMap = _blockManager.SpawnSandWithType(
+                        placedOnMap = _blockManager.SpawnSandWithSprite(
                             _map._map,
                             _map._spriteRenderer,
-                            block.IdColor,
-                            block.BlockType
+                            sr.sprite
                         );
                     }
                 }
 
                 if (placedOnMap)
                 {
+                    Delay(0.75f).Forget();
+                    Global.Send(new SignalOpenEffectTextScore()
+                    {
+                        Score = Random.Range(20, 40), 
+                        Position = dropPosition + Vector3.up  
+                    });
+
                     var spawnSystem = FindObjectOfType<BlockSpawn>();
                     spawnSystem.ReturnBlock(_objDrag);
                 }
@@ -131,6 +144,11 @@ namespace Sand
             Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mouseWorldPos.z = mapRenderer.transform.position.z;
             return mapRenderer.bounds.Contains(mouseWorldPos);
+        }
+
+        private async UniTask Delay(float seconds)
+        {
+            await UniTask.Delay(TimeSpan.FromSeconds(seconds));
         }
 
         private void OnDestroy()

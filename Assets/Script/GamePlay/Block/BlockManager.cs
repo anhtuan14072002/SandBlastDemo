@@ -1,120 +1,111 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using Zenject;
 
 namespace Sand
 {
     public class BlockManager : MonoBehaviour
     {
-        [SerializeField] private Sprite[] _sprite;
-        [SerializeField] private RenderMap renderMap;
-        
-        CheckLevelScore _checkLevelScore;
-        private Sprite _currentSprite;
+        [Header("References")] [SerializeField]
+        public bool[,] ShapeData => _shapeData;
+        private Sprite[] _sprites;
         private bool[,] _shapeData;
+        
+        RenderMap _renderMap;
+        CheckLevelScore _checkLevelScore;
+        BlockSpawn _blockSpawn;
 
         [Inject]
-        void Construct(CheckLevelScore checkLevelScore)
+        void Construct(CheckLevelScore checkLevelScore, RenderMap renderMap, BlockSpawn blockSpawn)
         {
             _checkLevelScore = checkLevelScore;
+            _renderMap = renderMap;
+            _blockSpawn = blockSpawn;
         }
+        
         private void Start()
         {
-            if (_sprite == null || _sprite.Length <= 0) return;
-            _currentSprite = _sprite[0];
+            BuildSpritesFromPrefabs();
         }
-        
+
+        //Lấy sprite từ các prefab trong BlockSpawn.PrefabBlocks,
+        private void BuildSpritesFromPrefabs()
+        {
+            if (_blockSpawn == null) return;
+
+            var prefabs = _blockSpawn.PrefabBlocks;
+            if (prefabs == null || prefabs.Length == 0) return;
+            var spriteList = new List<Sprite>();
+            for (int i = 0; i < prefabs.Length; i++)
+            {
+                var prefab = prefabs[i];
+                if (prefab == null) continue;
+
+                var sr = prefab.GetComponent<SpriteRenderer>();
+                if (sr == null || sr.sprite == null) continue;
+                spriteList.Add(sr.sprite);
+            }
+
+            _sprites = spriteList.ToArray();
+        }
+
         private int GetMaxSpritesForLevel()
         {
-            if (_checkLevelScore == null) return _sprite.Length; 
+            if (_sprites == null || _sprites.Length == 0) return 0;
+            if (_checkLevelScore == null) return _sprites.Length;
             int level = _checkLevelScore.CurrentLevel;
-            if (level == 0) return 5;  
-            if (level == 1) return 9;  
-            if (level == 2) return 13;    
-            return _sprite.Length;
+
+            return level switch
+            {
+                0 => Mathf.Min(5, _sprites.Length),
+                1 => Mathf.Min(9, _sprites.Length),
+                2 => Mathf.Min(13, _sprites.Length),
+                _ => _sprites.Length
+            };
         }
 
+        // Spawn random shape theo level
+        public void SpawnSandWithRandomShape(Map map, SpriteRenderer mapRenderer)
+        {
+            if (map == null || mapRenderer == null)
+                return;
 
-        public bool[,] GetTypeShapeData(BlockType blockType)
-        {
-            if (_sprite == null || _sprite.Length == 0) return null;
-            var id = GetBlockWithType(blockType);
-            var selectedSprite = _sprite[id];
-            if (selectedSprite == null) return null;
-            var (shapeData, _) = ExtractShapeAndColorData(selectedSprite);
-            return shapeData;
-        }
-        
-        public void SpawnSandWithRandomShape(Map map, SpriteRenderer spriteRenderer)
-        {
-            if (map == null || spriteRenderer == null || spriteRenderer.sprite == null) return;
+            if (_sprites == null || _sprites.Length == 0)
+                return;
 
             var maxSpritesForLevel = GetMaxSpritesForLevel();
+            if (maxSpritesForLevel <= 0)
+                return;
+
             var randomIndex = Random.Range(0, maxSpritesForLevel);
-            var selectedSprite = _sprite[randomIndex];
-            var (shapeData, colorData) = ExtractShapeAndColorData(selectedSprite);
-            if (shapeData == null) return;
+            var selectedSprite = _sprites[randomIndex];
 
-            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector3 localPos = transform.InverseTransformPoint(mouseWorldPos);
-
-            var spriteWidth = spriteRenderer.sprite.bounds.size.x;
-            var spriteHeight = spriteRenderer.sprite.bounds.size.y;
-
-            if (spriteWidth <= 0 || spriteHeight <= 0) return;
-
-            var centerX = Mathf.RoundToInt((localPos.x / spriteWidth + 0.5f) * renderMap._wight);
-            var centerY = Mathf.RoundToInt((localPos.y / spriteHeight + 0.5f) * renderMap._hight);
-
-            var shapeWidth = shapeData.GetLength(0);
-            var shapeHeight = shapeData.GetLength(1);
-
-            if (shapeWidth <= 0 || shapeHeight <= 0) return;
-            try
-            {
-                for (int x = 0; x < shapeWidth; x++)
-                {
-                    for (int y = 0; y < shapeHeight; y++)
-                    {
-                        if (x >= 0 && x < shapeWidth && y >= 0 && y < shapeHeight && shapeData[x, y])
-                        {
-                            var targetX = centerX - shapeWidth / 2 + x;
-                            var targetY = centerY - shapeHeight / 2 + y;
-
-                            if (targetX >= 0 && targetX < renderMap._wight && targetY >= 0 && targetY < renderMap._hight)
-                            {
-                                Color32 pixelColor = colorData != null ? colorData[x, y] : Color.white;
-                                map.SetPixelCell(targetX, targetY, pixelColor);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (System.IndexOutOfRangeException e)
-            {
-                Debug.Log("loi to mau block spawn");
-            }
+            SpawnSandWithSprite(map, mapRenderer, selectedSprite);
         }
 
-        public bool SpawnSandWithType(Map map, SpriteRenderer spriteRenderer, int id, BlockType blockType)
+        // Sprite từ prefab block, check va chạm, rồi vẽ block xuống Map.
+        public bool SpawnSandWithSprite(Map map, SpriteRenderer mapRenderer, Sprite sprite)
         {
-            if (map == null || spriteRenderer == null || spriteRenderer.sprite == null)
+            if (map == null || mapRenderer == null || sprite == null)
                 return false;
 
-            var shapeData = GetTypeShapeData(blockType);
+            var (shapeData, colorData) = ExtractShapeAndColorData(sprite);
             if (shapeData == null)
                 return false;
 
-            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector3 localPos = transform.InverseTransformPoint(mouseWorldPos);
+            _shapeData = shapeData;
 
-            var spriteWidth = spriteRenderer.sprite.bounds.size.x;
-            var spriteHeight = spriteRenderer.sprite.bounds.size.y;
+            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector3 localPos = _renderMap.transform.InverseTransformPoint(mouseWorldPos);
+
+            var spriteWidth = mapRenderer.sprite.bounds.size.x;
+            var spriteHeight = mapRenderer.sprite.bounds.size.y;
 
             if (spriteWidth <= 0 || spriteHeight <= 0)
                 return false;
 
-            var centerX = Mathf.RoundToInt((localPos.x / spriteWidth + 0.5f) * renderMap._wight);
-            var centerY = Mathf.RoundToInt((localPos.y / spriteHeight + 0.5f) * renderMap._hight);
+            var centerX = Mathf.RoundToInt((localPos.x / spriteWidth + 0.5f) * _renderMap._wight);
+            var centerY = Mathf.RoundToInt((localPos.y / spriteHeight + 0.5f) * _renderMap._hight);
 
             var shapeWidth = shapeData.GetLength(0);
             var shapeHeight = shapeData.GetLength(1);
@@ -127,26 +118,24 @@ namespace Sand
                 for (int y = 0; y < shapeHeight; y++)
                 {
                     if (!shapeData[x, y]) continue;
+
                     var targetX = centerX - shapeWidth / 2 + x;
                     var targetY = centerY - shapeHeight / 2 + y;
 
-                    var cell = map.GetCell(targetX, targetY);
-                    if (cell.hasValue == 1 || cell.isBorder == 1)
-                    {
+                    if (targetX < 0 || targetX >= _renderMap._wight || targetY < 0 || targetY >= _renderMap._hight)
                         return false;
-                    }
+
+                    var cell = map.GetCell(targetX, targetY);
+                    if (cell.hasValue == 1 || cell.isBorder == 1) return false;
                 }
             }
 
-            var selectedSprite = _sprite[GetBlockWithType(blockType)];
-            var (_, colorData) = ExtractShapeAndColorData(selectedSprite);
-
+            //Ghi pixel xuống map
             for (int x = 0; x < shapeWidth; x++)
             {
                 for (int y = 0; y < shapeHeight; y++)
                 {
-                    if (!shapeData[x, y])
-                        continue;
+                    if (!shapeData[x, y]) continue;
 
                     var targetX = centerX - shapeWidth / 2 + x;
                     var targetY = centerY - shapeHeight / 2 + y;
@@ -158,17 +147,9 @@ namespace Sand
 
             return true;
         }
-        private int GetBlockWithType(BlockType blockType)
-        {
-            return blockType switch
-            {
-                BlockType.Cross => 0,
-                BlockType.Square => 1,
-                BlockType.Line => 2,
-                BlockType.LShape => 3,
-                BlockType.Stair => 4,
-            };
-        }
+
+        // Đọc shape (pixel alpha > 0) + màu từ sprite.
+        // Dùng RenderTexture để copy texture sang readable Texture2D.
         private (bool[,], Color32[,]) ExtractShapeAndColorData(Sprite sprite)
         {
             if (sprite == null) return (null, null);
@@ -181,16 +162,22 @@ namespace Sand
 
             var renderTex = RenderTexture.GetTemporary(
                 originalTexture.width,
-                originalTexture.height, 0,
+                originalTexture.height,
+                0,
                 RenderTextureFormat.Default,
                 RenderTextureReadWrite.Default);
+
             Graphics.Blit(originalTexture, renderTex);
 
             var previous = RenderTexture.active;
             RenderTexture.active = renderTex;
 
-            var readableTexture =
-                new Texture2D(originalTexture.width, originalTexture.height, TextureFormat.RGBA32, false);
+            var readableTexture = new Texture2D(
+                originalTexture.width,
+                originalTexture.height,
+                TextureFormat.RGBA32,
+                false);
+
             readableTexture.ReadPixels(new Rect(0, 0, renderTex.width, renderTex.height), 0, 0);
             readableTexture.Apply();
 
@@ -209,8 +196,9 @@ namespace Sand
                 }
             }
 
-            Destroy(readableTexture); 
+            Destroy(readableTexture);
             RenderTexture.ReleaseTemporary(renderTex);
+
             return (shapeData, colorData);
         }
     }

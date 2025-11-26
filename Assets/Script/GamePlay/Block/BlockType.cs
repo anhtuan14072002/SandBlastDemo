@@ -6,7 +6,15 @@
         Square,
         Line,
         LShape,
+        Stair,
         Cross,
-        Stair
+        SquareBlueGreen,
+        LineGreenBlue,
+        StairRedYellow,
+        CrossGreenRed,
+        CrossPink,
+        CrossPinkRed,
+        Sword,
+        Thor
     }
 }

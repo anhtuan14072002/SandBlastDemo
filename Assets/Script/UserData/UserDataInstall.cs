@@ -19,44 +19,34 @@ namespace Sand
             Container.Bind<RewardSystem>()
                 .AsSingle()
                 .NonLazy();
-
         }
 
-        private void LoadFromES3(UserData userData)
+       private void LoadFromES3(UserData userData)
         {
-            if (ES3.KeyExists(SaveKeys.HighScore))
+            LoadIntValue(SaveKeys.HighScore, value => userData.HighScore.Value = value);
+            LoadIntValue(SaveKeys.Gems, value => userData.Gems.Value = value);
+            LoadIntValue(SaveKeys.MagicBrush, value => userData.MagicBrush.Value = value);
+            LoadIntValue(SaveKeys.Boom, value => userData.Boom.Value = value);
+        }
+
+        private void LoadIntValue(string key, Action<int> setValue)
+        {
+            if (!ES3.KeyExists(key)) return;
+
+            try
             {
-                try
-                {
-                    userData.HighScore.Value = ES3.Load<int>(SaveKeys.HighScore);
-                }
-                catch (InvalidOperationException)
-                {
-                    userData.HighScore.Value = (int)ES3.Load<double>(SaveKeys.HighScore);
-                    ES3.Save(SaveKeys.HighScore, userData.HighScore.Value);
-                }
+                setValue(ES3.Load<int>(key));
             }
-    
-            if (ES3.KeyExists(SaveKeys.Gems))
+            catch (InvalidOperationException)
             {
-                try
-                {
-                    userData.Gems.Value = ES3.Load<int>(SaveKeys.Gems);
-                }
-                catch (InvalidOperationException)
-                {
-                    userData.Gems.Value = (int)ES3.Load<double>(SaveKeys.Gems);
-                    ES3.Save(SaveKeys.Gems, userData.Gems.Value);
-                }
+                var doubleValue = ES3.Load<double>(key);
+                var intValue = (int)doubleValue;
+                setValue(intValue);
+                ES3.Save(key, intValue);
             }
         }
-        /*private void LoadFromES3(UserData userData)
-        {
-            if (ES3.KeyExists(SaveKeys.HighScore))
-                userData.HighScore.Value = ES3.Load<int>(SaveKeys.HighScore);
-            if (ES3.KeyExists(SaveKeys.Gems))
-                userData.Gems.Value = ES3.Load<int>(SaveKeys.Gems);
-            
-        }*/
+
+
+       
     }
 }

@@ -33,5 +33,29 @@ namespace Sand
                 _saveService.Save();
             }
         }
+        
+        public void AddMagicBrush(int amount)
+        {
+            _userData.MagicBrush.Value += amount;
+            _saveService.Save();
+        }
+
+        public void DeductMagicBrush(int amount)
+        {
+            _userData.MagicBrush.Value -= amount;
+            _saveService.Save();
+        }
+        public void AddBoom(int amount)
+        {
+            _userData.Boom.Value += amount;
+            _saveService.Save();
+        }
+
+        public void DeductBoom(int amount)
+        {
+            _userData.Boom.Value -= amount;
+            _saveService.Save();
+        }
+        
     }
 }

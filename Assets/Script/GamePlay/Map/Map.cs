@@ -27,6 +27,8 @@ namespace Sand
         }
         private bool _isGameOver;
         private int m_width, m_height;
+        public int Width => m_width;
+        public int Height => m_height;
         private int _pixelsPerCell = 8;
         private int _borderThickness = 1;
         private int Idx(int x, int y) => y * m_width + x;

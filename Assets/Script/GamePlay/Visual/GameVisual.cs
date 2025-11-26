@@ -141,6 +141,14 @@ namespace Sand
             }
         }
 
+        private void DisableAllCategory()
+        {
+            for (int i = 0; i < _popupCategory.Length; i++)
+            {
+                _popupCategory[i].SetActive(false);
+            }
+        }
+
         private void OpenHome(int index)
         {
             if (index == 2)
@@ -154,7 +162,8 @@ namespace Sand
             _animLoad.gameObject.SetActive(true);
             // _animLoad.SetTrigger(EndMenu);
             await UniTask.WaitForSeconds(1f);
-            _groupMenu.SetActive(false);
+            // _groupMenu.SetActive(false);
+            DisableAllCategory();
             _groupCategory.SetActive(false);
             _backGround.SetActive(false);
             _currenScore.SetActive(true);
@@ -201,7 +210,6 @@ namespace Sand
             Global.Send(new SignalResetAllBlocks());
         }
 
-
         public async UniTask ReturnHomeMenu()
         {
             _pauseMenu.SetActive(false);
@@ -213,6 +221,7 @@ namespace Sand
             _scoreBar.SetActive(false);
             _groupMenu.SetActive(true);
             _groupCategory.SetActive(true);
+            OpenPopupHome();
             _backGround.SetActive(true);
             _animLoad.SetTrigger(LoadGame);
             await UniTask.WaitForSeconds(1f);
@@ -233,6 +242,7 @@ namespace Sand
             _currenScore.SetActive(false);
             _scoreBar.SetActive(false);
             _groupMenu.SetActive(true);
+            OpenPopupHome();
             _groupCategory.SetActive(true);
             _backGround.SetActive(true);
             _animLoad.SetTrigger(LoadGame);
@@ -252,6 +262,11 @@ namespace Sand
             
         }
 
+        private void OpenPopupHome()
+        {
+            _popupCategory[2].gameObject.SetActive(true);
+        }
+        
         public void EnableEffectClaimGem()
         {
             _effectClaimGem.SetActive(true);

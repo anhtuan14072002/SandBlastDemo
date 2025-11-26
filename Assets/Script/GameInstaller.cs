@@ -4,6 +4,7 @@ namespace Sand
 {
     public class GameInstaller : MonoInstaller
     {
+        
         public override void InstallBindings()
         {
             Container.Bind<EffectBlock>()
@@ -31,6 +32,14 @@ namespace Sand
                 .AsSingle();
             
             Container.Bind<CheckLevelScore>()
+                .FromComponentInHierarchy()
+                .AsSingle();
+            
+            Container.Bind<BlockSpawn>()
+                .FromComponentInHierarchy()
+                .AsSingle();
+            
+            Container.Bind<PowerUpSystem>()
                 .FromComponentInHierarchy()
                 .AsSingle();
         }

@@ -86,6 +86,7 @@ namespace Sand
                         completedCollectionMap.Add(count, connectedComponent);
                         var cellCountAfter = CountCellsWithColor(targetColor);
                         Global.Send(new SignalScoreOnGame() { Score = cellCountAfter });
+                        Global.Send(new SignalOpenEffectTextScore(){Score = cellCountAfter});
                         count++;
                     }
                 }
@@ -111,7 +112,7 @@ namespace Sand
             return a.r == b.r && a.g == b.g && a.b == b.b;
         }
 
-        private int CountCellsWithColor(Color32 targetColor)
+        public int CountCellsWithColor(Color32 targetColor)
         {
             int count = 0;
             for (int x = 0; x < _width; x++)

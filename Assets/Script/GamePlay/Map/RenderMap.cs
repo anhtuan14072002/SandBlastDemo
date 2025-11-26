@@ -68,13 +68,13 @@ namespace Sand
             _map.ApplyTexture(_spriteRenderer);
             _colorMap = new SandColorMap(_map, _wight, _hight, _effectBlock);
 
-            /*_sandSpawnSub = Observable.EveryUpdate()
+            _sandSpawnSub = Observable.EveryUpdate()
                 .Where(_ => Input.GetMouseButton(1))
                 .TimeInterval()
                 .Chunk(2, 1)
                 .Where(clicks => clicks[1].Interval.TotalSeconds <= 0.5f)
                 .ThrottleFirst(TimeSpan.FromSeconds(0.25f))
-                .Subscribe(_ => _blockManager.SpawnSandWithRandomShape(_map, _spriteRenderer));*/
+                .Subscribe(_ => _blockManager.SpawnSandWithRandomShape(_map, _spriteRenderer));
         }
 
         private void Update()
@@ -139,7 +139,14 @@ namespace Sand
         {
             _effectBlock.CheckSandLosingLineWithEffect(_map,_hight, _wight).Forget();
         }
-        
+        public SandColorMap GetColorMap()
+        {
+            if (_colorMap == null)
+            {
+                _colorMap = new SandColorMap(_map, _wight, _hight, _effectBlock);
+            }
+            return _colorMap;
+        }
         private void OnDestroy()
         {
             _map?.Dispose();

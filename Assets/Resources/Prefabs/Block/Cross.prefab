@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 7432745605369472550}
   - component: {fileID: 7998695179195081505}
   - component: {fileID: 7665079246412416893}
-  - component: {fileID: -6686765816867208385}
   - component: {fileID: 4510221846309421959}
   m_Layer: 6
   m_Name: Cross
@@ -136,20 +135,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.24, y: 0.19}
   m_EdgeRadius: 0
---- !u!114 &-6686765816867208385
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1167217504055667162}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 658106aa7e674d288c4396dacbe42071, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  blockType: 4
-  _idColor: 0
 --- !u!95 &4510221846309421959
 Animator:
   serializedVersion: 7
