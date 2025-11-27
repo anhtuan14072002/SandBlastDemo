@@ -24,7 +24,24 @@ namespace Sand
         [SerializeField] private float _fillTweenDuration = 0.3f;
 
         private int _currentLevelScoreValue;
-        public int CurrentLevel => _level;
+        public int LevelScoreValue
+        {
+            get => _currentLevelScoreValue;
+            set => _currentLevelScoreValue = value;
+        }
+
+        public int NextLevelScoreValue
+        {
+            get => _nextLevelScoreValue;
+            set => _nextLevelScoreValue = value;
+        }
+        public int StepScore => _stepScore;
+        public int CurrentLevel
+        {
+            get => _level;
+            set => _level = value;
+        }
+
         private int _nextLevelScoreValue;
         private int _lastCheckedScore = 0;
         private int _level = 0;
@@ -33,6 +50,7 @@ namespace Sand
         [Inject] ScoreView _scoreView;
         [Inject] GameVisual _gameVisual;
         [Inject] GameResources _gameResources;
+        [Inject] SoundManager _soundManager;
 
         IDisposable _subCurrentScore;
         IDisposable _subNextScore;
@@ -110,6 +128,7 @@ namespace Sand
         public void OpenPopupLevelUp()
         {
             _popupLevelUp.SetActive(true);
+            _soundManager.OnPlaySound(SoundType.LevelUp);
             _effectLevelUp.SetActive(true);
             _currentLevelScoreInPopup.text = _currentLevelScoreValue.ToString();
             _gameResources.ResetCoreAnimation(); 
@@ -121,7 +140,7 @@ namespace Sand
             _effectLevelUp.SetActive(false);
             // DisableEffectClaimGem();
             _gameVisual.DisableEffectClaimGem();
-            _popupLevelUp.SetActive(false);
+            // _popupLevelUp.SetActive(false);
         }
         private void OnDestroy()
         {
@@ -133,6 +152,7 @@ namespace Sand
         private async UniTask ClaimReward()
         {
             // EnableEffectClaimGem();
+            _popupLevelUp.SetActive(false);
             _gameVisual.EnableEffectClaimGem();
             await UniTask.Delay(TimeSpan.FromSeconds(1.65f));
             _gameResources.ClaimGemsLevelUp();
@@ -142,6 +162,7 @@ namespace Sand
         private async UniTask ClaimCoreReward()
         {
             // EnableEffectClaimGem();
+            _popupLevelUp.SetActive(false);
             _gameVisual.EnableEffectClaimGem();
             _gameResources.StopCoreAnimation().Forget();
             await UniTask.Delay(TimeSpan.FromSeconds(0.75f));

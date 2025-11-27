@@ -166,7 +166,7 @@ namespace Sand
                 cells = _cells,
                 movedOut = movedArr
             };
-
+            
             var handle = job.Schedule();
             handle.Complete();
 

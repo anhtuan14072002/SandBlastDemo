@@ -86,6 +86,14 @@ namespace Sand
         // Sprite từ prefab block, check va chạm, rồi vẽ block xuống Map.
         public bool SpawnSandWithSprite(Map map, SpriteRenderer mapRenderer, Sprite sprite)
         {
+            return SpawnSandWithSprite(map, mapRenderer, sprite, out _);
+        }
+
+        // Overload trả về vị trí spawn thực tế
+        public bool SpawnSandWithSprite(Map map, SpriteRenderer mapRenderer, Sprite sprite, out Vector3 actualSpawnPosition)
+        {
+            actualSpawnPosition = Vector3.zero;
+
             if (map == null || mapRenderer == null || sprite == null)
                 return false;
 
@@ -144,6 +152,12 @@ namespace Sand
                     map.SetPixelCell(targetX, targetY, pixelColor);
                 }
             }
+
+            // Tính toán vị trí world thực tế của center
+            float fx = ((float)centerX / _renderMap._wight - 0.5f) * spriteWidth;
+            float fy = ((float)centerY / _renderMap._hight - 0.5f) * spriteHeight;
+            Vector3 centerLocal = new Vector3(fx, fy, 0);
+            actualSpawnPosition = _renderMap.transform.TransformPoint(centerLocal);
 
             return true;
         }

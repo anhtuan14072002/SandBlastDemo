@@ -23,6 +23,7 @@ namespace Sand
         [SerializeField] private GameObject _topUI;
         [SerializeField] private GameObject _scoreBar;
         [SerializeField] private GameObject _effectClaimGem;
+        [SerializeField] private GameObject _warningSand;
         [SerializeField] private GameObject[] _skill;
 
         [SerializeField] private Button[] _btnSelection;
@@ -50,6 +51,8 @@ namespace Sand
 
         [Inject] GameResources _gameResources;
         [Inject] GameRevive _gameRevive;
+        [Inject] CheckLevelScore _checkLevelScore;
+        [Inject] SoundManager _soundManager;
 
         private void Start()
         {
@@ -196,6 +199,9 @@ namespace Sand
             EnableSkill();
             DisablePopupGameOver();
             _gameRevive.ResetReviveUI();
+            _checkLevelScore.LevelScoreValue = 0;
+            _checkLevelScore.CurrentLevel = 0;
+            _checkLevelScore.NextLevelScoreValue = _checkLevelScore.StepScore;
             if (_renderMap != null)
                 _renderMap.Reset();
             Global.Send(new SignalResetAllBlocks());
@@ -259,17 +265,17 @@ namespace Sand
         public void Receive(in SignalOpenPopupGameOver signal)
         {
             _popupGameOver.SetActive(true);
-            
         }
 
         private void OpenPopupHome()
         {
             _popupCategory[2].gameObject.SetActive(true);
         }
-        
+
         public void EnableEffectClaimGem()
         {
             _effectClaimGem.SetActive(true);
+            _soundManager.OnPlaySound(SoundType.Reward);
         }
 
         public void DisableEffectClaimGem()
@@ -292,6 +298,12 @@ namespace Sand
             {
                 _skill[i].SetActive(false);
             }
+        }
+
+        // 
+        public void WarningSand(bool isWarningSand)
+        {
+            _warningSand.SetActive(isWarningSand);
         }
     }
 }

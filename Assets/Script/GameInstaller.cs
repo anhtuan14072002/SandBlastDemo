@@ -39,7 +39,19 @@ namespace Sand
                 .FromComponentInHierarchy()
                 .AsSingle();
             
+            Container.Bind<BlockManager>()
+                .FromComponentInHierarchy()
+                .AsSingle();
+            
             Container.Bind<PowerUpSystem>()
+                .FromComponentInHierarchy()
+                .AsSingle();
+            
+            Container.Bind<SoundManager>()
+                .FromComponentInHierarchy()
+                .AsSingle();
+            
+            Container.Bind<VibrationManager>()
                 .FromComponentInHierarchy()
                 .AsSingle();
         }

@@ -77,6 +77,7 @@ namespace Sand
         public void ClaimGemsLevelUp()
         {
             _rewardSystem.AddGems(_rewardGemsLevelUp);
+            
         }
         
         private void ClaimCoreGemsLevelUp(int core)
@@ -164,6 +165,11 @@ namespace Sand
         public void ReviveGame()
         {
             _rewardSystem.DeductGems(_gemsRevive);
+        }
+
+        public void ResetGem()
+        {
+            _rewardSystem.DeductGems(_userData.Gems.Value);;
         }
         private void OnDestroy()
         {

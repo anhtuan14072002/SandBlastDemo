@@ -95,10 +95,7 @@ namespace Sand
                     .Where(_ => Input.GetMouseButtonDown(0) && _isUseBoom)
                     .Subscribe(_ => { MouseClickBoom(); });
             }
-            else
-            {
-                Debug.Log("No boom");
-            }
+            // else Debug.Log("No boom");
         }
 
         private void OpenSkillBoom()
@@ -150,10 +147,7 @@ namespace Sand
                 _rewardSystem.DeductMagicBrush(1);
                 RemoveSameColorCompleteBands();
             }
-            else
-            {
-                Debug.Log("Not enough magic brush");
-            }
+            // else Debug.Log("No magic brush");
         }
 
         private void OpenPopupMagicBrush()
@@ -162,10 +156,7 @@ namespace Sand
             {
                 _popupSkillMagicBrush.SetActive(true);
             }
-            else
-            {
-                Debug.Log("Not enough magic brush");
-            }
+            // else Debug.Log("Not enough magic brush");
         }
 
         private void UsePowerUpMagicBrush()

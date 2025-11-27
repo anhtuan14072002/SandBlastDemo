@@ -31,6 +31,8 @@ namespace Sand
         RewardSystem _rewardSystem;
         EffectBlock _effectBlock;
         RenderMap _renderMaps;
+        SoundManager _soundManager;
+        VibrationManager _vibrationManager;
 
         IDisposable _mouseClickSub;
         IDisposable _mouseClickSubWave;
@@ -38,11 +40,13 @@ namespace Sand
         IDisposable _dragSub;
 
         [Inject]
-        void Construct(RenderMap renderMap, EffectBlock effectBlock, RewardSystem rewardSystem)
+        void Construct(RenderMap renderMap, EffectBlock effectBlock, RewardSystem rewardSystem, SoundManager soundManager, VibrationManager vibrationManager)
         {
             _renderMaps = renderMap;
             _effectBlock = effectBlock;
             _rewardSystem = rewardSystem;
+            _soundManager = soundManager;
+            _vibrationManager = vibrationManager;
         }
         
         private void Awake()
@@ -75,37 +79,7 @@ namespace Sand
                 _colorMagic.color = cell.color;
             }
         }
-        //------MagicBrushIcon-----//
-        public void UpdateMagicBrushIcon()
-        {
-            if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
-            {
-                Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                Vector3 iconPos = _iconMagicBrush.transform.position;
-
-                _offset = iconPos - mouseWorldPos;
-                _isDragging = true;
-            }
-
-            if (_isDragging && Input.GetMouseButton(0))
-            {
-                Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                Vector3 mouseForBounds = mouseWorldPos + _offset;
-                mouseForBounds.z = 0;
-
-                mouseForBounds.x = Mathf.Clamp(mouseForBounds.x, _minX, _maxX);
-                mouseForBounds.y = Mathf.Clamp(mouseForBounds.y, _minY, _maxY);
-
-                _iconMagicBrush.transform.position = mouseForBounds;
-                UpdateColorMagicFromMap(mouseForBounds).Forget();
-            }
-
-            if (Input.GetMouseButtonUp(0) && _isDragging)
-            {
-                _isDragging = false;
-            }
-        }
-        //------------------------------//
+        
         //---------------------Boom----------------//
         public bool PowerUpBoom()
         {
@@ -151,12 +125,42 @@ namespace Sand
 
         //----------------------------------------//
         
-        //-------------------Effect--------------------//
+        //------MagicBrushIcon-----//
+        public void UpdateMagicBrushIcon()
+        {
+            if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+            {
+                Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector3 iconPos = _iconMagicBrush.transform.position;
+
+                _offset = iconPos - mouseWorldPos;
+                _isDragging = true;
+            }
+
+            if (_isDragging && Input.GetMouseButton(0))
+            {
+                Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector3 mouseForBounds = mouseWorldPos + _offset;
+                mouseForBounds.z = 0;
+
+                mouseForBounds.x = Mathf.Clamp(mouseForBounds.x, _minX, _maxX);
+                mouseForBounds.y = Mathf.Clamp(mouseForBounds.y, _minY, _maxY);
+
+                _iconMagicBrush.transform.position = mouseForBounds;
+                UpdateColorMagicFromMap(mouseForBounds).Forget();
+            }
+
+            if (Input.GetMouseButtonUp(0) && _isDragging)
+            {
+                _isDragging = false;
+            }
+        }
+        //------------------------------//
         public async UniTask PowerUpMagicBrush(Color32 targetColor)
         {
             _renderMaps._map.IsMovePause = true;
 
-            var colorManager = new SandColorMap(_renderMaps._map, _renderMaps._hight, _renderMaps._wight, _effectBlock);
+            var colorManager = new SandColorMap(_renderMaps._map, _renderMaps._hight, _renderMaps._wight, _effectBlock, _soundManager);
             connectedComponentDel.Clear();
             for (int x = 0; x < _renderMaps._wight; x++)
             {
@@ -173,6 +177,8 @@ namespace Sand
             if (connectedComponentDel.Count > 0)
             {
                 var countCellsWithColor = colorManager.CountCellsWithColor(targetColor);
+                _soundManager.OnPlaySound(SoundType.Combo2);
+                _vibrationManager.SelectionButton();
                 await _effectBlock.ShrinkEffectFadeOut(_renderMaps._map, connectedComponentDel, targetColor, _renderMaps._backgroundColor);
                 Global.Send(new SignalScoreOnGame() { Score = countCellsWithColor });
                 Global.Send(new SignalOpenEffectTextScore(){Score = countCellsWithColor});
@@ -211,8 +217,12 @@ namespace Sand
 
             if (cellsToErase.Count > 0)
             {
+                _soundManager.OnPlaySound(SoundType.Boom);
                 await _effectBlock.ShrinkEffectFadeOut(_renderMaps._map, cellsToErase, new Color32(255, 255, 255, 255),
                     _renderMaps._backgroundColor);
+                _vibrationManager.SelectionButton();
+                Global.Send(new SignalScoreOnGame() { Score = cellsToErase.Count });
+                Global.Send(new SignalOpenEffectTextScore(){Score = cellsToErase.Count});
             }
 
             _renderMaps._map.IsMovePause = false;

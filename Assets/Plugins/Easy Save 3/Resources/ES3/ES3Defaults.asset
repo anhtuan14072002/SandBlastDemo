@@ -36,6 +36,8 @@ MonoBehaviour:
     assemblyNames:
     - Assembly-CSharp
     - Assembly-CSharp-firstpass
+    - Lofelt.NiceVibrations
+    - Lofelt.NiceVibrations.Demo
     - ParticleImage
     - PrimeTween.Debug
     - PrimeTween.Demo

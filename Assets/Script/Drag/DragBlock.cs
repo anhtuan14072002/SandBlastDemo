@@ -4,21 +4,32 @@ using Cysharp.Threading.Tasks;
 using R3;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Zenject;
 using Random = UnityEngine.Random;
 
 namespace Sand
 {
     public class DragBlock : MonoBehaviour
     {
-        [SerializeField] private BlockManager _blockManager;
-        [SerializeField] private RenderMap _map;
-
+        [SerializeField] private GameObject _test;
+        [SerializeField] private Transform _parent;
         private GameObject _objDrag;
         private Vector3 _startPos;
         private Vector3 _offset;
         private bool _isDragging;
+        
+        VibrationManager _vibrationManager;
+        BlockManager _blockManager;
+        RenderMap _map;
         IDisposable _dragSub;
 
+        [Inject]
+        void Construct(VibrationManager vibrationManager, BlockManager blockManager, RenderMap map)
+        {
+            _vibrationManager = vibrationManager;
+            _blockManager = blockManager;
+            _map = map;
+        }
         private void Start()
         {
             _dragSub = Observable.EveryUpdate()
@@ -41,6 +52,7 @@ namespace Sand
             RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero, Mathf.Infinity, 1 << 6);
 
             if (hit.collider == null) return;
+            _vibrationManager.SelectionButton();
             _objDrag = hit.collider.gameObject;
             _isDragging = true;
             _startPos = _objDrag.transform.position;
@@ -117,7 +129,7 @@ namespace Sand
                     Global.Send(new SignalOpenEffectTextScore()
                     {
                         Score = Random.Range(20, 40), 
-                        Position = dropPosition + Vector3.up  
+                        Position = dropPosition
                     });
 
                     var spawnSystem = FindObjectOfType<BlockSpawn>();

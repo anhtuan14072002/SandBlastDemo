@@ -19,20 +19,26 @@ namespace Sand
         
         EffectBlock _effectBlock;
         GameRevive _gameRevive;
+        SoundManager _soundManager;
+        GameVisual _gameVisual;
         
         public Map _map;
         private SandColorMap _colorMap;
         private bool _isSettled = false;
         private bool _isGameStarted = false;
+        private bool _hasPlayedTickSound = false;
         private int Idx(int x, int y) => y * _wight + x;
         IDisposable _sandSpawnSub;
 
         [Inject]
-        void Construct(GameRevive gameRevive, EffectBlock effectBlock)
+        void Construct(GameRevive gameRevive, EffectBlock effectBlock, SoundManager soundManager, GameVisual gameVisual)
         {
             _gameRevive = gameRevive;
             _effectBlock = effectBlock;
+            _soundManager = soundManager;
+            _gameVisual = gameVisual;
         }
+        
         private void Awake()
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -51,6 +57,7 @@ namespace Sand
         {
             _isGameStarted = false;
             _isSettled = false;
+            _hasPlayedTickSound = false; 
             if (_map != null)
             {
                 _map.SetUpMap(_backgroundColor);
@@ -58,7 +65,10 @@ namespace Sand
             }
 
             if (_colorMap != null)
-                _colorMap = new SandColorMap(_map, _wight, _hight, _effectBlock);;
+            {
+                _colorMap = new SandColorMap(_map, _wight, _hight, _effectBlock, _soundManager);
+                _colorMap.ResetCombo();
+            }
             StartGame();
         }
 
@@ -66,15 +76,15 @@ namespace Sand
         {
             _map.SetUpMap(_backgroundColor);
             _map.ApplyTexture(_spriteRenderer);
-            _colorMap = new SandColorMap(_map, _wight, _hight, _effectBlock);
+            _colorMap = new SandColorMap(_map, _wight, _hight, _effectBlock,_soundManager);
 
-            _sandSpawnSub = Observable.EveryUpdate()
+            /*_sandSpawnSub = Observable.EveryUpdate()
                 .Where(_ => Input.GetMouseButton(1))
                 .TimeInterval()
                 .Chunk(2, 1)
                 .Where(clicks => clicks[1].Interval.TotalSeconds <= 0.5f)
                 .ThrottleFirst(TimeSpan.FromSeconds(0.25f))
-                .Subscribe(_ => _blockManager.SpawnSandWithRandomShape(_map, _spriteRenderer));
+                .Subscribe(_ => _blockManager.SpawnSandWithRandomShape(_map, _spriteRenderer));*/
         }
 
         private void Update()
@@ -86,7 +96,15 @@ namespace Sand
         private void SandUpdate()
         {
             bool isTick = _map.Tick(4);
-            if (isTick) _isSettled = false;
+            if (isTick) 
+            {
+                _isSettled = false;
+                if (!_hasPlayedTickSound)
+                {
+                    _soundManager?.OnPlaySound(SoundType.SandDrop);
+                    _hasPlayedTickSound = true;
+                }
+            }
             else
             {
                 if (!_isSettled && !_map.IsMovePause)
@@ -94,6 +112,7 @@ namespace Sand
                     // CheckSandLosingLine();
                     ProcessSettledSand().Forget();
                     _isSettled = true;
+                    _hasPlayedTickSound = false; 
                 }
             }
 
@@ -111,6 +130,7 @@ namespace Sand
         {
             if (_hight <= _hightGameOver) return;
             bool foundSand = false;
+            bool warningSand = false;
             int sandCount = 0;
 
             List<(int x, int y)> sandCells = new List<(int x, int y)>();
@@ -119,11 +139,16 @@ namespace Sand
                 for (int x = 0; x < _wight; x++)
                 {
                     var cell = _map.GetCell(x, y);
+                    var cellWarning = _map.GetCell(x,80);
                     if (cell.hasValue == 1)
                     {
                         foundSand = true;
                         sandCount++;
                         sandCells.Add((x, y));
+                    }
+                    else if (cellWarning.hasValue == 1)
+                    {
+                        warningSand = true;
                     }
                 }
             }
@@ -133,20 +158,25 @@ namespace Sand
                 _gameRevive.OpenPopupRevive();
                 // _effectBlock.CheckSandLosingLineWithEffect(_map,_hight, _wight).Forget();
             }
+
+            _gameVisual.WarningSand(warningSand);
         }
 
         public void MapGameOver()
         {
             _effectBlock.CheckSandLosingLineWithEffect(_map,_hight, _wight).Forget();
+            _soundManager.OnPlaySound(SoundType.GameOver);
         }
+        
         public SandColorMap GetColorMap()
         {
             if (_colorMap == null)
             {
-                _colorMap = new SandColorMap(_map, _wight, _hight, _effectBlock);
+                _colorMap = new SandColorMap(_map, _wight, _hight, _effectBlock, _soundManager);
             }
             return _colorMap;
         }
+        
         private void OnDestroy()
         {
             _map?.Dispose();

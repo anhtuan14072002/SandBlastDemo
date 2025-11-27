@@ -10,14 +10,20 @@ namespace Sand
         private readonly Map _map;
         private readonly int _width;
         private readonly int _height;
-        private readonly EffectBlock _effectBlock;
+        private int _currentComboCount = 0;
+        private int _turnsWithoutCombo = 0;
+        private const int MAX_TURNS_WITHOUT_COMBO = 3;
 
-        public SandColorMap(Map map, int width, int height, EffectBlock effectBlock)
+        EffectBlock _effectBlock;
+        SoundManager _soundManager;
+        
+        public SandColorMap(Map map, int width, int height, EffectBlock effectBlock, SoundManager soundManager)
         {
             _map = map;
             _width = width;
             _height = height;
             _effectBlock = effectBlock;
+            _soundManager = soundManager;
         }
 
         public async UniTask SameColorCompleteBands(Color32 color)
@@ -85,17 +91,44 @@ namespace Sand
                     {
                         completedCollectionMap.Add(count, connectedComponent);
                         var cellCountAfter = CountCellsWithColor(targetColor);
+
+                        _currentComboCount++;
+                        _turnsWithoutCombo = 0;
+                        PlayComboSound();
+
                         Global.Send(new SignalScoreOnGame() { Score = cellCountAfter });
-                        Global.Send(new SignalOpenEffectTextScore(){Score = cellCountAfter});
+
+                        Global.Send(new SignalOpenEffectTextScore()
+                        {
+                            Score = cellCountAfter,
+                            Combo = _currentComboCount,
+                            Position = Vector3.zero
+                        });
+
                         count++;
+
+                        /*_currentComboCount++;
+                        _turnsWithoutCombo = 0;
+                        PlayComboSound();
+
+                        Global.Send(new SignalScoreOnGame() { Score = cellCountAfter });
+                        Global.Send(new SignalOpenEffectTextScore(){Score = cellCountAfter });
+                        count++;*/
                     }
                 }
+            }
+
+            if (completedCollectionMap.Count == 0)
+            {
+                _turnsWithoutCombo++;
+                if (_turnsWithoutCombo >= MAX_TURNS_WITHOUT_COMBO) ResetCombo();
             }
 
             foreach (var (_, connectedComponent) in completedCollectionMap)
             {
                 _map.HighlightCells(connectedComponent);
             }
+            
             _map.Dirty = true;
             _map.UpdateTexture(); 
 
@@ -127,6 +160,69 @@ namespace Sand
                 }
             }
             return count;
+        }
+
+        
+        private void PlayComboSound()
+        {
+            int comboLevel = Mathf.Clamp(_currentComboCount, 1, 9);
+
+            switch (comboLevel)
+            {
+                case 1:
+                    _soundManager.OnPlaySound(SoundType.Combo1);
+                    break;
+                case 2:
+                    _soundManager.OnPlaySound(SoundType.Combo2);
+                    break;
+                case 3:
+                    _soundManager.OnPlaySound(SoundType.Combo3);
+                    _soundManager.OnPlaySound(SoundType.Good);
+                    break;
+                case 4:
+                    _soundManager.OnPlaySound(SoundType.Combo4);
+                    _soundManager.OnPlaySound(SoundType.Superb);
+                    break;
+                case 5:
+                    _soundManager.OnPlaySound(SoundType.Combo6);
+                    _soundManager.OnPlaySound(SoundType.Great);
+                    break;
+                case 6:
+                    _soundManager.OnPlaySound(SoundType.Combo6);
+                    _soundManager.OnPlaySound(SoundType.WellDone);
+                    break;
+                case 7:
+                    _soundManager.OnPlaySound(SoundType.Combo7);
+                    _soundManager.OnPlaySound(SoundType.WellDone);
+                    break;
+                case 8:
+                    _soundManager.OnPlaySound(SoundType.Combo8);
+                    _soundManager.OnPlaySound(SoundType.Wonderful);
+                    break;
+                case 9:
+                    _soundManager.OnPlaySound(SoundType.Combo9);
+                    _soundManager.OnPlaySound(SoundType.Wonderful);
+                    break;
+                default:
+                    _soundManager.OnPlaySound(SoundType.Combo1);
+                    break;
+            }
+        }
+
+        public void ResetCombo()
+        {
+            _currentComboCount = 0;
+            _turnsWithoutCombo = 0;
+        }
+
+        public int GetCurrentComboCount()
+        {
+            return _currentComboCount;
+        }
+
+        public int GetTurnsWithoutCombo()
+        {
+            return _turnsWithoutCombo;
         }
 
     }
