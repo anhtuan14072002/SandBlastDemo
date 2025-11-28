@@ -8,6 +8,8 @@ namespace Sand
         private void OnEnable()
         {
             Debug.Log("Enable Popup");
+            gameObject.transform.localScale = new Vector3(0.9f, 0.9f, 0.9f);
+
             TweenPopupOpen();
         }
 
