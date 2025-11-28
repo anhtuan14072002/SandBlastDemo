@@ -36,6 +36,7 @@ MonoBehaviour:
     assemblyNames:
     - Assembly-CSharp
     - Assembly-CSharp-firstpass
+    - DamageNumbersPro
     - Lofelt.NiceVibrations
     - Lofelt.NiceVibrations.Demo
     - ParticleImage

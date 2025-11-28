@@ -1,0 +1,35 @@
+﻿using PrimeTween;
+using UnityEngine;
+
+namespace Sand
+{
+    public class Popup : MonoBehaviour
+    {
+        private void OnEnable()
+        {
+            Debug.Log("Enable Popup");
+            TweenPopupOpen();
+        }
+
+        private void OnDisable()
+        {
+            gameObject.transform.localScale = new Vector3(0.9f, 0.9f, 0.9f);
+        }
+
+        public void ClosePopup()
+        {
+            TweenPopupClose();
+        }
+
+        private void TweenPopupOpen()
+        {
+            Tween.Scale(gameObject.transform, Vector3.one, 0.25f, Ease.OutBack);
+        }
+
+        private void TweenPopupClose()
+        {
+            Tween.Scale(gameObject.transform, Vector3.zero, 0.25f, Ease.InBack)
+                .OnComplete(() => { gameObject.SetActive(false); });
+        }
+    }
+}
