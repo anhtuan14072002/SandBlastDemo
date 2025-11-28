@@ -19,6 +19,7 @@ namespace Sand
 
         private Queue<GameObject> _pool = new();
         private GameObject[] _currentBlocks;
+
         CheckLevelScore _checkLevelScore;
 
         [Inject]
@@ -70,45 +71,6 @@ namespace Sand
                 _ => _prefabBlock.Length
             };
         }
-        
-        private GameObject GetRandomFromPoolByLevel()
-        {
-            if (_pool.Count == 0) return null;
-            int maxPrefabIndex = BlockMaxInLevel();
-            if (maxPrefabIndex <= 0) return null;
-            GameObject chosen = null;
-            int count = _pool.Count;
-            for (int i = 0; i < count; i++)
-            {
-                var obj = _pool.Dequeue();
-                var instance = obj.GetComponent<BlockInfo>();
-                bool allowed = instance != null && instance.PrefabIndex < maxPrefabIndex;
-                if (chosen == null && allowed)
-                    chosen = obj;
-                else
-                    _pool.Enqueue(obj);
-            }
-
-            if (chosen == null) chosen = GetRandomFromPoolAny();
-            return chosen;
-        }
-        
-        private GameObject GetRandomFromPoolAny()
-        {
-            if (_pool.Count == 0) return null;
-            var randomIndex = Random.Range(0, _pool.Count);
-            GameObject result = null;
-            int count = _pool.Count;
-            for (int i = 0; i < count; i++)
-            {
-                var obj = _pool.Dequeue();
-                obj.transform.localScale = Vector3.one * 5;
-                if (i == randomIndex) result = obj;
-                else _pool.Enqueue(obj);
-            }
-
-            return result;
-        }
 
         private void SpawnAllSlots()
         {
@@ -120,13 +82,60 @@ namespace Sand
 
         private void SpawnAtSlot(int slot)
         {
-            var obj = GetRandomFromPoolByLevel();
+            var obj = GetBlockByLevel();
             if (obj == null) return;
 
             obj.transform.position = _posSpawn[slot].position;
             obj.SetActive(true);
             Tween.PunchScale(obj.transform, Vector3.one * 4 * 4f, 0.2f, 0.5f, false, Ease.Linear);
             _currentBlocks[slot] = obj;
+        }
+
+        private GameObject GetBlockByLevel()
+        {
+            int maxPrefabIndex = BlockMaxInLevel();
+            if (maxPrefabIndex <= 0) return null;
+
+            // int randomPrefabIndex = Random.Range(0, maxPrefabIndex);
+            var randomPrefabIndex = GetRandomPrefabIndex(maxPrefabIndex);
+            var pooledObject = GetFromPoolByPrefabIndex(randomPrefabIndex);
+            if (pooledObject != null)
+            {
+                return pooledObject;
+            }
+
+            var newObj = Instantiate(_prefabBlock[randomPrefabIndex], transform.position, Quaternion.identity);
+            newObj.transform.SetParent(_posParentSpawn.transform);
+            newObj.transform.localScale = Vector3.one * 5;
+
+            var instance = newObj.GetComponent<BlockInfo>();
+            if (instance == null) instance = newObj.AddComponent<BlockInfo>();
+            instance.PrefabIndex = randomPrefabIndex;
+
+            return newObj;
+        }
+
+        private GameObject GetFromPoolByPrefabIndex(int prefabIndex)
+        {
+            if (_pool.Count == 0) return null;
+
+            int count = _pool.Count;
+            for (int i = 0; i < count; i++)
+            {
+                var obj = _pool.Dequeue();
+                var instance = obj.GetComponent<BlockInfo>();
+
+                if (instance != null && instance.PrefabIndex == prefabIndex)
+                {
+                    return obj;
+                }
+                else
+                {
+                    _pool.Enqueue(obj);
+                }
+            }
+
+            return null;
         }
 
         public void ReturnBlock(GameObject obj)
@@ -175,9 +184,45 @@ namespace Sand
                     _currentBlocks[i] = null;
                 }
             }
+
             SpawnAllSlots();
         }
 
+        // lấy tỉ leej của các khối
+        // sau đó cộng tổng các khối 
+        // lấy tỉ lệ của các khối
+        // random lấy ra 1 khối
+        public int GetRandomPrefabIndex(int maxIndex)
+        {
+            var totalWeight= 0f;
+            for (int i = 0; i < maxIndex; i++)
+            {
+                var weight = GetPrefabRateSpawn(i);
+                totalWeight += weight;
+            }
+            
+            if (totalWeight <= 0f)
+                return Random.Range(0, maxIndex);
+
+            float randomValue = Random.Range(0f, totalWeight);
+            float currentWeight = 0f;
+
+            for (int i = 0; i < maxIndex; i++)
+            {
+                float weight = GetPrefabRateSpawn(i);
+                currentWeight += weight;
+                if (randomValue <= currentWeight) return i;
+            }
+            return maxIndex - 1;
+        }
+        public float GetPrefabRateSpawn(int prefabIndex)
+        {
+            var prefab = _prefabBlock[prefabIndex].GetComponent<BlockInfo>();
+            if (prefab != null & prefab.RateSpawn > 0)
+                return prefab.RateSpawn;
+            return 1;
+        }
+        
         public void Receive(in SignalResetAllBlocks signal)
         {
             ResetAllBlocks();

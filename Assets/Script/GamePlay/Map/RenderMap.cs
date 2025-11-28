@@ -115,15 +115,30 @@ namespace Sand
                     _hasPlayedTickSound = false; 
                 }
             }
-
             _map.UpdateTexture();
         }
 
         private async UniTask ProcessSettledSand()
         {
             await _colorMap.SameColorCompleteBands(_backgroundColor);
-            await UniTask.Delay(TimeSpan.FromSeconds(1f));
+            await WaitForSandToSettle();
             CheckSandLosingLine();
+        }
+
+        private async UniTask WaitForSandToSettle()
+        {
+            await UniTask.NextFrame();
+            bool isMoving = true;
+            while (isMoving)
+            {
+                isMoving = _map.Tick(4);
+                if (isMoving)
+                {
+                    _map.UpdateTexture();
+                    await UniTask.NextFrame();
+                }
+            }
+            await UniTask.Delay(TimeSpan.FromSeconds(0.1f));
         }
 
         private void CheckSandLosingLine()
@@ -158,7 +173,6 @@ namespace Sand
                 _gameRevive.OpenPopupRevive();
                 // _effectBlock.CheckSandLosingLineWithEffect(_map,_hight, _wight).Forget();
             }
-
             _gameVisual.WarningSand(warningSand);
         }
 
@@ -168,14 +182,6 @@ namespace Sand
             _soundManager.OnPlaySound(SoundType.GameOver);
         }
         
-        public SandColorMap GetColorMap()
-        {
-            if (_colorMap == null)
-            {
-                _colorMap = new SandColorMap(_map, _wight, _hight, _effectBlock, _soundManager);
-            }
-            return _colorMap;
-        }
         
         private void OnDestroy()
         {

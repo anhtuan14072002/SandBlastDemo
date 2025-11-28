@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7998695179195081505}
   - component: {fileID: 7665079246412416893}
   - component: {fileID: 4510221846309421959}
+  - component: {fileID: 8395638244170023723}
   m_Layer: 6
   m_Name: Cross_pinkRed
   m_TagString: Untagged
@@ -157,3 +158,17 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8395638244170023723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1167217504055667162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 658106aa7e674d288c4396dacbe42071, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PrefabIndex: 0
+  RateSpawn: 2

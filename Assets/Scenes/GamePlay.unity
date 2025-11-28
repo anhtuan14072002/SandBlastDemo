@@ -12993,7 +12993,7 @@ MonoBehaviour:
   _fillScoreBar: {fileID: 460191852}
   _claimRewardLevelUp: {fileID: 1356754611}
   _claimCoreRewardLevelUp: {fileID: 2063120494}
-  _stepScore: 25000
+  _stepScore: 3000
   _fillTweenDuration: 0.3
 --- !u!1 &694509201
 GameObject:
