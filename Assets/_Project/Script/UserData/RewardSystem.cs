@@ -56,6 +56,5 @@ namespace Sand
             _userData.Boom.Value -= amount;
             _saveService.Save();
         }
-        
     }
 }

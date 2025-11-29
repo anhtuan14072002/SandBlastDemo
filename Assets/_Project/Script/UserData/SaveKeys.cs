@@ -6,5 +6,7 @@
         public const string Gems = "UserData.Gems";
         public const string MagicBrush = "UserData.MagicBrush";
         public const string Boom = "UserData.Boom";
+        public const string Map = "UserData.Map";
+        public const string LevelModClassic = "UserData.LevelModClassic";
     }
 }

@@ -20,14 +20,16 @@ namespace Sand
         
         VibrationManager _vibrationManager;
         BlockManager _blockManager;
+        BlockSpawn _blockSpawn;
         RenderMap _map;
         IDisposable _dragSub;
 
         [Inject]
-        void Construct(VibrationManager vibrationManager, BlockManager blockManager, RenderMap map)
+        void Construct(VibrationManager vibrationManager, BlockManager blockManager, RenderMap map, BlockSpawn blockSpawn)
         {
             _vibrationManager = vibrationManager;
             _blockManager = blockManager;
+            _blockSpawn = blockSpawn;
             _map = map;
         }
         private void Start()
@@ -132,8 +134,8 @@ namespace Sand
                         Position = dropPosition
                     });
 
-                    var spawnSystem = FindObjectOfType<BlockSpawn>();
-                    spawnSystem.ReturnBlock(_objDrag);
+                    _blockSpawn.ReturnBlock(_objDrag); 
+
                 }
                 else
                 {

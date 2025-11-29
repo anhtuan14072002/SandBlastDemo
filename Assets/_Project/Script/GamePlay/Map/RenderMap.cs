@@ -122,6 +122,7 @@ namespace Sand
         {
             await _colorMap.SameColorCompleteBands(_backgroundColor);
             await WaitForSandToSettle();
+            Debug.Log("a");
             CheckSandLosingLine();
         }
 
@@ -181,7 +182,6 @@ namespace Sand
             _effectBlock.CheckSandLosingLineWithEffect(_map,_hight, _wight).Forget();
             _soundManager.OnPlaySound(SoundType.GameOver);
         }
-        
         
         private void OnDestroy()
         {

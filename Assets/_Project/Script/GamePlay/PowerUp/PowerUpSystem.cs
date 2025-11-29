@@ -60,25 +60,6 @@ namespace Sand
             _magicBrushSub = Observable.EveryUpdate().Subscribe(_ => UpdateMagicBrushIcon());
         }
         
-        private async UniTask UpdateColorMagicFromMap(Vector3 worldPosition)
-        {
-            if (_spriteRenderer.sprite == null) return;
-            Vector3 localPos = transform.InverseTransformPoint(worldPosition);
-            var spriteWidth = _spriteRenderer.sprite.bounds.size.x;
-            var spriteHeight = _spriteRenderer.sprite.bounds.size.y;
-
-            var mapX = Mathf.RoundToInt((localPos.x / spriteWidth + 0.5f) * _renderMaps._wight);
-            var mapY = Mathf.RoundToInt((localPos.y / spriteHeight + 0.5f) * _renderMaps._hight);
-
-            mapX = Mathf.Clamp(mapX, 0, _renderMaps._wight - 1);
-            mapY = Mathf.Clamp(mapY, 0, _renderMaps._hight - 1);
-
-            var cell = _renderMaps._map.GetCell(mapX, mapY);
-            if (cell.hasValue == 1)
-            {
-                _colorMagic.color = cell.color;
-            }
-        }
         
         //---------------------Boom----------------//
         public bool PowerUpBoom()
@@ -147,7 +128,7 @@ namespace Sand
                 mouseForBounds.y = Mathf.Clamp(mouseForBounds.y, _minY, _maxY);
 
                 _iconMagicBrush.transform.position = mouseForBounds;
-                UpdateColorMagicFromMap(mouseForBounds).Forget();
+                UpdateColorMagicFromMap(mouseForBounds);
             }
 
             if (Input.GetMouseButtonUp(0) && _isDragging)
@@ -155,6 +136,26 @@ namespace Sand
                 _isDragging = false;
             }
         }
+        private void UpdateColorMagicFromMap(Vector3 worldPosition)
+        {
+            if (_spriteRenderer.sprite == null) return;
+            Vector3 localPos = transform.InverseTransformPoint(worldPosition);
+            var spriteWidth = _spriteRenderer.sprite.bounds.size.x;
+            var spriteHeight = _spriteRenderer.sprite.bounds.size.y;
+
+            var mapX = Mathf.RoundToInt((localPos.x / spriteWidth + 0.5f) * _renderMaps._wight);
+            var mapY = Mathf.RoundToInt((localPos.y / spriteHeight + 0.5f) * _renderMaps._hight);
+
+            mapX = Mathf.Clamp(mapX, 0, _renderMaps._wight - 1);
+            mapY = Mathf.Clamp(mapY, 0, _renderMaps._hight - 1);
+
+            var cell = _renderMaps._map.GetCell(mapX, mapY);
+            if (cell.hasValue == 1)
+            {
+                _colorMagic.color = cell.color;
+            }
+        }
+
         //------------------------------//
         public async UniTask PowerUpMagicBrush(Color32 targetColor)
         {

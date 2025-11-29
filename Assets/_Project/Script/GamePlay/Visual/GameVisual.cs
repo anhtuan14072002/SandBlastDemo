@@ -199,8 +199,7 @@ namespace Sand
             EnableSkill();
             DisablePopupGameOver();
             _gameRevive.ResetReviveUI();
-            _checkLevelScore.LevelScoreValue = 0;
-            _checkLevelScore.CurrentLevel = 0;
+            _checkLevelScore.ResetLevelScore();
             _checkLevelScore.NextLevelScoreValue = _checkLevelScore.StepScore;
             if (_renderMap != null)
                 _renderMap.Reset();

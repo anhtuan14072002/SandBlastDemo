@@ -24,18 +24,15 @@ namespace Sand
         [SerializeField] private float _fillTweenDuration = 0.3f;
 
         private int _currentLevelScoreValue;
-        public int LevelScoreValue
-        {
-            get => _currentLevelScoreValue;
-            set => _currentLevelScoreValue = value;
-        }
 
         public int NextLevelScoreValue
         {
             get => _nextLevelScoreValue;
             set => _nextLevelScoreValue = value;
         }
+
         public int StepScore => _stepScore;
+
         public int CurrentLevel
         {
             get => _level;
@@ -43,27 +40,27 @@ namespace Sand
         }
 
         private int _nextLevelScoreValue;
-        private int _lastCheckedScore = 0;
-        private int _level = 0;
+        private int _lastCheckedScore;
+        private int _level;
         private Tween _currentFillTween;
 
+        [Inject] UserData _userData;
         [Inject] ScoreView _scoreView;
         [Inject] GameVisual _gameVisual;
         [Inject] GameResources _gameResources;
         [Inject] SoundManager _soundManager;
+        [Inject] LevelModClassicSystem _levelModClassicSystem;
 
         IDisposable _subCurrentScore;
         IDisposable _subNextScore;
         IDisposable _subLevel;
-        
+
         private void Start()
         {
-            _currentLevelScoreValue = 0;
-            _nextLevelScoreValue = _stepScore;
-            
+            InitializeLevel();
             _claimRewardLevelUp.onClick.AddListener(() => ClaimReward().Forget());
             _claimCoreRewardLevelUp.onClick.AddListener(() => ClaimCoreReward().Forget());
-            
+
             _subCurrentScore = Observable.EveryUpdate().Subscribe(_ => CurrentLevelScore());
             _subNextScore = Observable.EveryUpdate().Subscribe(_ => NextLevelScore());
             _subLevel = Observable.EveryUpdate().Subscribe(_ =>
@@ -76,12 +73,19 @@ namespace Sand
             });
         }
 
+        private void InitializeLevel()
+        {
+            _level = _userData.LevelModClassic.Value;
+            _currentLevelScoreValue = _level * _stepScore;
+            _nextLevelScoreValue = (_level + 1) * _stepScore;
+        }
         private void UpdateLevel()
         {
             bool levelChanged = false;
             while (_scoreView._score >= _nextLevelScoreValue)
             {
                 _level++;
+                _levelModClassicSystem.IncreaseLevelModClassic();
                 _currentLevelScoreValue = _nextLevelScoreValue;
                 _nextLevelScoreValue += _stepScore;
                 levelChanged = true;
@@ -105,11 +109,12 @@ namespace Sand
         {
             if (_nextLevelScoreValue > _currentLevelScoreValue)
             {
-                float targetProgress = (float)(_scoreView._score - _currentLevelScoreValue) / (_nextLevelScoreValue - _currentLevelScoreValue);
+                float targetProgress = (float)(_scoreView._score - _currentLevelScoreValue) /
+                                       (_nextLevelScoreValue - _currentLevelScoreValue);
                 targetProgress = Mathf.Clamp01(targetProgress);
                 _currentFillTween.Stop();
                 _currentFillTween = Tween.Custom(_fillScoreBar.fillAmount, targetProgress, _fillTweenDuration,
-                     value => _fillScoreBar.fillAmount = value, Ease.OutQuad);
+                    value => _fillScoreBar.fillAmount = value, Ease.OutQuad);
             }
         }
 
@@ -131,7 +136,7 @@ namespace Sand
             _soundManager.OnPlaySound(SoundType.LevelUp);
             _effectLevelUp.SetActive(true);
             _currentLevelScoreInPopup.text = _currentLevelScoreValue.ToString();
-            _gameResources.ResetCoreAnimation(); 
+            _gameResources.ResetCoreAnimation();
         }
 
         private async UniTask ClosePopupLevelUp()
@@ -142,6 +147,7 @@ namespace Sand
             _gameVisual.DisableEffectClaimGem();
             // _popupLevelUp.SetActive(false);
         }
+
         private void OnDestroy()
         {
             _currentFillTween.Stop();
@@ -149,6 +155,7 @@ namespace Sand
             _subNextScore?.Dispose();
             _subLevel?.Dispose();
         }
+
         private async UniTask ClaimReward()
         {
             // EnableEffectClaimGem();
@@ -158,7 +165,7 @@ namespace Sand
             _gameResources.ClaimGemsLevelUp();
             ClosePopupLevelUp().Forget();
         }
-        
+
         private async UniTask ClaimCoreReward()
         {
             // EnableEffectClaimGem();
@@ -167,6 +174,13 @@ namespace Sand
             _gameResources.StopCoreAnimation().Forget();
             await UniTask.Delay(TimeSpan.FromSeconds(0.75f));
             ClosePopupLevelUp().Forget();
+        }
+        
+        public void ResetLevelScore()
+        {
+            _currentLevelScoreValue = 0;
+            CurrentLevel = 0;
+            _levelModClassicSystem.ResetLevelModClassic();
         }
     }
 }

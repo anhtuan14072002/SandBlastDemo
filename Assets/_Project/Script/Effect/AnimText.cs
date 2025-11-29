@@ -33,7 +33,7 @@ namespace Core
                     if (Time.time - lastTweenTime >= tweenInterval)
                     {
                         if (icon == null) return;
-                        Tween.PunchScale(icon.transform, new Vector3(0.35f, 0.35f), 0.1f, frequency);
+                        _ = Tween.PunchScale(icon.transform, new Vector3(0.35f, 0.35f), 0.1f, frequency);
                         lastTweenTime = Time.time;
                     }
                 }

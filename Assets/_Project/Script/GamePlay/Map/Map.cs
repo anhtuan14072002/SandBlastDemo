@@ -13,6 +13,7 @@ namespace Sand
         private Texture2D Texture { get; set; }
         private bool m_isMovePause;
         private NativeArray<Cell> _cells;
+
         public bool IsMovePause
         {
             get => m_isMovePause;
@@ -20,11 +21,13 @@ namespace Sand
         }
 
         public bool _dirty = true;
+
         public bool Dirty
         {
             get => _dirty;
             set => _dirty = value;
         }
+
         private bool _isGameOver;
         private int m_width, m_height;
         public int Width => m_width;
@@ -125,7 +128,7 @@ namespace Sand
                 cells = _cells,
                 pixels = _pixels
             };
-            
+
             var handle = job.Schedule(_pixels.Length, 64);
             handle.Complete();
             Profiler.BeginSample("Texture.SetPixelData+Apply");
@@ -150,7 +153,7 @@ namespace Sand
                 }
             }
         }
-        
+
         public bool Tick(int iterations = 1)
         {
             if (m_isMovePause) return false;
@@ -166,7 +169,7 @@ namespace Sand
                 cells = _cells,
                 movedOut = movedArr
             };
-            
+
             var handle = job.Schedule();
             handle.Complete();
 
@@ -191,7 +194,7 @@ namespace Sand
         {
             return x >= 0 && y >= 0 && x < m_width && y < m_height;
         }
-        
+
         public void SetPixelCell(int x, int y, Color32 color32)
         {
             if (OutOfBound(x, y)) return;
@@ -229,6 +232,7 @@ namespace Sand
                 c.color = new Color32(255, 255, 255, 255);
                 _cells[idx] = c;
             }
+
             _dirty = true;
         }
 
@@ -248,7 +252,18 @@ namespace Sand
 
             return _cells[Idx(x, y)];
         }
-        
+
+        public Color32 GetCellColor(int x, int y)
+        {
+            var cell = GetCell(x, y);
+            return cell.color;
+        }
+
+        public bool HasValue(int x, int y)
+        {
+            var cell = GetCell(x, y);
+            return cell.hasValue == 1;
+        }
     }
 
     public struct Cell

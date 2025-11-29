@@ -19,6 +19,9 @@ namespace Sand
             Container.Bind<RewardSystem>()
                 .AsSingle()
                 .NonLazy();
+            Container.Bind<LevelModClassicSystem>()
+                .AsSingle()
+                .NonLazy();
         }
 
        private void LoadFromES3(UserData userData)
@@ -27,26 +30,22 @@ namespace Sand
             LoadIntValue(SaveKeys.Gems, value => userData.Gems.Value = value);
             LoadIntValue(SaveKeys.MagicBrush, value => userData.MagicBrush.Value = value);
             LoadIntValue(SaveKeys.Boom, value => userData.Boom.Value = value);
+            LoadIntValue(SaveKeys.LevelModClassic, value => userData.LevelModClassic.Value = value);
         }
 
         private void LoadIntValue(string key, Action<int> setValue)
         {
             if (!ES3.KeyExists(key)) return;
-
             try
             {
                 setValue(ES3.Load<int>(key));
             }
-            catch (InvalidOperationException)
+            catch (Exception ex)
             {
-                var doubleValue = ES3.Load<double>(key);
-                var intValue = (int)doubleValue;
-                setValue(intValue);
-                ES3.Save(key, intValue);
+                UnityEngine.Debug.LogWarning($"Error loading {key}: {ex.Message}. Using default value 0.");
+                // setValue(0);
             }
         }
 
-
-       
     }
 }
