@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEditor.Overlays;
 using Zenject;
 
 namespace Sand
@@ -19,7 +20,13 @@ namespace Sand
             Container.Bind<RewardSystem>()
                 .AsSingle()
                 .NonLazy();
-            Container.Bind<LevelModClassicSystem>()
+            Container.Bind<ScoreData>()
+                .AsSingle()
+                .NonLazy();
+            Container.Bind<LevelModClassicData>()
+                .AsSingle()
+                .NonLazy();
+            Container.Bind<SaveMapData>()
                 .AsSingle()
                 .NonLazy();
         }
@@ -31,6 +38,7 @@ namespace Sand
             LoadIntValue(SaveKeys.MagicBrush, value => userData.MagicBrush.Value = value);
             LoadIntValue(SaveKeys.Boom, value => userData.Boom.Value = value);
             LoadIntValue(SaveKeys.LevelModClassic, value => userData.LevelModClassic.Value = value);
+            LoadIntValue(SaveKeys.CurrentScore, value => userData.CurrentScore.Value = value);
         }
 
         private void LoadIntValue(string key, Action<int> setValue)
@@ -46,6 +54,5 @@ namespace Sand
                 // setValue(0);
             }
         }
-
     }
 }

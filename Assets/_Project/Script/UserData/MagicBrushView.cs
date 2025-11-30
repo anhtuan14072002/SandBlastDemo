@@ -24,7 +24,7 @@ namespace Sand
         {
             _sub = _userData.MagicBrush.Subscribe(value =>
             {
-                _textAmountMagicBrush.text = _userData.MagicBrush.Value.ToString();
+                _textAmountMagicBrush.text = _userData.MagicBrushValue.ToString();
                 /*AnimText.AnimateNumberChange(_textAmountMagicBrush, currentAmountMagicBrush, (int)value, 0.5f, 2,
                     _textAmountMagicBrush.gameObject).Forget();*/
             });

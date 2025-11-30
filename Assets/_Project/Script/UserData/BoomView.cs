@@ -22,7 +22,7 @@ namespace Sand
         {
             _sub = _userData.Boom.Subscribe(value =>
             {
-                _textAmountBoom.text = _userData.Boom.Value.ToString();
+                _textAmountBoom.text = _userData.BoomValue.ToString();
                 /*AnimText.AnimateNumberChange(_textAmountBoom, currentAmountBoom, (int)value, 0.5f, 2,
                     _textAmountBoom.gameObject).Forget();*/
             });

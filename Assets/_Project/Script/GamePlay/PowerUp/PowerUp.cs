@@ -70,7 +70,7 @@ namespace Sand
         //------------Boom-----------------//
         private void BuyBoom()
         {
-            if (_userData.Gems.Value >= _priceSkillBoom)
+            if (_userData.GemsValue >= _priceSkillBoom)
             {
                 _userData.Gems.Value -= _priceSkillBoom;
                 _rewardSystem.AddBoom(1);
@@ -84,7 +84,7 @@ namespace Sand
 
         private void UseBoom()
         {
-            if (_userData.Boom.Value > 0)
+            if (_userData.BoomValue > 0)
             {
                 OpenSkillBoom();
                 _isUseBoom = true;
@@ -112,13 +112,13 @@ namespace Sand
 
         private void MouseClickBoom()
         {
-            if (_userData.Boom.Value > 0 && _isUseBoom)
+            if (_userData.BoomValue > 0 && _isUseBoom)
             {
                 bool hasEffect = _powerUpSystem.PowerUpBoom();
                 if (hasEffect)
                 {
                     _rewardSystem.DeductBoom(1);
-                    if (_userData.Boom.Value <= 0) ClosePowerUpBoom();
+                    if (_userData.BoomValue <= 0) ClosePowerUpBoom();
                 }
             }
         }
@@ -127,7 +127,7 @@ namespace Sand
         //---------MagicBrush-------------//
         private void BuyMagicBrush()
         {
-            if (_userData.Gems.Value >= _priceSkillMagicBrush)
+            if (_userData.GemsValue >= _priceSkillMagicBrush)
             {
                 _userData.Gems.Value -= _priceSkillMagicBrush;
                 _rewardSystem.AddMagicBrush(1);
@@ -141,7 +141,7 @@ namespace Sand
 
         private void UseMagicBrush()
         {
-            if (_userData.MagicBrush.Value > 0)
+            if (_userData.MagicBrushValue > 0)
             {
                 OpenPopupMagicBrush();
                 _rewardSystem.DeductMagicBrush(1);
@@ -152,7 +152,7 @@ namespace Sand
 
         private void OpenPopupMagicBrush()
         {
-            if (_userData.MagicBrush.Value > 0)
+            if (_userData.MagicBrushValue > 0)
             {
                 _popupSkillMagicBrush.SetActive(true);
             }

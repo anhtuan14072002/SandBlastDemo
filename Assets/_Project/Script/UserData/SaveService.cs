@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using Zenject;
+﻿using Zenject;
 
 namespace Sand
 {
@@ -13,7 +12,7 @@ namespace Sand
             ES3.Save(SaveKeys.MagicBrush, _userData.MagicBrush.Value);
             ES3.Save(SaveKeys.Boom, _userData.Boom.Value);
             ES3.Save(SaveKeys.LevelModClassic,_userData.LevelModClassic.Value);
-
+            ES3.Save(SaveKeys.CurrentScore,_userData.CurrentScore.Value);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Sand
 
         private void Start()
         {
-            var currentGems = _userData.Gems.Value;
+            var currentGems = _userData.GemsValue;
             _sub = _userData.Gems.Subscribe(value =>
             {
                 AnimText.AnimateNumberChange(_gemsTextMenu, (int)currentGems, (int)value, 0.5f, 2,

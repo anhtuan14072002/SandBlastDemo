@@ -12,15 +12,21 @@ namespace Sand
     {
         [SerializeField] private TextMeshProUGUI _highScoreText;
         [SerializeField] private TextMeshProUGUI _highScoreTextPopupGameOver;
-        [Inject] UserData _userData;
+        UserData _userData;
         private int _currentHighScore = 0;
         private float _originalFontSize;
         IDisposable _sub;
 
+        [Inject]
+        public void Construct(UserData userData)
+        {
+            _userData = userData;
+        }
+        
         private void Start()
         {
             _originalFontSize = _highScoreText.fontSize;
-            _currentHighScore = _userData.HighScore.Value;
+            _currentHighScore = _userData.HighScoreValue;
             _highScoreText.text = _currentHighScore.ToString();
             AdjustFontSize(_currentHighScore);
             

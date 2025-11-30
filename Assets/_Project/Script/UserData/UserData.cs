@@ -21,6 +21,8 @@ namespace Sand
         public SerializableReactiveProperty<int> Map = new(0);
         [SerializeField]
         public SerializableReactiveProperty<int> LevelModClassic = new(0);
+        [SerializeField]
+        public SerializableReactiveProperty<int> CurrentScore = new(0);
         
         public void OnDeserialized()
         {
@@ -30,11 +32,20 @@ namespace Sand
             receivers.Add(MagicBrush);
             receivers.Add(Boom);
             receivers.Add(LevelModClassic);
+            receivers.Add(CurrentScore);
             
             foreach (var serializationCallbackReceiver in receivers)
             {
                 serializationCallbackReceiver.OnAfterDeserialize();
             }
         }
+
+        public int CurrentScoreValue => CurrentScore.Value;
+        public int HighScoreValue => HighScore.Value;
+        public int GemsValue => Gems.Value;
+        public int MagicBrushValue => MagicBrush.Value;
+        public int BoomValue => Boom.Value;
+        public int MapValue => Map.Value;
+        public int LevelModClassicValue => LevelModClassic.Value;
     }
 }

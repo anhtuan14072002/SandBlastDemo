@@ -16,12 +16,13 @@ namespace Sand
         [SerializeField] public int _hightGameOver;
         [SerializeField] private BlockManager _blockManager;
         [HideInInspector] public SpriteRenderer _spriteRenderer;
-        
+
         EffectBlock _effectBlock;
         GameRevive _gameRevive;
         SoundManager _soundManager;
         GameVisual _gameVisual;
-        
+        SaveMapData _saveMapData;
+
         public Map _map;
         private SandColorMap _colorMap;
         private bool _isSettled = false;
@@ -31,14 +32,38 @@ namespace Sand
         IDisposable _sandSpawnSub;
 
         [Inject]
-        void Construct(GameRevive gameRevive, EffectBlock effectBlock, SoundManager soundManager, GameVisual gameVisual)
+        void Construct(GameRevive gameRevive, EffectBlock effectBlock, SoundManager soundManager, GameVisual gameVisual,
+            SaveMapData saveMapData)
         {
             _gameRevive = gameRevive;
             _effectBlock = effectBlock;
             _soundManager = soundManager;
             _gameVisual = gameVisual;
+            _saveMapData = saveMapData;
         }
-        
+
+        private void Start()
+        {
+            _map.SetUpMap(_backgroundColor);
+            _map.ApplyTexture(_spriteRenderer);
+            _colorMap = new SandColorMap(_map, _wight, _hight, _effectBlock, _soundManager);
+            _saveMapData.LoadDataMap();
+            // _saveMapData?.LoadDataMap();
+            /*_sandSpawnSub = Observable.EveryUpdate()
+                .Where(_ => Input.GetMouseButton(1))
+                .TimeInterval()
+                .Chunk(2, 1)
+                .Where(clicks => clicks[1].Interval.TotalSeconds <= 0.5f)
+                .ThrottleFirst(TimeSpan.FromSeconds(0.25f))
+                .Subscribe(_ => _blockManager.SpawnSandWithRandomShape(_map, _spriteRenderer));*/
+        }
+
+        private void Update()
+        {
+            if (!_isGameStarted || _map == null) return;
+            SandUpdate();
+        }
+
         private void Awake()
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -57,7 +82,7 @@ namespace Sand
         {
             _isGameStarted = false;
             _isSettled = false;
-            _hasPlayedTickSound = false; 
+            _hasPlayedTickSound = false;
             if (_map != null)
             {
                 _map.SetUpMap(_backgroundColor);
@@ -69,34 +94,15 @@ namespace Sand
                 _colorMap = new SandColorMap(_map, _wight, _hight, _effectBlock, _soundManager);
                 _colorMap.ResetCombo();
             }
+
             StartGame();
         }
 
-        private void Start()
-        {
-            _map.SetUpMap(_backgroundColor);
-            _map.ApplyTexture(_spriteRenderer);
-            _colorMap = new SandColorMap(_map, _wight, _hight, _effectBlock,_soundManager);
-
-            /*_sandSpawnSub = Observable.EveryUpdate()
-                .Where(_ => Input.GetMouseButton(1))
-                .TimeInterval()
-                .Chunk(2, 1)
-                .Where(clicks => clicks[1].Interval.TotalSeconds <= 0.5f)
-                .ThrottleFirst(TimeSpan.FromSeconds(0.25f))
-                .Subscribe(_ => _blockManager.SpawnSandWithRandomShape(_map, _spriteRenderer));*/
-        }
-
-        private void Update()
-        {
-            if (!_isGameStarted || _map == null) return;
-            SandUpdate();
-        }
 
         private void SandUpdate()
         {
             bool isTick = _map.Tick(4);
-            if (isTick) 
+            if (isTick)
             {
                 _isSettled = false;
                 if (!_hasPlayedTickSound)
@@ -112,9 +118,10 @@ namespace Sand
                     // CheckSandLosingLine();
                     ProcessSettledSand().Forget();
                     _isSettled = true;
-                    _hasPlayedTickSound = false; 
+                    _hasPlayedTickSound = false;
                 }
             }
+
             _map.UpdateTexture();
         }
 
@@ -122,7 +129,6 @@ namespace Sand
         {
             await _colorMap.SameColorCompleteBands(_backgroundColor);
             await WaitForSandToSettle();
-            Debug.Log("a");
             CheckSandLosingLine();
         }
 
@@ -139,6 +145,7 @@ namespace Sand
                     await UniTask.NextFrame();
                 }
             }
+
             await UniTask.Delay(TimeSpan.FromSeconds(0.1f));
         }
 
@@ -155,7 +162,7 @@ namespace Sand
                 for (int x = 0; x < _wight; x++)
                 {
                     var cell = _map.GetCell(x, y);
-                    var cellWarning = _map.GetCell(x,80);
+                    var cellWarning = _map.GetCell(x, 80);
                     if (cell.hasValue == 1)
                     {
                         foundSand = true;
@@ -174,15 +181,31 @@ namespace Sand
                 _gameRevive.OpenPopupRevive();
                 // _effectBlock.CheckSandLosingLineWithEffect(_map,_hight, _wight).Forget();
             }
+
             _gameVisual.WarningSand(warningSand);
         }
 
         public void MapGameOver()
         {
-            _effectBlock.CheckSandLosingLineWithEffect(_map,_hight, _wight).Forget();
+            _effectBlock.CheckSandLosingLineWithEffect(_map, _hight, _wight).Forget();
             _soundManager.OnPlaySound(SoundType.GameOver);
         }
-        
+
+        public void SaveMap()
+        {
+            _saveMapData?.SaveDataMap();
+        }
+
+        private void OnApplicationPause(bool pause)
+        {
+            if (pause) SaveMap();
+        }
+
+        private void OnApplicationQuit()
+        {
+            SaveMap();
+        }
+
         private void OnDestroy()
         {
             _map?.Dispose();

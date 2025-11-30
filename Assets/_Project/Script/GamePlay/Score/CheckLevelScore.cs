@@ -49,7 +49,8 @@ namespace Sand
         [Inject] GameVisual _gameVisual;
         [Inject] GameResources _gameResources;
         [Inject] SoundManager _soundManager;
-        [Inject] LevelModClassicSystem _levelModClassicSystem;
+        [Inject] SaveService _saveService;
+        [Inject] LevelModClassicData _levelModClassicData;
 
         IDisposable _subCurrentScore;
         IDisposable _subNextScore;
@@ -65,9 +66,9 @@ namespace Sand
             _subNextScore = Observable.EveryUpdate().Subscribe(_ => NextLevelScore());
             _subLevel = Observable.EveryUpdate().Subscribe(_ =>
             {
-                if (_scoreView._score != _lastCheckedScore)
+                if (_userData.CurrentScoreValue != _lastCheckedScore)
                 {
-                    _lastCheckedScore = _scoreView._score;
+                    _lastCheckedScore = _userData.CurrentScoreValue;
                     UpdateLevel();
                 }
             });
@@ -75,17 +76,17 @@ namespace Sand
 
         private void InitializeLevel()
         {
-            _level = _userData.LevelModClassic.Value;
+            _level = _userData.LevelModClassicValue;
             _currentLevelScoreValue = _level * _stepScore;
             _nextLevelScoreValue = (_level + 1) * _stepScore;
         }
         private void UpdateLevel()
         {
             bool levelChanged = false;
-            while (_scoreView._score >= _nextLevelScoreValue)
+            while (_userData.CurrentScoreValue >= _nextLevelScoreValue)
             {
                 _level++;
-                _levelModClassicSystem.IncreaseLevelModClassic();
+                _levelModClassicData.IncreaseLevelModClassic();
                 _currentLevelScoreValue = _nextLevelScoreValue;
                 _nextLevelScoreValue += _stepScore;
                 levelChanged = true;
@@ -109,7 +110,7 @@ namespace Sand
         {
             if (_nextLevelScoreValue > _currentLevelScoreValue)
             {
-                float targetProgress = (float)(_scoreView._score - _currentLevelScoreValue) /
+                float targetProgress = (float)(_userData.CurrentScoreValue - _currentLevelScoreValue) /
                                        (_nextLevelScoreValue - _currentLevelScoreValue);
                 targetProgress = Mathf.Clamp01(targetProgress);
                 _currentFillTween.Stop();
@@ -180,7 +181,7 @@ namespace Sand
         {
             _currentLevelScoreValue = 0;
             CurrentLevel = 0;
-            _levelModClassicSystem.ResetLevelModClassic();
+            _levelModClassicData.ResetLevelModClassic();
         }
     }
 }

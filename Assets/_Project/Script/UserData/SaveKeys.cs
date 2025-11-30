@@ -8,5 +8,7 @@
         public const string Boom = "UserData.Boom";
         public const string Map = "UserData.Map";
         public const string LevelModClassic = "UserData.LevelModClassic";
+        public const string CurrentScore = "UserData.CurrentScore";
+        public const string MapData = "UserData.MapData";
     }
 }

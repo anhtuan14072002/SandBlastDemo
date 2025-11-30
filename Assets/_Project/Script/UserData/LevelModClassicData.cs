@@ -2,13 +2,13 @@
 
 namespace Sand
 {
-    public class LevelModClassicSystem
+    public class LevelModClassicData
     {
         UserData _userData;
         SaveService _saveService;
 
         [Inject]
-        public LevelModClassicSystem(UserData userData, SaveService saveService)
+        public LevelModClassicData(UserData userData, SaveService saveService)
         {
             _userData = userData;
             _saveService = saveService;

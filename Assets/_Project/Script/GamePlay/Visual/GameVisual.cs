@@ -50,9 +50,10 @@ namespace Sand
         [SerializeField] private Button _btnReviveGems;
 
         [Inject] GameResources _gameResources;
-        [Inject] GameRevive _gameRevive;
         [Inject] CheckLevelScore _checkLevelScore;
+        [Inject] GameRevive _gameRevive;
         [Inject] SoundManager _soundManager;
+        [Inject] ScoreData _scoreData;
 
         private void Start()
         {
@@ -191,7 +192,7 @@ namespace Sand
             _pauseMenu.SetActive(false);
             _btnPauseGame.gameObject.SetActive(true);
         }
-
+        
         public void ResetGame()
         {
             _pauseMenu.SetActive(false);
@@ -200,6 +201,7 @@ namespace Sand
             DisablePopupGameOver();
             _gameRevive.ResetReviveUI();
             _checkLevelScore.ResetLevelScore();
+            _scoreData.ResetCurrentScore();
             _checkLevelScore.NextLevelScoreValue = _checkLevelScore.StepScore;
             if (_renderMap != null)
                 _renderMap.Reset();

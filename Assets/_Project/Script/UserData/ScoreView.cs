@@ -13,15 +13,26 @@ namespace Sand
     {
         [SerializeField] private TextMeshProUGUI _scoreText;
         [SerializeField] private TextMeshProUGUI _scoreTextPopupGameOver;
-        private RewardSystem _rewardSystem;
-        public int _score = 0;
-
-        [Inject]
-        void Construct(RewardSystem rewardSystem)
-        {
-            _rewardSystem = rewardSystem;
-        }
+        private int _score ;
         
+        ScoreData _scoreData;
+        UserData _userData;
+        SaveService _saveService;
+        
+        [Inject]
+        void Construct(ScoreData scoreData, UserData userData, SaveService saveService)
+        {
+            _scoreData = scoreData;
+            _userData = userData;
+            _saveService = saveService;
+        }
+
+        private void Start()
+        {
+            _score = _userData.CurrentScoreValue;
+            _scoreText.text = _score.ToString();
+        }
+
         public void Receive(in SignalScoreOnGame signal)
         {
             UpdateScore(signal.Score);
@@ -32,13 +43,16 @@ namespace Sand
             var currentScore = _score;
             _score += score;
             _scoreText.text = score.ToString();
+            _userData.CurrentScore.Value = _score;
+            _saveService.Save();
             AnimText.AnimateNumberChange(_scoreText, currentScore, _score, 0.5f, 8,_scoreText.gameObject).Forget();
             _scoreTextPopupGameOver.text = _score.ToString();
-            _rewardSystem.AddScore(_score);
+            _scoreData.CheckHighScore(_score);
         }
         public void ResetScore()
         {
             _score = 0;
+            _scoreData.ResetCurrentScore();
             _scoreText.text = "0";
             _scoreTextPopupGameOver.text = "0";
         }
