@@ -36,7 +36,6 @@ namespace Sand
 
         IDisposable _mouseClickSub;
         IDisposable _mouseClickSubWave;
-        IDisposable _magicBrushSub;
         IDisposable _dragSub;
 
         [Inject]
@@ -53,14 +52,12 @@ namespace Sand
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
             if (_spriteRenderer == null) _spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-
-            /*_mouseClickSubWave = Observable.EveryUpdate()
-                .Where(_ => Input.GetMouseButtonDown(3))
-                .Subscribe(_ => MousePositionOnMap());*/
-            _magicBrushSub = Observable.EveryUpdate().Subscribe(_ => UpdateMagicBrushIcon());
         }
-        
-        
+         
+        private void Update()
+        {
+            UpdateMagicBrushIcon();
+        }
         //---------------------Boom----------------//
         public bool PowerUpBoom()
         {
@@ -233,7 +230,6 @@ namespace Sand
         {
             _mouseClickSub?.Dispose();
             _mouseClickSubWave?.Dispose();
-            _magicBrushSub?.Dispose();
             _dragSub?.Dispose();
         }
     }

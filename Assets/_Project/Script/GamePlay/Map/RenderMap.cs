@@ -22,6 +22,7 @@ namespace Sand
         SoundManager _soundManager;
         GameVisual _gameVisual;
         SaveMapData _saveMapData;
+        SaveService _saveService;
 
         public Map _map;
         private SandColorMap _colorMap;
@@ -33,13 +34,14 @@ namespace Sand
 
         [Inject]
         void Construct(GameRevive gameRevive, EffectBlock effectBlock, SoundManager soundManager, GameVisual gameVisual,
-            SaveMapData saveMapData)
+            SaveMapData saveMapData, SaveService saveService)
         {
             _gameRevive = gameRevive;
             _effectBlock = effectBlock;
             _soundManager = soundManager;
             _gameVisual = gameVisual;
             _saveMapData = saveMapData;
+            _saveService = saveService;
         }
 
         private void Start()
@@ -190,20 +192,20 @@ namespace Sand
             _effectBlock.CheckSandLosingLineWithEffect(_map, _hight, _wight).Forget();
             _soundManager.OnPlaySound(SoundType.GameOver);
         }
-
-        public void SaveMap()
-        {
-            _saveMapData?.SaveDataMap();
-        }
-
+        
         private void OnApplicationPause(bool pause)
         {
-            if (pause) SaveMap();
+            if (pause)
+            {
+                _saveMapData?.SaveDataMap();
+                _saveService.Save();
+            }
         }
 
         private void OnApplicationQuit()
         {
-            SaveMap();
+            _saveMapData?.SaveDataMap();      
+            _saveService.Save();
         }
 
         private void OnDestroy()

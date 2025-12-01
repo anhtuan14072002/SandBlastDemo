@@ -17,13 +17,13 @@ namespace Sand
         public void IncreaseLevelModClassic()
         {
             _userData.LevelModClassic.Value++;
-            _saveService.Save();
+            // _saveService.Save();
         }
         
         public void ResetLevelModClassic()
         {
             _userData.LevelModClassic.Value = 0;
-            _saveService.Save();
+            // _saveService.Save();
         }
     }
 }

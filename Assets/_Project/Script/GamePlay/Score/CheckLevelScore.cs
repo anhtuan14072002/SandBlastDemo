@@ -52,8 +52,6 @@ namespace Sand
         [Inject] SaveService _saveService;
         [Inject] LevelModClassicData _levelModClassicData;
 
-        IDisposable _subCurrentScore;
-        IDisposable _subNextScore;
         IDisposable _subLevel;
 
         private void Start()
@@ -62,16 +60,15 @@ namespace Sand
             _claimRewardLevelUp.onClick.AddListener(() => ClaimReward().Forget());
             _claimCoreRewardLevelUp.onClick.AddListener(() => ClaimCoreReward().Forget());
 
-            _subCurrentScore = Observable.EveryUpdate().Subscribe(_ => CurrentLevelScore());
-            _subNextScore = Observable.EveryUpdate().Subscribe(_ => NextLevelScore());
-            _subLevel = Observable.EveryUpdate().Subscribe(_ =>
-            {
-                if (_userData.CurrentScoreValue != _lastCheckedScore)
-                {
-                    _lastCheckedScore = _userData.CurrentScoreValue;
-                    UpdateLevel();
-                }
-            });
+            _subLevel = _userData.CurrentScore
+                .Subscribe(_ => OnScoreChanged());
+        }
+
+        private void OnScoreChanged()
+        {
+            UpdateLevel();
+            CurrentLevelScore();
+            NextLevelScore();
         }
 
         private void InitializeLevel()
@@ -80,6 +77,7 @@ namespace Sand
             _currentLevelScoreValue = _level * _stepScore;
             _nextLevelScoreValue = (_level + 1) * _stepScore;
         }
+
         private void UpdateLevel()
         {
             bool levelChanged = false;
@@ -152,8 +150,6 @@ namespace Sand
         private void OnDestroy()
         {
             _currentFillTween.Stop();
-            _subCurrentScore?.Dispose();
-            _subNextScore?.Dispose();
             _subLevel?.Dispose();
         }
 
@@ -176,7 +172,7 @@ namespace Sand
             await UniTask.Delay(TimeSpan.FromSeconds(0.75f));
             ClosePopupLevelUp().Forget();
         }
-        
+
         public void ResetLevelScore()
         {
             _currentLevelScoreValue = 0;

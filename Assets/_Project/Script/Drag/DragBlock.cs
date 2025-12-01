@@ -32,12 +32,10 @@ namespace Sand
             _blockSpawn = blockSpawn;
             _map = map;
         }
-        private void Start()
+        private void Update()
         {
-            _dragSub = Observable.EveryUpdate()
-                .Subscribe(_ => HandleDragInput());
+            HandleDragInput();
         }
-
         private void HandleDragInput()
         {
             if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
