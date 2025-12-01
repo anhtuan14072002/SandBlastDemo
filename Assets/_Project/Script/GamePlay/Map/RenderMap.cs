@@ -164,7 +164,7 @@ namespace Sand
                 for (int x = 0; x < _wight; x++)
                 {
                     var cell = _map.GetCell(x, y);
-                    var cellWarning = _map.GetCell(x, 80);
+                    var cellWarning = _map.GetCell(x, 75);
                     if (cell.hasValue == 1)
                     {
                         foundSand = true;
@@ -207,7 +207,7 @@ namespace Sand
             _saveMapData?.SaveDataMap();      
             _saveService.Save();
         }
-
+        
         private void OnDestroy()
         {
             _map?.Dispose();

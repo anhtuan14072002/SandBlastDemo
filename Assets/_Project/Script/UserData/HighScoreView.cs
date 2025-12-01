@@ -12,9 +12,10 @@ namespace Sand
     {
         [SerializeField] private TextMeshProUGUI _highScoreText;
         [SerializeField] private TextMeshProUGUI _highScoreTextPopupGameOver;
-        UserData _userData;
+        
         private int _currentHighScore = 0;
         private float _originalFontSize;
+        UserData _userData;
         IDisposable _sub;
 
         [Inject]

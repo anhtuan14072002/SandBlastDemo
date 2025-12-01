@@ -9109,7 +9109,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -3340824167500581928, guid: 8daa624a7f1b8f14aac6104ba2c18ef8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 045ef144fc6424eb2845bef7cccc040d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -10831,7 +10831,7 @@ MonoBehaviour:
     rgba: 4283578684
   _hight: 105
   _wight: 88
-  _hightGameOver: 95
+  _hightGameOver: 91
   _blockManager: {fileID: 533819452}
   _spriteRenderer: {fileID: 0}
 --- !u!212 &533819450
@@ -15201,7 +15201,7 @@ MonoBehaviour:
   _scalePress: {x: 0.9, y: 0.9, z: 0.9}
   _scaleNormal: {x: 1, y: 1, z: 1}
   _duration: 0.1
-  _colorNormal: {r: 1, g: 1, b: 1, a: 1}
+  _colorNormal: {r: 0.24705882, g: 0.9137255, b: 0, a: 1}
   _colorDisable: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   _button: {fileID: 53529612}
 --- !u!1 &832975034
@@ -15801,6 +15801,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1643492037342491448, guid: fd1f8d2443670184cbb911c9d33dc17d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3733863337292976672, guid: fd1f8d2443670184cbb911c9d33dc17d, type: 3}
       propertyPath: m_LocalScale.y
       value: 0.946
@@ -15812,6 +15816,14 @@ PrefabInstance:
     - target: {fileID: 3733863337292976672, guid: fd1f8d2443670184cbb911c9d33dc17d, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5834714575004037237, guid: fd1f8d2443670184cbb911c9d33dc17d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5834714575004037237, guid: fd1f8d2443670184cbb911c9d33dc17d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.417
       objectReference: {fileID: 0}
     - target: {fileID: 9071521722823301357, guid: fd1f8d2443670184cbb911c9d33dc17d, type: 3}
       propertyPath: m_LocalPosition.y
@@ -15855,7 +15867,7 @@ MonoBehaviour:
   _scalePress: {x: 0.9, y: 0.9, z: 0.9}
   _scaleNormal: {x: 1, y: 1, z: 1}
   _duration: 0.1
-  _colorNormal: {r: 1, g: 1, b: 1, a: 1}
+  _colorNormal: {r: 0.24705882, g: 0.9137255, b: 0, a: 1}
   _colorDisable: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   _button: {fileID: 63665646}
 --- !u!1 &894717617
@@ -18989,7 +19001,7 @@ MonoBehaviour:
   _scalePress: {x: 0.9, y: 0.9, z: 0.9}
   _scaleNormal: {x: 1, y: 1, z: 1}
   _duration: 0.1
-  _colorNormal: {r: 1, g: 1, b: 1, a: 1}
+  _colorNormal: {r: 0.24705882, g: 0.9137255, b: 0, a: 1}
   _colorDisable: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   _button: {fileID: 595903207}
 --- !u!1 &1084442608
@@ -26106,7 +26118,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -3340824167500581928, guid: 8daa624a7f1b8f14aac6104ba2c18ef8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 045ef144fc6424eb2845bef7cccc040d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -26520,7 +26532,7 @@ MonoBehaviour:
   _scalePress: {x: 0.9, y: 0.9, z: 0.9}
   _scaleNormal: {x: 1, y: 1, z: 1}
   _duration: 0.1
-  _colorNormal: {r: 1, g: 1, b: 1, a: 1}
+  _colorNormal: {r: 0.24705882, g: 0.9137255, b: 0, a: 1}
   _colorDisable: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   _button: {fileID: 349711562}
 --- !u!1 &1567598897
@@ -31001,7 +31013,7 @@ MonoBehaviour:
   _scalePress: {x: 0.9, y: 0.9, z: 0.9}
   _scaleNormal: {x: 1, y: 1, z: 1}
   _duration: 0.1
-  _colorNormal: {r: 1, g: 1, b: 1, a: 1}
+  _colorNormal: {r: 0.24705882, g: 0.9137255, b: 0, a: 1}
   _colorDisable: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   _button: {fileID: 1597285844}
 --- !u!1 &1721153170
@@ -40922,7 +40934,7 @@ MonoBehaviour:
   _scalePress: {x: 0.9, y: 0.9, z: 0.9}
   _scaleNormal: {x: 1, y: 1, z: 1}
   _duration: 0.1
-  _colorNormal: {r: 1, g: 1, b: 1, a: 1}
+  _colorNormal: {r: 0.24705882, g: 0.9137255, b: 0, a: 1}
   _colorDisable: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   _button: {fileID: 2080563986}
 --- !u!1 &2083153123
@@ -41130,7 +41142,6 @@ MonoBehaviour:
   _btnQuitGameOver: {fileID: 1622605053}
   _btnReviveGems: {fileID: 810431155}
   _pauseMenu: {fileID: 120706296}
-  _adManager: {fileID: 0}
   _gdprScript: {fileID: 2084033667}
 --- !u!114 &2084033664
 MonoBehaviour:

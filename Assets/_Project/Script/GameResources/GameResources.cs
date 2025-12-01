@@ -1,5 +1,6 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
+using HadesSDK.Ads.Runtime;
 using PrimeTween;
 using R3;
 using TMPro;
@@ -46,6 +47,7 @@ namespace Sand
             _subCore = Observable.EveryUpdate().Subscribe(_ =>
                 CheckCoreReward(_pointerRectTransform.anchoredPosition.x));
             _btnBuyGem[0].onClick.AddListener(BuyNoAds);
+            _btnBuyGem[5].onClick.AddListener(WatchReceiveGems);
 
             for (int i = 1; i < _btnBuyGem.Length; i++)
             {
@@ -55,7 +57,10 @@ namespace Sand
 
             for (int i = 0; i < _textPriceBuyGem.Length; i++)
             {
-                _textPriceBuyGem[i].text = _priceBuyGem[i].ToString();
+                if (i == 5)
+                    _textPriceBuyGem[i].text = "Free";
+                else
+                    _textPriceBuyGem[i].text = _priceBuyGem[i].ToString();
             }
 
             for (int i = 1; i < _textAmoutGems.Length; i++)
@@ -69,17 +74,49 @@ namespace Sand
             Debug.Log("BuyNoAds");
         }
 
+        public void WatchReceiveGems()
+        {
+            AdManager.Instance.ShowReward(OnInterstitialSuccess, OnInterstitialFail, "buy_no_ads");
+        }
+
+        public void WatchReceiveGemsCore()
+        {
+            AdManager.Instance.ShowReward(OnCoreRewardSuccess, OnCoreRewardFail, "gem_reward_core");
+        }
+
+        private void OnInterstitialSuccess()
+        {
+            Debug.Log("Interstitial ad displayed successfully");
+            _rewardSystem.AddGems(20);
+        }
+
+        private void OnInterstitialFail()
+        {
+            Debug.Log("Interstitial ad failed to display");
+        }
+
+        private void OnCoreRewardSuccess()
+        {
+            Debug.Log("Core reward ad completed successfully");
+            ClaimCoreGemsLevelUp(_currentCore);
+        }
+
+        private void OnCoreRewardFail()
+        {
+            Debug.Log("Core reward ad failed to display");
+            ClaimCoreGemsLevelUp(0);
+        }
+
         private void BuyGems(int gems)
         {
             _rewardSystem.AddGems(gems);
         }
-        
+
         public void ClaimGemsLevelUp()
         {
             _rewardSystem.AddGems(_rewardGemsLevelUp);
-            
         }
-        
+
         private void ClaimCoreGemsLevelUp(int core)
         {
             _rewardSystem.AddGems(_rewardGemsLevelUp * core);
@@ -91,6 +128,7 @@ namespace Sand
             _currentTween = _pointerRectTransform.TweenAnchoredX(_targetX, 0.75f, Ease.Linear, -1, CycleMode.Yoyo);
         }
 
+
         public async UniTask StopCoreAnimation()
         {
             _isPauseCoreReward = true;
@@ -101,8 +139,7 @@ namespace Sand
 
             float currentX = _pointerRectTransform.anchoredPosition.x;
             CheckCoreReward(currentX);
-            await UniTask.Delay(TimeSpan.FromSeconds(1.65f));
-            ClaimCoreGemsLevelUp(_currentCore);
+            WatchReceiveGemsCore();
         }
 
         public void ResetCoreAnimation()
@@ -169,8 +206,10 @@ namespace Sand
 
         public void ResetGem()
         {
-            _rewardSystem.DeductGems(_userData.GemsValue);;
+            _rewardSystem.DeductGems(_userData.GemsValue);
+            ;
         }
+
         private void OnDestroy()
         {
             _subCore?.Dispose();

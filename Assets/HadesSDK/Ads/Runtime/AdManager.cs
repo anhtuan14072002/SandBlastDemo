@@ -448,7 +448,6 @@ namespace HadesSDK.Ads.Runtime
 
             return _aoaProvider.IsAOAReady();
         }
-
         #endregion
     }
 }

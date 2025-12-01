@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interID: "\tca-app-pub-3940256099942544/1033173712"
   rewardID: "\tca-app-pub-3940256099942544/5224354917"
-  mrecID: 
-  aoaID: 
+  mrecID: "\tca-app-pub-3940256099942544/1033173712"
+  aoaID: ca-app-pub-3940256099942544/9257395921
   bannerID: "\tca-app-pub-3940256099942544/6300978111"
   mrecAdPosition: 1
   bannerIsCollapsible: 0

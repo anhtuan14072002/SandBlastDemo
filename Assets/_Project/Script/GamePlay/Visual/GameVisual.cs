@@ -47,15 +47,10 @@ namespace Sand
         [SerializeField] private Button _btnQuitGame;
         [SerializeField] private Button _btnQuitGameOver;
         [SerializeField] private Button _btnReviveGems;
-
-
-        [Header("GamePlayUI")] [SerializeField]
-        private GameObject _pauseMenu;
         
-        [Header("Ads")]
-        [SerializeField] private AdManager _adManager;
-        [SerializeField] private GDPRScript _gdprScript;
-        
+        [Header("GamePlayUI")] [SerializeField] private GameObject _pauseMenu;
+        [Header("Ads")] [SerializeField] private GDPRScript _gdprScript;
+
         [Inject] GameResources _gameResources;
         [Inject] CheckLevelScore _checkLevelScore;
         [Inject] GameRevive _gameRevive;
@@ -65,9 +60,7 @@ namespace Sand
         private void Start()
         {
             // _gdprScript.CallGDPR();
-            // _adManager.HideBanner();
-            // _adManager.LoadBanner();
-            
+            // AdManager.Instance.LoadBanner();
             for (int i = 0; i < _btnSelection.Length; i++)
             {
                 var i1 = i;
@@ -85,8 +78,8 @@ namespace Sand
             _btnPauseGame.onClick.AddListener(PauseGame);
             _btnResumeGame.onClick.AddListener(ResumeGame);
 
-            _btnRestartGame.onClick.AddListener(ResetGame);
-            _btnRestartGameOver.onClick.AddListener(ResetGame);
+            _btnRestartGame.onClick.AddListener(InterResetGame);
+            _btnRestartGameOver.onClick.AddListener(InterResetGame);
 
             _btnQuitGame.onClick.AddListener(() => ReturnHomeMenu().Forget());
             _btnQuitGameOver.onClick.AddListener(() => ReturnHomeGameOver().Forget());
@@ -187,10 +180,9 @@ namespace Sand
             EnableSkill();
             _animLoad.SetTrigger(LoadGame);
             await UniTask.WaitForSeconds(1f);
-            
-            // _adManager.ShowBanner();
-            _gdprScript.CallGDPR();
-            
+
+            AdManager.Instance.ShowBanner();
+
             if (_renderMap != null)
                 _renderMap.StartGame();
             _animLoad.gameObject.SetActive(false);
@@ -207,7 +199,13 @@ namespace Sand
             _pauseMenu.SetActive(false);
             _btnPauseGame.gameObject.SetActive(true);
         }
-        
+
+        public void InterResetGame()
+        {
+            if (AdManager.Instance.IsMrecReady())
+                AdManager.Instance.HideMrec();
+            AdManager.Instance.ShowInterstitial(ResetGame, null, "replay_game");
+        }
         public void ResetGame()
         {
             _pauseMenu.SetActive(false);
@@ -239,6 +237,9 @@ namespace Sand
             DisableSkill();
             _animLoad.gameObject.SetActive(true);
             await UniTask.WaitForSeconds(1f);
+
+            AdManager.Instance.HideBanner();
+
             _currenScore.SetActive(false);
             _scoreBar.SetActive(false);
             _groupMenu.SetActive(true);
@@ -261,6 +262,9 @@ namespace Sand
             Global.Send(new SignalResetAllBlocks());
             Global.Send(new SignalRestCurrenScore());
             await UniTask.WaitForSeconds(1f);
+
+            AdManager.Instance.HideBanner();
+
             _currenScore.SetActive(false);
             _scoreBar.SetActive(false);
             _groupMenu.SetActive(true);
@@ -275,12 +279,19 @@ namespace Sand
         private void DisablePopupGameOver()
         {
             if (_renderMap != null) _renderMap.Reset();
-            if (_popupGameOver.activeSelf) _popupGameOver.SetActive(false);
+            if (_popupGameOver.activeSelf)
+            {
+                _popupGameOver.SetActive(false);
+                AdManager.Instance.HideMrec();
+                AdManager.Instance.ShowBanner();
+            }
         }
 
         public void Receive(in SignalOpenPopupGameOver signal)
         {
             _popupGameOver.SetActive(true);
+            AdManager.Instance.HideBanner();
+            AdManager.Instance.ShowMrec();
         }
 
         private void OpenPopupHome()
