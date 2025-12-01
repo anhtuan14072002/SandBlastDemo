@@ -12,7 +12,7 @@ namespace Sand
             FitCameraForAllDevices(_camera, _mapWidth);
         }
 
-        void FitCameraToWidth(Camera cam, float mapWidth)
+        /*void FitCameraToWidth(Camera cam, float mapWidth)
         {
             float aspect = (float)Screen.width / Screen.height;
             cam.orthographicSize = (mapWidth / 2f) / aspect;
@@ -25,7 +25,7 @@ namespace Sand
             float sizeByWidth  = (mapWidth / 2f) / aspect;
 
             cam.orthographicSize = Mathf.Max(sizeByHeight, sizeByWidth);
-        }
+        }*/
         void FitCameraForAllDevices(Camera cam, float mapWidth)
         {
             float aspect = (float)Screen.width / Screen.height;

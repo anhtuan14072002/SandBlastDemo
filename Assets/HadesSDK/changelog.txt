@@ -1,0 +1,14 @@
+Version 1.1.2
+-Fix some stuffs
+Version 1.1.1
+-Add UniTask internal
+Version 1.1.0
+-Fix some bugs
+-Analytic Singleton, public remote config variable
+-Ads loading popup
+-Ads ready not ready notify
+-Build validator (beta)
+Version 1.0.0
+-First Release
+-Integrated Mediation included: Admob, Applovin, IronSource
+-Integrated MMP services: Appsflyer, Adjust

@@ -1,6 +1,8 @@
 ﻿using System;
 using Core;
 using Cysharp.Threading.Tasks;
+using Game;
+using HadesSDK.Ads.Runtime;
 using PrimeTween;
 using UnityEngine;
 using UnityEngine.UI;
@@ -38,9 +40,6 @@ namespace Sand
         private static readonly int LoadGame = Animator.StringToHash("Load");
         private static readonly int EndMenu = Animator.StringToHash("End");
 
-        [Header("GamePlayUI")] [SerializeField]
-        private GameObject _pauseMenu;
-
         [SerializeField] private Button _btnPauseGame;
         [SerializeField] private Button _btnResumeGame;
         [SerializeField] private Button _btnRestartGame;
@@ -49,6 +48,14 @@ namespace Sand
         [SerializeField] private Button _btnQuitGameOver;
         [SerializeField] private Button _btnReviveGems;
 
+
+        [Header("GamePlayUI")] [SerializeField]
+        private GameObject _pauseMenu;
+        
+        [Header("Ads")]
+        [SerializeField] private AdManager _adManager;
+        [SerializeField] private GDPRScript _gdprScript;
+        
         [Inject] GameResources _gameResources;
         [Inject] CheckLevelScore _checkLevelScore;
         [Inject] GameRevive _gameRevive;
@@ -57,6 +64,10 @@ namespace Sand
 
         private void Start()
         {
+            // _gdprScript.CallGDPR();
+            // _adManager.HideBanner();
+            // _adManager.LoadBanner();
+            
             for (int i = 0; i < _btnSelection.Length; i++)
             {
                 var i1 = i;
@@ -176,6 +187,10 @@ namespace Sand
             EnableSkill();
             _animLoad.SetTrigger(LoadGame);
             await UniTask.WaitForSeconds(1f);
+            
+            // _adManager.ShowBanner();
+            _gdprScript.CallGDPR();
+            
             if (_renderMap != null)
                 _renderMap.StartGame();
             _animLoad.gameObject.SetActive(false);

@@ -30,7 +30,7 @@ namespace Sand
 
         public void SaveDataMap()
         {
-            /*int width  = Map.Width;
+            int width  = Map.Width;
             int height = Map.Height;
             int length = width * height;
 
@@ -50,14 +50,13 @@ namespace Sand
 
             ES3.Save(KEY_MAP_WIDTH,  width);
             ES3.Save(KEY_MAP_HEIGHT, height);
-            ES3.Save(KEY_MAP_CELLS,  cellsData);*/
-            
+            ES3.Save(KEY_MAP_CELLS,  cellsData);
+            Debug.Log("Save map data");
         }
 
         public void LoadDataMap()
         {
-            Debug.Log("Load map data");
-            /*if (!ES3.KeyExists(KEY_MAP_CELLS))
+            if (!ES3.KeyExists(KEY_MAP_CELLS))
                 return;
 
             int savedWidth  = ES3.Load<int>(KEY_MAP_WIDTH);
@@ -85,7 +84,8 @@ namespace Sand
                 }
             }
 
-            Map.UpdateTexture();*/
+            Map.UpdateTexture();
+            Debug.Log("Load map data");
         }
     }
 }
