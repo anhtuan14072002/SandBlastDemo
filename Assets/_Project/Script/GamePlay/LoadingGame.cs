@@ -63,6 +63,7 @@ using Cysharp.Threading.Tasks;
 using HadesSDK.Ads.Runtime;
 using Random = UnityEngine.Random;
 using System;
+using HadesSDK.Ads.Core;
 
 namespace Sand
 {
@@ -84,6 +85,8 @@ namespace Sand
 
         private async UniTask FakeLoadingRoutine()
         {
+            var a = SceneManager.LoadSceneAsync("GamePlay");
+            a.allowSceneActivation = false;
             foreach (int step in steps)
             {
                 targetValue = step / 100f;
@@ -100,7 +103,8 @@ namespace Sand
 
             await ShowAdWithTimeout();
             await UniTask.Delay(TimeSpan.FromSeconds(0.15f));
-            SceneManager.LoadScene("GamePlay");
+            a.allowSceneActivation = true;
+            // SceneManager.LoadScene("GamePlay");
         }
 
         private async UniTask ShowAdWithTimeout()
@@ -114,6 +118,15 @@ namespace Sand
                 
                 if (completed == 0)
                 {
+                    if (FirebaseService.Instance != null)
+                    {
+                        Debug.Log("ok");
+                    }
+                    else
+                    {
+                        Debug.Log("FirebaseService is null");
+                    }
+                    
                     AdManager.Instance.ShowAoa();
                 }
                 else

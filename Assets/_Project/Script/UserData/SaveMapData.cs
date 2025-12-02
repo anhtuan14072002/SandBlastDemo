@@ -74,15 +74,10 @@ namespace Sand
                 }
             }
 
-            if (!hasData)
-            {
-                Global.Send(new SignalDisableButtonContinueMenu());
-            }
+            if (hasData)
+                Global.Send(new SignalChangTextBtnSwitchPlay() { IsChange = true });
             else
-            {
-                Global.Send(new SignalEnableButtonContinueMenu());
-                Global.Send(new SignalChangTextBtnSwitchPlay(){IsChange = true});
-            }
+                Global.Send(new SignalChangTextBtnSwitchPlay() { IsChange = false });
             
             Map.SetUpMap(Background);
             int i = 0;

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "52586519402",
+    "project_id": "sandblast-e6574",
+    "storage_bucket": "sandblast-e6574.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:52586519402:android:7cebb5d63cab10d8efe313",
+        "android_client_info": {
+          "package_name": "com.DefaultCompany.SandBlast"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKx3utOZDMPZm4DQc-7-41owSqhruWTyw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

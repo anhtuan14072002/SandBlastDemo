@@ -1,5 +1,6 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
+using HadesSDK.Ads.Core;
 using R3;
 using TMPro;
 using UnityEngine;
@@ -52,7 +53,7 @@ namespace Sand
         [Inject] LevelModClassicData _levelModClassicData;
 
         IDisposable _subLevel;
-
+        
         private void Start()
         {
             InitializeLevel();
@@ -75,6 +76,7 @@ namespace Sand
             _level = _userData.LevelModClassicValue;
             _currentLevelScoreValue = _level * _stepScore;
             _nextLevelScoreValue = (_level + 1) * _stepScore;
+            FirebaseService.Instance.LogEvent("level_start", new EventParameter("time", "2025"));
         }
 
         private void UpdateLevel()
@@ -86,6 +88,7 @@ namespace Sand
                 _levelModClassicData.IncreaseLevelModClassic();
                 _currentLevelScoreValue = _nextLevelScoreValue;
                 _nextLevelScoreValue += _stepScore;
+                FirebaseService.Instance.LogEvent("level_up", new EventParameter("level_up", "{" + _level + "}"));
                 levelChanged = true;
             }
 

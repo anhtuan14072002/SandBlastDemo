@@ -34,9 +34,10 @@ namespace Sand
             _sub = _userData.HighScore.Subscribe(value =>
             {
                 AnimText.AnimateNumberChange(_highScoreText, _currentHighScore, value, 0.5f, 2,
-                        _highScoreText.gameObject)
+                        _highScoreText.gameObject, false)
                     .Forget();
-                _highScoreTextPopupGameOver.text = NumberFormat.Format(value);
+                // _highScoreTextPopupGameOver.text = NumberFormat.Format(value);
+                _highScoreTextPopupGameOver.text = value.ToString();
                 _currentHighScore = value;
                 AdjustFontSize(value);
             });

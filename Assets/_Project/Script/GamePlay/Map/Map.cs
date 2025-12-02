@@ -252,13 +252,12 @@ namespace Sand
 
             return _cells[Idx(x, y)];
         }
-
         public Color32 GetCellColor(int x, int y)
         {
             var cell = GetCell(x, y);
             return cell.color;
         }
-
+        
         public bool HasValue(int x, int y)
         {
             var cell = GetCell(x, y);

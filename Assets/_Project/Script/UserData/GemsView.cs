@@ -24,8 +24,8 @@ public class GemsView : MonoBehaviour
 
         _sub = _userData.Gems.Subscribe(value =>
         {
-            AnimText.AnimateNumberChange(_gemsTextMenu, _currentGems, value, 0.5f, 2, _gemsTextMenu.gameObject).Forget();
-            AnimText.AnimateNumberChange(_gemsTextShop, _currentGems, value, 0.5f, 2, _gemsTextShop.gameObject).Forget();
+            AnimText.AnimateNumberChange(_gemsTextMenu, _currentGems, value, 0.5f, 2, _gemsTextMenu.gameObject, true).Forget();
+            AnimText.AnimateNumberChange(_gemsTextShop, _currentGems, value, 0.5f, 2, _gemsTextShop.gameObject, true).Forget();
             _currentGems = value;
         });
     }

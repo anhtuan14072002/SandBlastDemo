@@ -12,12 +12,9 @@ namespace Sand
 {
     public class GameVisual : GameElement,
         IReceive<SignalOpenPopupGameOver>,
-        IReceive<SignalEnableButtonContinueMenu>,
-        IReceive<SignalDisableButtonContinueMenu>,
         IReceive<SignalChangTextBtnSwitchPlay>
     {
-        [Header("MainMenu")] 
-        [SerializeField] private LayoutElement[] _layoutElement;
+        [Header("MainMenu")] [SerializeField] private LayoutElement[] _layoutElement;
         [SerializeField] private GameObject[] _focus;
         [SerializeField] private GameObject[] _iconMenu;
         [SerializeField] private GameObject[] _popupCategory;
@@ -51,11 +48,13 @@ namespace Sand
         [SerializeField] private Button _btnQuitGame;
         [SerializeField] private Button _btnQuitGameOver;
         [SerializeField] private Button _btnReviveGems;
-        [SerializeField] private Button _btnContinueMenu;
+        [SerializeField] private Button _btnNewGame;
 
         [SerializeField] private TextMeshProUGUI _textBtnSwitchPlay;
-        
-        [Header("GamePlayUI")] [SerializeField] private GameObject _pauseMenu;
+
+        [Header("GamePlayUI")] [SerializeField]
+        private GameObject _pauseMenu;
+
         [Header("Ads")] [SerializeField] private GDPRScript _gdprScript;
 
         [Inject] GameResources _gameResources;
@@ -95,6 +94,8 @@ namespace Sand
             // _claimCoreRewardLevelUp.onClick.AddListener(() => ClaimCoreReward().Forget());
 
             _btnReviveGems.onClick.AddListener(ReviveGems);
+
+            _btnNewGame.onClick.AddListener(ResetGame);
         }
 
         private void IncreaseElement(int index)
@@ -213,10 +214,12 @@ namespace Sand
                 AdManager.Instance.HideMrec();
             AdManager.Instance.ShowInterstitial(ResetGame, null, "replay_game");
         }
+
         public void ResetGame()
         {
             _pauseMenu.SetActive(false);
             _btnPauseGame.gameObject.SetActive(true);
+            ChangTextBtnSwitchPlay(false);
             EnableSkill();
             DisablePopupGameOver();
             _gameRevive.ResetReviveUI();
@@ -243,6 +246,8 @@ namespace Sand
             _btnPauseGame.gameObject.SetActive(false);
             DisableSkill();
             _animLoad.gameObject.SetActive(true);
+            ChangTextBtnSwitchPlay(true);
+
             await UniTask.WaitForSeconds(1f);
 
             AdManager.Instance.HideBanner();
@@ -266,6 +271,9 @@ namespace Sand
             _animLoad.gameObject.SetActive(true);
             DisablePopupGameOver();
             _gameRevive.ResetReviveUI();
+
+            ChangTextBtnSwitchPlay(false);
+
             Global.Send(new SignalResetAllBlocks());
             Global.Send(new SignalRestCurrenScore());
             await UniTask.WaitForSeconds(1f);
@@ -293,7 +301,7 @@ namespace Sand
                 AdManager.Instance.ShowBanner();
             }
         }
-        
+
         private void OpenPopupHome()
         {
             _popupCategory[2].gameObject.SetActive(true);
@@ -311,18 +319,6 @@ namespace Sand
         }
 
         //---------------------CheckSwitchButtonPlay-------------------//
-        public void CheckSwitchButtonPlay()
-        {
-            
-        }
-        public void EnableButtonContinueMenu()
-        {
-            _btnContinueMenu.gameObject.SetActive(true);
-        }
-        public void DisableButtonContinueMenu()
-        {
-            _btnContinueMenu.gameObject.SetActive(false);
-        }
 
         public void ChangTextBtnSwitchPlay(bool change)
         {
@@ -351,7 +347,7 @@ namespace Sand
         {
             _warningSand.SetActive(isWarningSand);
         }
-        
+
         //--------------------Signal----------------------//
         public void Receive(in SignalOpenPopupGameOver signal)
         {
@@ -359,17 +355,7 @@ namespace Sand
             AdManager.Instance.HideBanner();
             AdManager.Instance.ShowMrec();
         }
-
-        public void Receive(in SignalEnableButtonContinueMenu signal)
-        {
-            EnableButtonContinueMenu();
-        }
-
-        public void Receive(in SignalDisableButtonContinueMenu signal)
-        {
-            DisableButtonContinueMenu();
-        }
-
+        
         public void Receive(in SignalChangTextBtnSwitchPlay signal)
         {
             ChangTextBtnSwitchPlay(signal.IsChange);

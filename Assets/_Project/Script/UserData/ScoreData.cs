@@ -1,4 +1,6 @@
-﻿namespace Sand
+﻿using HadesSDK.Ads.Core;
+
+namespace Sand
 {
     public class ScoreData
     {
@@ -15,6 +17,7 @@
         {
             if (score <= _userData.HighScoreValue) return;
             _userData.HighScore.Value = score;
+            FirebaseService.Instance.LogEvent("high_score", new EventParameter("high_score", "{" + score + "}"));
             // _saveService.Save();
         }
 

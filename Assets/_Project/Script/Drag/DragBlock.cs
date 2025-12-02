@@ -90,7 +90,7 @@ namespace Sand
                 Vector3 snappedLocal = new Vector3(fx, fy, 0);
                 Vector3 snappedWorld = _map.transform.TransformPoint(snappedLocal);
                 
-                Debug.Log($"x : {cellX} y : {cellY} snappedWorld : {snappedWorld}");
+                // Debug.Log($"x : {cellX} y : {cellY} snappedWorld : {snappedWorld}");
                 
                 _objDrag.transform.localScale = Vector3.one * 8f;
 

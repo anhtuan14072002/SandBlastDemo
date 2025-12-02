@@ -45,7 +45,7 @@ namespace Sand
             _score += score;
             // _scoreText.text = _score.ToString();
             _userData.CurrentScore.Value = _score;
-            AnimText.AnimateNumberChange(_scoreText, startScore, _score, 0.5f, 8, _scoreText.gameObject).Forget();
+            AnimText.AnimateNumberChange(_scoreText, startScore, _score, 0.5f, 8, _scoreText.gameObject, false).Forget();
             // _scoreTextPopupGameOver.text = NumberFormat.Format(_score);
             _scoreTextPopupGameOver.text = _score.ToString();
             _scoreData.CheckHighScore(_score);

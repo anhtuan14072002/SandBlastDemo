@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Core;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Zenject;
@@ -9,8 +10,7 @@ namespace Sand
     [RequireComponent(typeof(SpriteRenderer))]
     public class RenderMap : MonoBehaviour
     {
-        [Header("Setting")] 
-        [SerializeField] public Color32 _backgroundColor;
+        [Header("Setting")] [SerializeField] public Color32 _backgroundColor;
         [SerializeField] public int _hight;
         [SerializeField] public int _wight;
         [SerializeField] public int _hightGameOver;
@@ -192,7 +192,27 @@ namespace Sand
             _effectBlock.CheckSandLosingLineWithEffect(_map, _hight, _wight).Forget();
             _soundManager.OnPlaySound(SoundType.GameOver);
         }
-        
+
+        private void CheckValueAllMap()
+        {
+            bool hasData = false;
+            for (int y = 0; y < _map.Height; y++)
+            {
+                for (int x = 0; x < _map.Width ; x++)
+                {
+                    if (_map.GetCell(x, y).hasValue == 1)
+                    {
+                        hasData = true;
+                        Debug.Log("co data");
+                        break;
+                    }
+                    Debug.Log("khong co data");
+                    break;
+                }
+            }
+            Global.Send(new SignalChangTextBtnSwitchPlay() { IsChange = hasData });
+        }
+
         private void OnApplicationPause(bool pause)
         {
             if (pause)
@@ -204,10 +224,10 @@ namespace Sand
 
         private void OnApplicationQuit()
         {
-            _saveMapData?.SaveDataMap();      
+            _saveMapData?.SaveDataMap();
             _saveService.Save();
         }
-        
+
         private void OnDestroy()
         {
             _map?.Dispose();

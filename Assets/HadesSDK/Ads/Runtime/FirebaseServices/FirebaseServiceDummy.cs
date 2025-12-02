@@ -10,6 +10,7 @@ namespace HadesSDK.Ads.Runtime.FirebaseServices
 
         public FirebaseServiceDummy()
         {
+            // Instance = this;
             _remoteConfig = new RemoteConfig();
         }
         

@@ -10977,6 +10977,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _shopPanel: {fileID: 1443169835}
+  _shopPanelHasColse: {fileID: 0}
 --- !u!1 &559089292
 GameObject:
   m_ObjectHideFlags: 0
@@ -19722,7 +19723,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -401.50003, y: 305.99994}
+  m_AnchoredPosition: {x: -401.50003, y: 306}
   m_SizeDelta: {x: 150.86, y: 150.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1118003019
@@ -33683,7 +33684,7 @@ GameObject:
   - component: {fileID: 1865640802}
   - component: {fileID: 1865640801}
   m_Layer: 5
-  m_Name: BtnTobecontinue
+  m_Name: BtnNewGame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41433,6 +41434,8 @@ MonoBehaviour:
   _btnQuitGame: {fileID: 1787386350}
   _btnQuitGameOver: {fileID: 1622605053}
   _btnReviveGems: {fileID: 810431155}
+  _btnNewGame: {fileID: 1865640803}
+  _textBtnSwitchPlay: {fileID: 74242604}
   _pauseMenu: {fileID: 120706296}
   _gdprScript: {fileID: 2084033667}
 --- !u!114 &2084033664
@@ -42855,11 +42858,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7204947941485906438, guid: 8a2a56e443ba7504283e2d69c0c98df1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -73
+      value: -46
       objectReference: {fileID: 0}
     - target: {fileID: 7204947941485906438, guid: 8a2a56e443ba7504283e2d69c0c98df1, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -163
+      value: -50
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448973119743462389, guid: 8a2a56e443ba7504283e2d69c0c98df1, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448973119743462389, guid: 8a2a56e443ba7504283e2d69c0c98df1, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -42
+      objectReference: {fileID: 0}
+    - target: {fileID: 8752154941097653820, guid: 8a2a56e443ba7504283e2d69c0c98df1, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -118.10915
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

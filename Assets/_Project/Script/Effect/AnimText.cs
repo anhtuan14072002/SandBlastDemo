@@ -8,7 +8,7 @@ namespace Core
     public static class AnimText
     {
         public static async UniTask AnimateNumberChange(TextMeshProUGUI textComponent, int startValue, int endValue,
-            float duration, float frequency, GameObject icon)
+            float duration, float frequency, GameObject icon, bool isAcronym)
         {
             float elapsedTime = 0;
             var startColor = Color.white;
@@ -21,7 +21,11 @@ namespace Core
                 elapsedTime += Time.deltaTime;
                 var progress = elapsedTime / duration;
                 var currentValue = (int)Mathf.Lerp(startValue, endValue, progress);
-                textComponent.text = NumberFormat.Format(currentValue);
+                
+                if (isAcronym)
+                   textComponent.text = NumberFormat.Format(currentValue);
+                else
+                    textComponent.text = currentValue.ToString();
 
                 if (endValue < startValue)
                 {
@@ -41,7 +45,12 @@ namespace Core
                 await UniTask.Yield();
             }
 
-            textComponent.text = NumberFormat.Format(endValue);
+            // textComponent.text = NumberFormat.Format(endValue);
+            if (isAcronym)
+                textComponent.text = NumberFormat.Format(endValue);
+            else
+                textComponent.text = endValue.ToString();
+            
             if (endValue < startValue)
             {
                 textComponent.color = Color.white;
