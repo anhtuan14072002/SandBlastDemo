@@ -10,7 +10,9 @@ using Zenject;
 public class GemsView : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _gemsTextMenu;
+    [SerializeField] private TextMeshProUGUI _gemsTextMenuInGame;
     [SerializeField] private TextMeshProUGUI _gemsTextShop;
+    [SerializeField] private TextMeshProUGUI _gemsTextShopInGame;
     [Inject] private UserData _userData;
     IDisposable _sub;
 
@@ -19,13 +21,19 @@ public class GemsView : MonoBehaviour
     private void Start()
     {
         _currentGems = _userData.GemsValue;
-        _gemsTextMenu.text = NumberFormat.Format(_currentGems);
-        _gemsTextShop.text = NumberFormat.Format(_currentGems);
-
+        // _gemsTextMenu.text = NumberFormat.Format(_currentGems);
+        // _gemsTextShop.text = NumberFormat.Format(_currentGems);
+        _gemsTextMenu.text = _currentGems.ToString();
+        _gemsTextMenuInGame.text = _currentGems.ToString();
+        _gemsTextShop.text = _currentGems.ToString();
+        _gemsTextShopInGame.text = _currentGems.ToString();
+        
         _sub = _userData.Gems.Subscribe(value =>
         {
             AnimText.AnimateNumberChange(_gemsTextMenu, _currentGems, value, 0.5f, 2, _gemsTextMenu.gameObject, true).Forget();
             AnimText.AnimateNumberChange(_gemsTextShop, _currentGems, value, 0.5f, 2, _gemsTextShop.gameObject, true).Forget();
+            AnimText.AnimateNumberChange(_gemsTextMenuInGame, _currentGems, value, 0.5f, 2, _gemsTextShop.gameObject, true).Forget();
+            AnimText.AnimateNumberChange(_gemsTextShopInGame, _currentGems, value, 0.5f, 2, _gemsTextShop.gameObject, true).Forget();
             _currentGems = value;
         });
     }

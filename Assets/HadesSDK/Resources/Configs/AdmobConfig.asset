@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d27dba6d25f6468e9ac799c3e687264e, type: 3}
   m_Name: AdmobConfig
   m_EditorClassIdentifier: 
-  interID: "\tca-app-pub-3940256099942544/1033173712"
-  rewardID: "\tca-app-pub-3940256099942544/5224354917"
-  mrecID: "\tca-app-pub-3940256099942544/1033173712"
+  interID: ca-app-pub-3940256099942544/1033173712
+  rewardID: ca-app-pub-3940256099942544/5224354917
+  mrecID: ca-app-pub-3940256099942544/1033173712
   aoaID: ca-app-pub-3940256099942544/9257395921
-  bannerID: "\tca-app-pub-3940256099942544/6300978111"
+  bannerID: ca-app-pub-3940256099942544/6300978111
   mrecAdPosition: 1
   bannerIsCollapsible: 0
   shouldDestroyBannerWhenLoad: 0
   shouldReloadBannerIfLoadedFail: 0
-  onlyShowAoaOnce: 0
+  onlyShowAoaOnce: 1

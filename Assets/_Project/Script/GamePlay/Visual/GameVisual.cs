@@ -18,17 +18,23 @@ namespace Sand
         [SerializeField] private GameObject[] _focus;
         [SerializeField] private GameObject[] _iconMenu;
         [SerializeField] private GameObject[] _popupCategory;
+        [SerializeField] private GameObject[] _skill;
         [SerializeField] private GameObject _groupMenu;
         [SerializeField] private GameObject _groupCategory;
         [SerializeField] private GameObject _popupGameOver;
+        [SerializeField] private GameObject _popupShop;
         [SerializeField] private GameObject _currenScore;
         [SerializeField] private GameObject _backGround;
         [SerializeField] private GameObject _topUI;
         [SerializeField] private GameObject _scoreBar;
         [SerializeField] private GameObject _effectClaimGem;
         [SerializeField] private GameObject _warningSand;
-        [SerializeField] private GameObject[] _skill;
 
+        [Header("Handle Popup Shop")] 
+        [SerializeField] private GameObject _gemBarMenu;
+        [SerializeField] private GameObject _gemBarInGame;
+        [SerializeField] private GameObject _popupShopInGame;
+        
         [SerializeField] private Button[] _btnSelection;
         [SerializeField] private Button _btnPlay;
 
@@ -95,7 +101,7 @@ namespace Sand
 
             _btnReviveGems.onClick.AddListener(ReviveGems);
 
-            _btnNewGame.onClick.AddListener(ResetGame);
+            _btnNewGame.onClick.AddListener(() => { NewGame().Forget(); });
         }
 
         private void IncreaseElement(int index)
@@ -172,12 +178,51 @@ namespace Sand
             else
                 _topUI.gameObject.SetActive(false);
         }
+        
+        //----------------popupShop----------------//
+        public void OpenShopMenu()
+        {
+            CloseAllCategory();
+            OpenCategory(3);
+            _popupCategory[2].gameObject.SetActive(false);
+            _popupCategory[3].gameObject.SetActive(true);
+        }
 
+        public void CloseShopMenu()
+        {
+            CloseAllCategory();
+            OpenCategory(2);
+            _popupCategory[3].gameObject.SetActive(false);
+            _popupCategory[2].gameObject.SetActive(true);
+        }
+
+        public void OpenShopInGame()
+        {
+            _popupShopInGame.gameObject.SetActive(true);
+        }
+
+        public void CloseShopInGame()
+        {
+            _popupShopInGame.gameObject.SetActive(false);
+        }
+        
+        public void CloseAllCategory()
+        {
+            for (int i = 0; i < _btnSelection.Length; i++)
+            {
+                CloseCategory(i);
+            }
+        }
+        
+        //------------------------------------------------//
+        
         public async UniTask PlayGame()
         {
             _animLoad.gameObject.SetActive(true);
             // _animLoad.SetTrigger(EndMenu);
             await UniTask.WaitForSeconds(1f);
+            _gemBarMenu.SetActive(false); // gem bar menu
+            _gemBarInGame.SetActive(true); // gem bar ingame
             // _groupMenu.SetActive(false);
             DisableAllCategory();
             _groupCategory.SetActive(false);
@@ -249,7 +294,8 @@ namespace Sand
             ChangTextBtnSwitchPlay(true);
 
             await UniTask.WaitForSeconds(1f);
-
+            _gemBarInGame.SetActive(false); // gem bar ingame
+            _gemBarMenu.SetActive(true); // gem bar menu
             AdManager.Instance.HideBanner();
 
             _currenScore.SetActive(false);
@@ -277,7 +323,8 @@ namespace Sand
             Global.Send(new SignalResetAllBlocks());
             Global.Send(new SignalRestCurrenScore());
             await UniTask.WaitForSeconds(1f);
-
+            _gemBarInGame.SetActive(false); // gem bar ingame
+            _gemBarMenu.SetActive(true); // gem bar menu
             AdManager.Instance.HideBanner();
 
             _currenScore.SetActive(false);
@@ -318,12 +365,20 @@ namespace Sand
             _effectClaimGem.SetActive(false);
         }
 
+        public async UniTask NewGame()
+        {
+            PlayGame().Forget();
+            await UniTask.WaitForSeconds(1f);
+            ResetGame();
+        }
+
         //---------------------CheckSwitchButtonPlay-------------------//
 
         public void ChangTextBtnSwitchPlay(bool change)
         {
             _textBtnSwitchPlay.text = change ? "CONTINUE" : "PLAY";
         }
+
         //---------------------------------------------------------//
         //Skill
         private void EnableSkill()
@@ -355,7 +410,7 @@ namespace Sand
             AdManager.Instance.HideBanner();
             AdManager.Instance.ShowMrec();
         }
-        
+
         public void Receive(in SignalChangTextBtnSwitchPlay signal)
         {
             ChangTextBtnSwitchPlay(signal.IsChange);

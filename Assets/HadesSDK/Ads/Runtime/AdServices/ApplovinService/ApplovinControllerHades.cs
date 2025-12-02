@@ -312,6 +312,7 @@ namespace HadesSDK.Ads.Runtime.AdServices.ApplovinService
             {
                 if (!MaxSdk.IsInterstitialReady(_config.interID))
                 {
+                    Debug.Log("co load inter"); 
                     MaxSdk.LoadInterstitial(_config.interID);
                 }
                 else

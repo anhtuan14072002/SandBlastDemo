@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27c0b6047ed7420db0dc97dc8acaa35a, type: 3}
   m_Name: ApplovinConfig
   m_EditorClassIdentifier: 
-  appKey: 
-  interID: 
-  rewardID: 
-  bannerID: 
+  appKey: ZoNyqu_piUmpl33-qkoIfRp6MTZGW9M5xk1mb1ZIWK6FN9EBu0TXSHeprC3LMPQI7S3kTc1-x7DJGSV8S-gvFJ
+  interID: 60334ac275395d43
+  rewardID: c4c2d6e2a1ee683d
+  bannerID: '3b1b61ed2c911acf '
   aoaID: 
-  mrecID: 
+  mrecID: cfba00bc03926436
   bannerPosition: 7

@@ -53,7 +53,7 @@ namespace Sand
         [Inject] LevelModClassicData _levelModClassicData;
 
         IDisposable _subLevel;
-        
+
         private void Start()
         {
             InitializeLevel();
@@ -76,7 +76,14 @@ namespace Sand
             _level = _userData.LevelModClassicValue;
             _currentLevelScoreValue = _level * _stepScore;
             _nextLevelScoreValue = (_level + 1) * _stepScore;
-            FirebaseService.Instance.LogEvent("level_start", new EventParameter("time", "2025"));
+            if (FirebaseService.Instance != null)
+            {
+                FirebaseService.Instance.LogEvent("level_start", new EventParameter("time", "2025"));
+            }
+            else
+            {
+                Debug.Log("FirebaseService is null");
+            }
         }
 
         private void UpdateLevel()
@@ -88,7 +95,15 @@ namespace Sand
                 _levelModClassicData.IncreaseLevelModClassic();
                 _currentLevelScoreValue = _nextLevelScoreValue;
                 _nextLevelScoreValue += _stepScore;
-                FirebaseService.Instance.LogEvent("level_up", new EventParameter("level_up", "{" + _level + "}"));
+                if (FirebaseService.Instance != null)
+                {
+                    FirebaseService.Instance.LogEvent("level_up", new EventParameter("level_up", "{" + _level + "}"));
+                }
+                else
+                {
+                    Debug.Log("FirebaseService is null");
+                }
+
                 levelChanged = true;
             }
 

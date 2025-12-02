@@ -111,7 +111,7 @@ namespace Sand
         {
             try
             {
-                AdManager.Instance.Init();
+                // AdManager.Instance.Init();
                 var adLoadTask = WaitForAdLoad();
                 var timeoutTask = UniTask.WaitForSeconds(AD_LOAD_TIMEOUT);
                 var completed = await UniTask.WhenAny(adLoadTask, timeoutTask);

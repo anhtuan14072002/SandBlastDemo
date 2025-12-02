@@ -32,6 +32,7 @@ Transform:
   - {fileID: 4923779478908987441}
   - {fileID: 8507860207253302593}
   - {fileID: 7014814347519038942}
+  - {fileID: 8485965136627774455}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &630030060364547449
@@ -82,6 +83,7 @@ MonoBehaviour:
   _showLoadingAdPopup: 1
   _notifyIfNoRewardReady: 1
   _analyticController: {fileID: 8618628631629515179}
+  _applovinConfig: {fileID: 11400000, guid: f681d226cc3016e4799850a57d14a34f, type: 2}
   _admobConfig: {fileID: 11400000, guid: 4400a36803ad26a4d8daff863fcf331e, type: 2}
 --- !u!1 &1424745674536528455
 GameObject:
@@ -278,6 +280,52 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &5735140324051252523
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8485965136627774455}
+  - component: {fileID: 8491144532331076909}
+  m_Layer: 0
+  m_Name: GDPR
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8485965136627774455
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5735140324051252523}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1843244002293284263}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8491144532331076909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5735140324051252523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ed0d2a7509f56b49b1d21b007611916, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowGDPRPopupDone: 0
+  test: 0
 --- !u!1 &6797306418562095820
 GameObject:
   m_ObjectHideFlags: 0

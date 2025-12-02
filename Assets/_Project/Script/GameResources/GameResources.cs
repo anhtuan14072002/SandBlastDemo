@@ -47,7 +47,9 @@ namespace Sand
             _subCore = Observable.EveryUpdate().Subscribe(_ =>
                 CheckCoreReward(_pointerRectTransform.anchoredPosition.x));
             _btnBuyGem[0].onClick.AddListener(BuyNoAds);
+            _btnBuyGem[6].onClick.AddListener(BuyNoAds);
             _btnBuyGem[5].onClick.AddListener(WatchReceiveGems);
+            _btnBuyGem[11].onClick.AddListener(WatchReceiveGems);
 
             for (int i = 1; i < _btnBuyGem.Length; i++)
             {
@@ -57,7 +59,7 @@ namespace Sand
 
             for (int i = 0; i < _textPriceBuyGem.Length; i++)
             {
-                if (i == 5)
+                if (i == 5 || i == 11)
                     _textPriceBuyGem[i].text = "Free";
                 else
                     _textPriceBuyGem[i].text = _priceBuyGem[i].ToString();

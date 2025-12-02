@@ -1,9 +1,9 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using Core;
 using Cysharp.Threading.Tasks;
 using R3;
-using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -36,6 +36,7 @@ namespace Sand
 
         IDisposable _mouseClickSub;
         IDisposable _mouseClickSubWave;
+        IDisposable _magicBrushSub;
         IDisposable _dragSub;
 
         [Inject]
@@ -53,11 +54,17 @@ namespace Sand
             _spriteRenderer = GetComponent<SpriteRenderer>();
             if (_spriteRenderer == null) _spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
         }
-         
+
+        /*private void Start()
+        {
+            _magicBrushSub = Observable.EveryUpdate().Subscribe(_ => UpdateMagicBrushIcon());
+        }*/
+
         private void Update()
         {
             UpdateMagicBrushIcon();
         }
+
         //---------------------Boom----------------//
         public bool PowerUpBoom()
         {
@@ -106,7 +113,7 @@ namespace Sand
         //------MagicBrushIcon-----//
         public void UpdateMagicBrushIcon()
         {
-            if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+            if (Input.GetMouseButtonDown(0) /*&& !EventSystem.current.IsPointerOverGameObject()*/)
             {
                 Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 Vector3 iconPos = _iconMagicBrush.transform.position;
@@ -231,6 +238,7 @@ namespace Sand
             _mouseClickSub?.Dispose();
             _mouseClickSubWave?.Dispose();
             _dragSub?.Dispose();
+            _magicBrushSub?.Dispose();
         }
     }
 }

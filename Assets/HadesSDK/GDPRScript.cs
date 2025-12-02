@@ -1,3 +1,4 @@
+using System;
 using GoogleMobileAds.Api;
 using GoogleMobileAds.Ump.Api;
 using System.Collections;
@@ -10,6 +11,12 @@ namespace Game
     {
         public bool ShowGDPRPopupDone = false;
         [SerializeField] bool test;
+
+        private void Awake()
+        {
+            CallGDPR();
+        }
+
         public void CallGDPR()
         {
             MobileAds.RaiseAdEventsOnUnityMainThread = true;

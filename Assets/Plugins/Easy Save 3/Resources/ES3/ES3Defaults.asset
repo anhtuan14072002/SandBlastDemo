@@ -37,8 +37,10 @@ MonoBehaviour:
     - Assembly-CSharp
     - Assembly-CSharp-firstpass
     - DamageNumbersPro
+    - IngameDebugConsole.Runtime
     - Lofelt.NiceVibrations
     - Lofelt.NiceVibrations.Demo
+    - MaxSdk.Scripts
     - ParticleImage
     - PrimeTween.Debug
     - PrimeTween.Demo

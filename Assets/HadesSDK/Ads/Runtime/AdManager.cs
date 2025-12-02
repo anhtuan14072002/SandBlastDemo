@@ -111,7 +111,7 @@ namespace HadesSDK.Ads.Runtime
                 new ApplovinControllerHades(_applovinConfig, _firebaseService, _analyticController.GetMmpService());
             _backfillMediation = new AdmobControllerHades(_admobConfig, _firebaseService);
 
-            _aoaProvider = (ApplovinControllerHades)_mainAdMediation;
+            _aoaProvider = _backfillMediation;
             
             RegisterAdEvent(_backfillMediation);
             _backfillMediation.OnAdServiceInitializeFinished += OnBackfillMediationInitializeFinished;
@@ -146,12 +146,13 @@ namespace HadesSDK.Ads.Runtime
             _mainAdMediation.LoadInterstitial();
             _mainAdMediation.LoadReward();
             _mainAdMediation.LoadBanner();
+            _mainAdMediation.LoadMrec();
         }
 
         void OnBackfillMediationInitializeFinished()
         {
             _aoaProvider.LoadAOA();
-            _backfillMediation.LoadMrec();
+            // _backfillMediation.LoadMrec();
         }
 
         #region Ad Paid Event Handler
