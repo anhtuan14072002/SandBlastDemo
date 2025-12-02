@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using R3;
 using UnityEngine;
 using Zenject;
 
@@ -10,7 +9,8 @@ namespace Sand
     [RequireComponent(typeof(SpriteRenderer))]
     public class RenderMap : MonoBehaviour
     {
-        [Header("Setting")] [SerializeField] public Color32 _backgroundColor;
+        [Header("Setting")] 
+        [SerializeField] public Color32 _backgroundColor;
         [SerializeField] public int _hight;
         [SerializeField] public int _wight;
         [SerializeField] public int _hightGameOver;

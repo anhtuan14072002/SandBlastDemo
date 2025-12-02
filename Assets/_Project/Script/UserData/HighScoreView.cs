@@ -36,7 +36,7 @@ namespace Sand
                 AnimText.AnimateNumberChange(_highScoreText, _currentHighScore, value, 0.5f, 2,
                         _highScoreText.gameObject)
                     .Forget();
-                _highScoreTextPopupGameOver.text = value.ToString();
+                _highScoreTextPopupGameOver.text = NumberFormat.Format(value);
                 _currentHighScore = value;
                 AdjustFontSize(value);
             });

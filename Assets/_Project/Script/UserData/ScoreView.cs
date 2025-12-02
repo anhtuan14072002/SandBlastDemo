@@ -30,6 +30,7 @@ namespace Sand
         private void Start()
         {
             _score = _userData.CurrentScoreValue;
+            // _scoreText.text = NumberFormat.Format(_score);
             _scoreText.text = _score.ToString();
         }
 
@@ -40,15 +41,16 @@ namespace Sand
 
         private void UpdateScore(int score)
         {
-            var currentScore = _score;
+            var startScore = _score;
             _score += score;
-            _scoreText.text = score.ToString();
+            // _scoreText.text = _score.ToString();
             _userData.CurrentScore.Value = _score;
-            // _saveService.Save();
-            AnimText.AnimateNumberChange(_scoreText, currentScore, _score, 0.5f, 8,_scoreText.gameObject).Forget();
+            AnimText.AnimateNumberChange(_scoreText, startScore, _score, 0.5f, 8, _scoreText.gameObject).Forget();
+            // _scoreTextPopupGameOver.text = NumberFormat.Format(_score);
             _scoreTextPopupGameOver.text = _score.ToString();
             _scoreData.CheckHighScore(_score);
         }
+
         public void ResetScore()
         {
             _score = 0;

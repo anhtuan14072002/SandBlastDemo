@@ -1,9 +1,9 @@
-﻿using System;
-using Core;
+﻿using Core;
 using Cysharp.Threading.Tasks;
 using Game;
 using HadesSDK.Ads.Runtime;
 using PrimeTween;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -11,9 +11,13 @@ using Zenject;
 namespace Sand
 {
     public class GameVisual : GameElement,
-        IReceive<SignalOpenPopupGameOver>
+        IReceive<SignalOpenPopupGameOver>,
+        IReceive<SignalEnableButtonContinueMenu>,
+        IReceive<SignalDisableButtonContinueMenu>,
+        IReceive<SignalChangTextBtnSwitchPlay>
     {
-        [Header("MainMenu")] [SerializeField] private LayoutElement[] _layoutElement;
+        [Header("MainMenu")] 
+        [SerializeField] private LayoutElement[] _layoutElement;
         [SerializeField] private GameObject[] _focus;
         [SerializeField] private GameObject[] _iconMenu;
         [SerializeField] private GameObject[] _popupCategory;
@@ -47,6 +51,9 @@ namespace Sand
         [SerializeField] private Button _btnQuitGame;
         [SerializeField] private Button _btnQuitGameOver;
         [SerializeField] private Button _btnReviveGems;
+        [SerializeField] private Button _btnContinueMenu;
+
+        [SerializeField] private TextMeshProUGUI _textBtnSwitchPlay;
         
         [Header("GamePlayUI")] [SerializeField] private GameObject _pauseMenu;
         [Header("Ads")] [SerializeField] private GDPRScript _gdprScript;
@@ -286,14 +293,7 @@ namespace Sand
                 AdManager.Instance.ShowBanner();
             }
         }
-
-        public void Receive(in SignalOpenPopupGameOver signal)
-        {
-            _popupGameOver.SetActive(true);
-            AdManager.Instance.HideBanner();
-            AdManager.Instance.ShowMrec();
-        }
-
+        
         private void OpenPopupHome()
         {
             _popupCategory[2].gameObject.SetActive(true);
@@ -310,6 +310,25 @@ namespace Sand
             _effectClaimGem.SetActive(false);
         }
 
+        //---------------------CheckSwitchButtonPlay-------------------//
+        public void CheckSwitchButtonPlay()
+        {
+            
+        }
+        public void EnableButtonContinueMenu()
+        {
+            _btnContinueMenu.gameObject.SetActive(true);
+        }
+        public void DisableButtonContinueMenu()
+        {
+            _btnContinueMenu.gameObject.SetActive(false);
+        }
+
+        public void ChangTextBtnSwitchPlay(bool change)
+        {
+            _textBtnSwitchPlay.text = change ? "CONTINUE" : "PLAY";
+        }
+        //---------------------------------------------------------//
         //Skill
         private void EnableSkill()
         {
@@ -331,6 +350,29 @@ namespace Sand
         public void WarningSand(bool isWarningSand)
         {
             _warningSand.SetActive(isWarningSand);
+        }
+        
+        //--------------------Signal----------------------//
+        public void Receive(in SignalOpenPopupGameOver signal)
+        {
+            _popupGameOver.SetActive(true);
+            AdManager.Instance.HideBanner();
+            AdManager.Instance.ShowMrec();
+        }
+
+        public void Receive(in SignalEnableButtonContinueMenu signal)
+        {
+            EnableButtonContinueMenu();
+        }
+
+        public void Receive(in SignalDisableButtonContinueMenu signal)
+        {
+            DisableButtonContinueMenu();
+        }
+
+        public void Receive(in SignalChangTextBtnSwitchPlay signal)
+        {
+            ChangTextBtnSwitchPlay(signal.IsChange);
         }
     }
 }

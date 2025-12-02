@@ -15,13 +15,13 @@ namespace Core
             var targetColor = Color.red;
             float tweenInterval = 0.2f;
             float lastTweenTime = 0f;
-            
+
             while (elapsedTime < duration)
             {
                 elapsedTime += Time.deltaTime;
                 var progress = elapsedTime / duration;
                 var currentValue = (int)Mathf.Lerp(startValue, endValue, progress);
-                textComponent.text = currentValue.ToString();
+                textComponent.text = NumberFormat.Format(currentValue);
 
                 if (endValue < startValue)
                 {
@@ -37,14 +37,35 @@ namespace Core
                         lastTweenTime = Time.time;
                     }
                 }
+
                 await UniTask.Yield();
             }
 
-            textComponent.text = endValue.ToString();
+            textComponent.text = NumberFormat.Format(endValue);
             if (endValue < startValue)
             {
                 textComponent.color = Color.white;
             }
         }
     }
+    public static class NumberFormat
+    {
+        public static string Format(int value)
+        {
+            if (value >= 1_000_000)
+            {
+                float m = value / 1_000_000f; 
+                return m.ToString("0.##") + "M"; 
+            }
+
+            if (value >= 1_000)
+            {
+                float k = value / 1_000f;
+                return k.ToString("0.##") + "k"; 
+            }
+
+            return value.ToString("N0");
+        }
+    }
+
 }

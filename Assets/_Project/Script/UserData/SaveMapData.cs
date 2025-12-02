@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Core;
+using UnityEngine;
 using Zenject;
 
 namespace Sand
@@ -56,34 +57,45 @@ namespace Sand
 
         public void LoadDataMap()
         {
-            if (!ES3.KeyExists(KEY_MAP_CELLS))
-                return;
-
+            if (!ES3.KeyExists(KEY_MAP_CELLS)) return;
             int savedWidth  = ES3.Load<int>(KEY_MAP_WIDTH);
             int savedHeight = ES3.Load<int>(KEY_MAP_HEIGHT);
 
-            if (savedWidth != Map.Width || savedHeight != Map.Height)
-            {
-                Debug.LogWarning("Saved map size khác map hiện tại, bỏ qua load.");
-                return;
-            }
+            if (savedWidth != Map.Width || savedHeight != Map.Height) return;
 
             var cellsData = ES3.Load<CellSaveData[]>(KEY_MAP_CELLS);
+            bool hasData = false;
+            for (int j = 0; j < cellsData.Length; j++)
+            {
+                if (cellsData[j].hasValue == 1) 
+                {
+                    hasData = true;
+                    break;
+                }
+            }
 
+            if (!hasData)
+            {
+                Global.Send(new SignalDisableButtonContinueMenu());
+            }
+            else
+            {
+                Global.Send(new SignalEnableButtonContinueMenu());
+                Global.Send(new SignalChangTextBtnSwitchPlay(){IsChange = true});
+            }
+            
             Map.SetUpMap(Background);
-
             int i = 0;
             for (int y = 0; y < savedHeight; y++)
             {
                 for (int x = 0; x < savedWidth; x++)
                 {
                     var data = cellsData[i];
-                    if (data.hasValue == 1)
-                        Map.SetPixelCell(x, y, data.color);
+                    if (data.hasValue == 1) Map.SetPixelCell(x, y, data.color);
                     i++;
                 }
             }
-
+            
             Map.UpdateTexture();
             Debug.Log("Load map data");
         }
