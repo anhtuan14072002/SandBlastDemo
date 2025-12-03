@@ -27,9 +27,8 @@ namespace Sand
         [SerializeField] private int _priceSkillMagicBrush;
         [SerializeField] private int _priceSkillBoom;
 
-        [Header("Button Use Skill")] [SerializeField]
-        private Button _btnUseMagicBrush;
-
+        [Header("Button Use Skill")]
+        [SerializeField] private Button _btnUseMagicBrush;
         [SerializeField] private Button _buttonUseBoom;
 
         private bool _isUseBoom;
@@ -51,23 +50,22 @@ namespace Sand
         {
             _textPriceMagicBrush.text = _priceSkillMagicBrush.ToString();
             _textPriceBoom.text = _priceSkillBoom.ToString();
-
-            _btnBuyMagicBrush.onClick.AddListener(OpenPopupConfirmBuyMagicBrush);
+            
+            //--------Boom---------//
             _btnBuyBoom.onClick.AddListener(OpenPopupConfirmBuyBoom);
-
-            _btnConfirmMagicBrush.onClick.AddListener(BuyMagicBrush);
             _btnConfirmBoom.onClick.AddListener(BuyBoom);
-
-            _btnOpenSkillMagicBrush.onClick.AddListener(OpenPopupMagicBrush);
-            _btnCloseSkillMagicBrush.onClick.AddListener(UsePowerUpMagicBrush);
+            _buttonUseBoom.onClick.AddListener(UsePowerUpBoom);
             _btnCloseSkillBoom.onClick.AddListener(ClosePowerUpBoom);
-
-            _btnUseMagicBrush.onClick.AddListener(UseMagicBrush);
-            _buttonUseBoom.onClick.AddListener(UseBoom);
-            //---Boom
+            
+            //-----MagicBrush----//
+            _btnBuyMagicBrush.onClick.AddListener(OpenPopupConfirmBuyMagicBrush);
+            _btnConfirmMagicBrush.onClick.AddListener(BuyMagicBrush);
+            _btnOpenSkillMagicBrush.onClick.AddListener(OpenPopupMagicBrush);
+            _btnUseMagicBrush.onClick.AddListener(UsePowerUpMagicBrush);
+            _btnCloseSkillMagicBrush.onClick.AddListener(ClosePopupMagicBrush);
         }
 
-        //------------Boom-----------------//
+        //===================== BOOM =======================//
         private void BuyBoom()
         {
             if (_userData.GemsValue >= _priceSkillBoom)
@@ -82,20 +80,21 @@ namespace Sand
             }
         }
 
-        private void UseBoom()
+        private void UsePowerUpBoom()
         {
             if (_userData.BoomValue > 0)
             {
                 OpenSkillBoom();
                 _isUseBoom = true;
-                if (_mouseClickSubWave != null)
-                    _mouseClickSubWave.Dispose();
-
+                _mouseClickSubWave?.Dispose();
                 _mouseClickSubWave = Observable.EveryUpdate()
                     .Where(_ => Input.GetMouseButtonDown(0) && _isUseBoom)
                     .Subscribe(_ => { MouseClickBoom(); });
             }
-            // else Debug.Log("No boom");
+            else
+            {
+                Global.Send(new SignalOpenEffectNotEnough());
+            }
         }
 
         private void OpenSkillBoom()
@@ -118,13 +117,14 @@ namespace Sand
                 if (hasEffect)
                 {
                     _rewardSystem.DeductBoom(1);
-                    if (_userData.BoomValue <= 0) ClosePowerUpBoom();
+                    if (_userData.BoomValue <= 0)
+                        ClosePowerUpBoom();
                 }
             }
         }
-        //------------------------------------//
 
-        //---------MagicBrush-------------//
+        //===================== MAGIC BRUSH =======================//
+
         private void BuyMagicBrush()
         {
             if (_userData.GemsValue >= _priceSkillMagicBrush)
@@ -138,35 +138,47 @@ namespace Sand
                 Global.Send(new SignalOpenEffectNotEnough());
             }
         }
-
-        private void UseMagicBrush()
-        {
-            if (_userData.MagicBrushValue > 0)
-            {
-                OpenPopupMagicBrush();
-                _rewardSystem.DeductMagicBrush(1);
-                RemoveSameColorCompleteBands();
-            }
-            // else Debug.Log("No magic brush");
-        }
-
+        
         private void OpenPopupMagicBrush()
         {
             if (_userData.MagicBrushValue > 0)
             {
                 _popupSkillMagicBrush.SetActive(true);
+                _powerUpSystem.EnableMagicBrushIcon();
             }
-            // else Debug.Log("Not enough magic brush");
-        }
+            else
+            {
+                Global.Send(new SignalOpenEffectNotEnough());
+            }
 
+        }
         private void UsePowerUpMagicBrush()
         {
-            _popupSkillMagicBrush.SetActive(false);
+            if (!_popupSkillMagicBrush.activeSelf) return;
+            var selectedColor = _powerUpSystem._colorMagic.color;
+            if (selectedColor.a <= 0f)
+            {
+                ClosePopupMagicBrush();
+                return;
+            }
+            _rewardSystem.DeductMagicBrush(1);
+            RemoveSameColorCompleteBands(selectedColor);
+            ClosePopupMagicBrush();
         }
 
-        //-------------------------------------//
+        private void ClosePopupMagicBrush()
+        {
+            _popupSkillMagicBrush.SetActive(false);
+            _powerUpSystem.DisableMagicBrushIcon();
+        }
+        
+        private void RemoveSameColorCompleteBands(Color32 selectedColor)
+        {
+            _powerUpSystem.PowerUpMagicBrush(selectedColor).Forget();
+        }
 
-        //-------------PopupBuyPowerUp-----------//
+        //================ POPUP BUY POWER UP ================//
+
         private void OpenPopupConfirmBuyMagicBrush()
         {
             _popupConfirmBuyMagicBrush.SetActive(true);
@@ -187,21 +199,10 @@ namespace Sand
             _popupConfirmBuyBoom.SetActive(false);
         }
 
-        //-------------------------------------//
-        private void RemoveSameColorCompleteBands()
-        {
-            UsePowerUpMagicBrush();
-            _powerUpSystem.PowerUpMagicBrush(_powerUpSystem._colorMagic.color).Forget();
-        }
-
-        public void ResetGem()
-        {
-            _rewardSystem.AddGems(0);
-        }
+        //================ OTHERS =======================//
+        
         private void OnDestroy()
         {
-            _btnBuyMagicBrush.onClick.RemoveListener(BuyMagicBrush);
-            _btnBuyBoom.onClick.RemoveListener(BuyBoom);
             _mouseClickSubWave?.Dispose();
         }
     }

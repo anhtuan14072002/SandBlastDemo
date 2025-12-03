@@ -6,7 +6,7 @@ namespace Sand
 {
     public class BlockManager : MonoBehaviour
     {
-        [Header("References")] [SerializeField]
+        [Header("References")] 
         public bool[,] ShapeData => _shapeData;
         private Sprite[] _sprites;
         private bool[,] _shapeData;

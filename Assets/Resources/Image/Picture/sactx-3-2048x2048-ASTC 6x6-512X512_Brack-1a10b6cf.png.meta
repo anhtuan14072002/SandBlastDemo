@@ -1,0 +1,299 @@
+fileFormatVersion: 2
+guid: b4aee1a1354e7374b9337adc3a6b31be
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2393651351746732709
+    second: sactx-3-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_0
+  - first:
+      213: -7325763659545343367
+    second: sactx-3-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_1
+  - first:
+      213: -6037019383609957315
+    second: sactx-3-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_2
+  - first:
+      213: 7823472700826102284
+    second: sactx-3-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_3
+  - first:
+      213: -8699750176820757915
+    second: sactx-3-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_4
+  - first:
+      213: -3536392137184178530
+    second: sactx-3-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_5
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: sactx-3-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1661
+        width: 1555
+        height: 338
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a26ff8e835f73120800000000000000
+      internalID: 2393651351746732709
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sactx-3-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_1
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1325
+        width: 1552
+        height: 332
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97a8554e3c8a55a90800000000000000
+      internalID: -7325763659545343367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sactx-3-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 997
+        width: 1555
+        height: 326
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d34e7c92bd2383ca0800000000000000
+      internalID: -6037019383609957315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sactx-3-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_3
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 665
+        width: 1555
+        height: 332
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0aa4ba88fe829c60800000000000000
+      internalID: 7823472700826102284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sactx-3-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 329
+        width: 1555
+        height: 332
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56af4f3be47444780800000000000000
+      internalID: -8699750176820757915
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sactx-3-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_5
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1555
+        height: 327
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9e07ac76163ceec0800000000000000
+      internalID: -3536392137184178530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      sactx-3-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_0: 2393651351746732709
+      sactx-3-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_1: -7325763659545343367
+      sactx-3-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_2: -6037019383609957315
+      sactx-3-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_3: 7823472700826102284
+      sactx-3-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_4: -8699750176820757915
+      sactx-3-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_5: -3536392137184178530
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -3152,7 +3152,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 98514137}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -13616.347}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -11193,7 +11193,8 @@ MonoBehaviour:
     rgba: 4283578684
   _hight: 105
   _wight: 88
-  _hightGameOver: 91
+  _hightGameOver: 92
+  _interations: 4
   _blockManager: {fileID: 533819452}
   _spriteRenderer: {fileID: 0}
 --- !u!212 &533819450
@@ -11279,8 +11280,8 @@ MonoBehaviour:
   _colorMagic: {fileID: 98514139}
   _minX: -3.5
   _maxX: 3.5
-  _minY: -3.7
-  _maxY: 4
+  _minY: -3
+  _maxY: 4.3
 --- !u!1 &538470085
 GameObject:
   m_ObjectHideFlags: 0
@@ -16756,42 +16757,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1409282514904392904, guid: fd1f8d2443670184cbb911c9d33dc17d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1643492037342491448, guid: fd1f8d2443670184cbb911c9d33dc17d, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3733863337292976672, guid: fd1f8d2443670184cbb911c9d33dc17d, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.946
-      objectReference: {fileID: 0}
-    - target: {fileID: 3733863337292976672, guid: fd1f8d2443670184cbb911c9d33dc17d, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.5076
-      objectReference: {fileID: 0}
-    - target: {fileID: 3733863337292976672, guid: fd1f8d2443670184cbb911c9d33dc17d, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5834714575004037237, guid: fd1f8d2443670184cbb911c9d33dc17d, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5834714575004037237, guid: fd1f8d2443670184cbb911c9d33dc17d, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.417
-      objectReference: {fileID: 0}
-    - target: {fileID: 9071521722823301357, guid: fd1f8d2443670184cbb911c9d33dc17d, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.4716
-      objectReference: {fileID: 0}
-    - target: {fileID: 9188762173214346335, guid: fd1f8d2443670184cbb911c9d33dc17d, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.946
-      objectReference: {fileID: 0}
-    - target: {fileID: 9188762173214346335, guid: fd1f8d2443670184cbb911c9d33dc17d, type: 3}
-      propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -43491,7 +43456,6 @@ MonoBehaviour:
   _btnRestartGameOver: {fileID: 450945792}
   _btnQuitGame: {fileID: 1787386350}
   _btnQuitGameOver: {fileID: 1622605053}
-  _btnReviveGems: {fileID: 810431155}
   _btnNewGame: {fileID: 1865640803}
   _textBtnSwitchPlay: {fileID: 74242604}
   _pauseMenu: {fileID: 120706296}
@@ -43523,8 +43487,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _textRevive: {fileID: 2053179116}
   _popupRevive: {fileID: 1000737334}
-  _imageRevive: {fileID: 1222109438}
   _buttonCloseRevive: {fileID: 379340594}
+  _btnReviveGems: {fileID: 810431155}
+  _btnReviveAds: {fileID: 759812892}
+  _imageRevive: {fileID: 1222109438}
   _timeRevive: 10
 --- !u!114 &2084033666
 MonoBehaviour:

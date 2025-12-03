@@ -14,7 +14,8 @@ namespace Sand
         IReceive<SignalOpenPopupGameOver>,
         IReceive<SignalChangTextBtnSwitchPlay>
     {
-        [Header("MainMenu")] [SerializeField] private LayoutElement[] _layoutElement;
+        [Header("MainMenu")] 
+        [SerializeField] private LayoutElement[] _layoutElement;
         [SerializeField] private GameObject[] _focus;
         [SerializeField] private GameObject[] _iconMenu;
         [SerializeField] private GameObject[] _popupCategory;
@@ -53,7 +54,6 @@ namespace Sand
         [SerializeField] private Button _btnRestartGameOver;
         [SerializeField] private Button _btnQuitGame;
         [SerializeField] private Button _btnQuitGameOver;
-        [SerializeField] private Button _btnReviveGems;
         [SerializeField] private Button _btnNewGame;
 
         [SerializeField] private TextMeshProUGUI _textBtnSwitchPlay;
@@ -98,9 +98,6 @@ namespace Sand
 
             // _claimRewardLevelUp.onClick.AddListener(() => ClaimReward().Forget());
             // _claimCoreRewardLevelUp.onClick.AddListener(() => ClaimCoreReward().Forget());
-
-            _btnReviveGems.onClick.AddListener(ReviveGems);
-
             _btnNewGame.onClick.AddListener(() => { NewGame().Forget(); });
         }
 
@@ -277,14 +274,6 @@ namespace Sand
             Global.Send(new SignalRestCurrenScore());
         }
 
-        public void ReviveGems()
-        {
-            _gameResources.ReviveGame();
-            _gameRevive.SetRevived();
-            if (_renderMap != null) _renderMap.Reset();
-            Global.Send(new SignalResetAllBlocks());
-        }
-
         public async UniTask ReturnHomeMenu()
         {
             _pauseMenu.SetActive(false);
@@ -396,11 +385,22 @@ namespace Sand
                 _skill[i].SetActive(false);
             }
         }
-
-        // 
+        
         public void WarningSand(bool isWarningSand)
         {
             _warningSand.SetActive(isWarningSand);
+        }
+
+        public void ResetGameStart()
+        {
+            ChangTextBtnSwitchPlay(false);
+            _gameRevive.ResetReviveUI();
+            _checkLevelScore.ResetLevelScore();
+            _scoreData.ResetCurrentScore();
+            _checkLevelScore.NextLevelScoreValue = _checkLevelScore.StepScore;
+            if (_renderMap != null) _renderMap.Reset();
+            Global.Send(new SignalResetAllBlocks());
+            Global.Send(new SignalRestCurrenScore());
         }
 
         //--------------------Signal----------------------//

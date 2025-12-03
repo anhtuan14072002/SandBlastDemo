@@ -13,6 +13,7 @@ namespace Sand
         private int _currentComboCount = 0;
         private int _turnsWithoutCombo = 0;
         private const int MAX_TURNS_WITHOUT_COMBO = 3;
+        private const int CHANNEL_TOLERANCE = 12;
 
         EffectBlock _effectBlock;
         SoundManager _soundManager;
@@ -139,10 +140,12 @@ namespace Sand
             
             _map.IsMovePause = false;
         }
-
+        
         public bool SameColor(Color32 a, Color32 b)
         {
-            return a.r == b.r && a.g == b.g && a.b == b.b;
+            return Mathf.Abs(a.r - b.r) <= CHANNEL_TOLERANCE &&
+                   Mathf.Abs(a.g - b.g) <= CHANNEL_TOLERANCE &&
+                   Mathf.Abs(a.b - b.b) <= CHANNEL_TOLERANCE;
         }
 
         public int CountCellsWithColor(Color32 targetColor)

@@ -14,6 +14,7 @@ namespace Sand
         [SerializeField] public int _hight;
         [SerializeField] public int _wight;
         [SerializeField] public int _hightGameOver;
+        [SerializeField] public int _interations = 4;
         [SerializeField] private BlockManager _blockManager;
         [HideInInspector] public SpriteRenderer _spriteRenderer;
 
@@ -103,7 +104,7 @@ namespace Sand
 
         private void SandUpdate()
         {
-            bool isTick = _map.Tick(4);
+            bool isTick = _map.Tick(_interations);
             if (isTick)
             {
                 _isSettled = false;

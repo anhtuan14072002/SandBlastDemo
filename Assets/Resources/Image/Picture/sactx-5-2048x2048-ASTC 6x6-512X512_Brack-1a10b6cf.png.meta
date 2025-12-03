@@ -1,10 +1,19 @@
 fileFormatVersion: 2
-guid: 9d97972b53ae9264fa9afc53a11c10bc
+guid: 71f038ccd6391934aa4b3d8fef2fd369
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8482712648628362555
-    second: Cross_0
+      213: 2181945471786179110
+    second: sactx-5-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_0
+  - first:
+      213: -4368012719280256439
+    second: sactx-5-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_1
+  - first:
+      213: -4570790531054592381
+    second: sactx-5-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_2
+  - first:
+      213: -3835467470447684293
+    second: sactx-5-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +46,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -46,13 +55,13 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 1, y: 2, z: 1, w: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -126,23 +135,89 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Cross_0
+      name: sactx-5-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_0
       rect:
         serializedVersion: 2
-        x: 2
-        y: 1
-        width: 16
-        height: 10
+        x: 0
+        y: 1329
+        width: 1825
+        height: 719
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b3dd439e536a8b570800000000000000
-      internalID: 8482712648628362555
+      spriteID: 62a561d98d3d74e10800000000000000
+      internalID: 2181945471786179110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sactx-5-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_1
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 995
+        width: 1825
+        height: 370
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94a89e41393b163c0800000000000000
+      internalID: -4368012719280256439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sactx-5-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 661
+        width: 1825
+        height: 362
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38e95c5aa3a4190c0800000000000000
+      internalID: -4570790531054592381
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sactx-5-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_3
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1
+        width: 1819
+        height: 678
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b35566428aea5cac0800000000000000
+      internalID: -3835467470447684293
       vertices: []
       indices: 
       edges: []
@@ -151,8 +226,8 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
-    internalID: 1537655665
+    spriteID: 
+    internalID: 0
     vertices: []
     indices: 
     edges: []
@@ -161,7 +236,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Cross_0: 8482712648628362555
+      sactx-5-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_0: 2181945471786179110
+      sactx-5-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_1: -4368012719280256439
+      sactx-5-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_2: -4570790531054592381
+      sactx-5-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_3: -3835467470447684293
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
