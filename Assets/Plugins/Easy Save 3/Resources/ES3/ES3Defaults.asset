@@ -37,6 +37,7 @@ MonoBehaviour:
     - Assembly-CSharp
     - Assembly-CSharp-firstpass
     - DamageNumbersPro
+    - GamesTan.SuperScrollRect
     - IngameDebugConsole.Runtime
     - Lofelt.NiceVibrations
     - Lofelt.NiceVibrations.Demo

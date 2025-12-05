@@ -94,12 +94,10 @@ namespace Sand
         {
             actualSpawnPosition = Vector3.zero;
 
-            if (map == null || mapRenderer == null || sprite == null)
-                return false;
+            if (map == null || mapRenderer == null || sprite == null) return false;
 
             var (shapeData, colorData) = ExtractShapeAndColorData(sprite);
-            if (shapeData == null)
-                return false;
+            if (shapeData == null) return false;
 
             _shapeData = shapeData;
 
@@ -109,8 +107,7 @@ namespace Sand
             var spriteWidth = mapRenderer.sprite.bounds.size.x;
             var spriteHeight = mapRenderer.sprite.bounds.size.y;
 
-            if (spriteWidth <= 0 || spriteHeight <= 0)
-                return false;
+            if (spriteWidth <= 0 || spriteHeight <= 0) return false;
 
             var centerX = Mathf.RoundToInt((localPos.x / spriteWidth + 0.5f) * _renderMap._wight);
             var centerY = Mathf.RoundToInt((localPos.y / spriteHeight + 0.5f) * _renderMap._hight);

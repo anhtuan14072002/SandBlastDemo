@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using R3;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Zenject;
 
@@ -29,7 +30,7 @@ namespace Sand
 
         [Header("Button Use Skill")]
         [SerializeField] private Button _btnUseMagicBrush;
-        [SerializeField] private Button _buttonUseBoom;
+        [FormerlySerializedAs("_buttonUseBoom")] [SerializeField] private Button _btnUseBoom;
 
         private bool _isUseBoom;
 
@@ -54,7 +55,7 @@ namespace Sand
             //--------Boom---------//
             _btnBuyBoom.onClick.AddListener(OpenPopupConfirmBuyBoom);
             _btnConfirmBoom.onClick.AddListener(BuyBoom);
-            _buttonUseBoom.onClick.AddListener(UsePowerUpBoom);
+            _btnUseBoom.onClick.AddListener(UsePowerUpBoom);
             _btnCloseSkillBoom.onClick.AddListener(ClosePowerUpBoom);
             
             //-----MagicBrush----//

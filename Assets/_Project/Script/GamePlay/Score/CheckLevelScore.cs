@@ -16,7 +16,6 @@ namespace Sand
         [SerializeField] private TextMeshProUGUI _currentLevelScoreInPopup;
         [SerializeField] private TextMeshProUGUI _nextLevelScore;
         [SerializeField] private GameObject _popupLevelUp;
-        [SerializeField] private GameObject _effectLevelUp;
         [SerializeField] private Image _fillScoreBar;
         [SerializeField] private Button _claimRewardLevelUp;
         [SerializeField] private Button _claimCoreRewardLevelUp;
@@ -51,6 +50,7 @@ namespace Sand
         [Inject] SoundManager _soundManager;
         [Inject] SaveService _saveService;
         [Inject] LevelModClassicData _levelModClassicData;
+        [Inject] EffectGame _effectGame;
 
         IDisposable _subLevel;
 
@@ -150,7 +150,7 @@ namespace Sand
         {
             _popupLevelUp.SetActive(true);
             _soundManager.OnPlaySound(SoundType.LevelUp);
-            _effectLevelUp.SetActive(true);
+            _effectGame.OpenEffectLevelUp();
             _currentLevelScoreInPopup.text = _currentLevelScoreValue.ToString();
             _gameResources.ResetCoreAnimation();
         }
@@ -158,7 +158,7 @@ namespace Sand
         private async UniTask ClosePopupLevelUp()
         {
             await UniTask.Delay(TimeSpan.FromSeconds(1.25f));
-            _effectLevelUp.SetActive(false);
+            _effectGame.CloseEffectLevelUp();
             // DisableEffectClaimGem();
             _gameVisual.DisableEffectClaimGem();
             // _popupLevelUp.SetActive(false);

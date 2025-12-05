@@ -15,6 +15,8 @@ namespace Sand
         [SerializeField] public int _wight;
         [SerializeField] public int _hightGameOver;
         [SerializeField] public int _interations = 4;
+        [SerializeField] private int _pixelsPerCell;
+        [SerializeField] private int _borderThickness;
         [SerializeField] private BlockManager _blockManager;
         [HideInInspector] public SpriteRenderer _spriteRenderer;
 
@@ -45,6 +47,13 @@ namespace Sand
             _saveService = saveService;
         }
 
+        private void Awake()
+        {
+            _spriteRenderer = GetComponent<SpriteRenderer>();
+            if (_spriteRenderer == null) _spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
+            _map = new Map(_wight, _hight, _pixelsPerCell, _borderThickness);
+            Application.targetFrameRate = 60;
+        }
         private void Start()
         {
             _map.SetUpMap(_backgroundColor);
@@ -67,13 +76,6 @@ namespace Sand
             SandUpdate();
         }
 
-        private void Awake()
-        {
-            _spriteRenderer = GetComponent<SpriteRenderer>();
-            if (_spriteRenderer == null) _spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-            _map = new Map(_wight, _hight);
-            Application.targetFrameRate = 60;
-        }
 
         public void StartGame()
         {

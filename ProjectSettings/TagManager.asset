@@ -15,7 +15,7 @@ TagManager:
   - Box
   - MagicBrush
   - Wall
-  - 
+  - MapArt
   - 
   - 
   - 
@@ -40,6 +40,18 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Wall
+    uniqueID: 373075609
+    locked: 0
+  - name: Map
+    uniqueID: 3294831965
+    locked: 0
+  - name: Background
+    uniqueID: 804431477
+    locked: 0
+  - name: MapArt
+    uniqueID: 3742483591
     locked: 0
   m_RenderingLayers:
   - Default

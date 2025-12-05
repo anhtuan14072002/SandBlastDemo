@@ -38,10 +38,12 @@ namespace Sand
         private NativeArray<Color32> _pixels;
         private Color32 m_backgroundColor;
 
-        public Map(int width, int height)
+        public Map(int width, int height, int pixelsPerCell, int borderThickness)
         {
             m_width = width;
             m_height = height;
+            _pixelsPerCell = pixelsPerCell;
+            _borderThickness = borderThickness;
             m_backgroundColor = Color.clear;
 
             _cells = new NativeArray<Cell>(m_width * m_height, Allocator.Persistent);
@@ -252,16 +254,35 @@ namespace Sand
 
             return _cells[Idx(x, y)];
         }
+
         public Color32 GetCellColor(int x, int y)
         {
             var cell = GetCell(x, y);
             return cell.color;
         }
-        
+
         public bool HasValue(int x, int y)
         {
             var cell = GetCell(x, y);
             return cell.hasValue == 1;
+        }
+
+        public void SetPixelCellBatch(int x, int y, Color32 color32)
+        {
+            if (OutOfBound(x, y)) return;
+            int idx = Idx(x, y);
+            var c = _cells[idx];
+            c.color = color32;
+            c.hasValue = 1;
+            c.isBorder = 0;
+            c.x = x;
+            c.y = y;
+            _cells[idx] = c;
+        }
+
+        public void MarkDirty()
+        {
+            _dirty = true;
         }
     }
 

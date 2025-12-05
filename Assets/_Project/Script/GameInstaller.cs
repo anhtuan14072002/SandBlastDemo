@@ -55,6 +55,14 @@ namespace Sand
             Container.Bind<VibrationManager>()
                 .FromComponentInHierarchy()
                 .AsSingle();
+            
+            Container.Bind<RenderPicture>()
+                .FromComponentInHierarchy()
+                .AsSingle();
+            
+            Container.Bind<EffectGame>()
+                .FromComponentInHierarchy()
+                .AsSingle();
         }
     }
 }

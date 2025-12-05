@@ -51,7 +51,7 @@ namespace Sand
                 localY < borderThickness ||
                 localX >= pixelsPerCell - borderThickness ||
                 localY >= pixelsPerCell - borderThickness;
-
+            
             Color32 baseColor = hasSand ? cell.color : backgroundColor;
 
             float cellNoise = Hash01(cx, cy);
@@ -61,11 +61,13 @@ namespace Sand
                 brightness = Mathf.Lerp(1.1f, 1.2f, cellNoise / 0.9f);
             else
                 brightness = Mathf.Lerp(0.8f, 1.0f, (cellNoise - 0.9f) / 0.1f);
+
             Color32 cellColor = MulColor(baseColor, brightness);
+
             if (isBorderPixel)
-                pixels[index] = MulColor(cellColor, 0.8f);
+                pixels[index] = MulColor(cellColor, 0.8f); // cellColor // baseColor
             else
-                pixels[index] = cellColor;
+                pixels[index] = cellColor; // cellColor // baseColor
         }
 
         private static Color32 MulColor(Color32 c, float mul)

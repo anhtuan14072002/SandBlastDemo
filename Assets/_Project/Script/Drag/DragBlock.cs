@@ -81,7 +81,7 @@ namespace Sand
                 float fy = ((float)cellY / _map._hight - 0.5f) * spriteHeight;
                 Vector3 snappedLocal = new Vector3(fx, fy, 0);
                 Vector3 snappedWorld = _map.transform.TransformPoint(snappedLocal);
-                Debug.Log($"x : {cellX} y : {cellY} snappedWorld : {snappedWorld}");
+                // Debug.Log($"x : {cellX} y : {cellY} snappedWorld : {snappedWorld}");
                 _objDrag.transform.localScale = Vector3.one * 8f;
                 snappedWorld.z = _objDrag.transform.position.z;
                 _objDrag.transform.position = snappedWorld;
