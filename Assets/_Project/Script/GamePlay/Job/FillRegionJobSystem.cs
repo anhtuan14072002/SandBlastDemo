@@ -6,27 +6,30 @@ using UnityEngine;
 
 namespace Sand
 {
-    public static class FillRegionJobSystem
+    public static class FillColorRenderJobs
     {
-        public static void FillRegion(
+        /// <summary>
+        /// Tô các vị trí có màu gần targetColor lên mapArt._map,
+        /// dùng NativeArray pixel đã cache (không GetPixels32 nữa).
+        /// </summary>
+        public static void FillRegionColorFull(
             RenderMap mapArt,
-            Sprite colorSprite,
+            NativeArray<Color32> spritePixels,
+            int fullTextureWidth,
+            int spriteStartX,
+            int spriteStartY,
+            int spriteWidth,
+            int spriteHeight,
             Color32 targetColor,
-            int tolerance,
-            int jobBatchSize = 64)
+            int colorTolerance,
+            int batchSize
+        )
         {
-            if (mapArt == null || colorSprite == null) return;
-
-            Texture2D texture = colorSprite.texture;
-            Rect spriteRect = colorSprite.textureRect;
-
-            int spriteWidth = (int)spriteRect.width;
-            int spriteHeight = (int)spriteRect.height;
-            int startX = (int)spriteRect.x;
-            int startY = (int)spriteRect.y;
+            if (mapArt == null || !spritePixels.IsCreated) return;
 
             int mapWidth = mapArt._wight;
             int mapHeight = mapArt._hight;
+            int totalMapPixels = mapWidth * mapHeight;
 
             float scaleX = (float)mapWidth / spriteWidth;
             float scaleY = (float)mapHeight / spriteHeight;
@@ -37,12 +40,6 @@ namespace Sand
             float offsetX = (mapWidth - drawWidth) * 0.5f;
             float offsetY = (mapHeight - drawHeight) * 0.5f;
 
-            Color32[] pixels = texture.GetPixels32();
-            int fullTextureWidth = texture.width;
-
-            int totalMapPixels = mapWidth * mapHeight;
-
-            var colorPixelsNative = new NativeArray<Color32>(pixels, Allocator.TempJob);
             var outColors = new NativeArray<Color32>(totalMapPixels, Allocator.TempJob);
 
             var fillJob = new FillRegionJob
@@ -50,10 +47,10 @@ namespace Sand
                 MapWidth = mapWidth,
                 MapHeight = mapHeight,
 
-                SpritePixels = colorPixelsNative,
+                SpritePixels = spritePixels,
                 FullTextureWidth = fullTextureWidth,
-                SpriteStartX = startX,
-                SpriteStartY = startY,
+                SpriteStartX = spriteStartX,
+                SpriteStartY = spriteStartY,
                 SpriteWidth = spriteWidth,
                 SpriteHeight = spriteHeight,
 
@@ -62,31 +59,29 @@ namespace Sand
                 OffsetY = offsetY,
 
                 TargetColor = targetColor,
-                Tolerance = tolerance,
+                Tolerance = colorTolerance,
 
                 OutColors = outColors
             };
 
-            JobHandle handle = fillJob.Schedule(totalMapPixels, jobBatchSize);
+            JobHandle handle = fillJob.Schedule(totalMapPixels, batchSize);
             handle.Complete();
 
-            // Apply các pixel được tô
             for (int i = 0; i < totalMapPixels; i++)
             {
                 Color32 c = outColors[i];
-                if (c.a == 0) continue; // không tô
+                if (c.a == 0) continue;
 
                 int y = i / mapWidth;
                 int x = i % mapWidth;
-
                 mapArt._map.SetPixelCell(x, y, c);
             }
 
             mapArt._map.UpdateTexture();
-
-            colorPixelsNative.Dispose();
             outColors.Dispose();
         }
+
+        // =============== JOB STRUCT ===============
 
         [BurstCompile]
         private struct FillRegionJob : IJobParallelFor
@@ -108,6 +103,7 @@ namespace Sand
             public Color32 TargetColor;
             public int Tolerance;
 
+            // OutColors[index].a == 0 => không tô
             public NativeArray<Color32> OutColors;
 
             public void Execute(int index)
@@ -118,7 +114,6 @@ namespace Sand
                 float drawWidth = SpriteWidth * Scale;
                 float drawHeight = SpriteHeight * Scale;
 
-                // default: không tô
                 OutColors[index] = new Color32(0, 0, 0, 0);
 
                 if (mapX < OffsetX || mapX >= OffsetX + drawWidth ||

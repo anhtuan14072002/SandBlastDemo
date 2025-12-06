@@ -28,7 +28,6 @@ namespace Sand
         [SerializeField] private GameObject _backGround;
         [SerializeField] private GameObject _topUI;
         [SerializeField] private GameObject _scoreBar;
-        [SerializeField] private GameObject _effectClaimGem;
         [SerializeField] private GameObject _warningSand;
         [SerializeField] private GameObject _popupCollections;
 
@@ -358,18 +357,7 @@ namespace Sand
         {
             _popupCategory[2].gameObject.SetActive(true);
         }
-
-        public void EnableEffectClaimGem()
-        {
-            _effectClaimGem.SetActive(true);
-            _soundManager.OnPlaySound(SoundType.Reward);
-        }
-
-        public void DisableEffectClaimGem()
-        {
-            _effectClaimGem.SetActive(false);
-        }
-
+        
         public async UniTask NewGame()
         {
             PlayGame().Forget();

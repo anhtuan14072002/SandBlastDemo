@@ -727,6 +727,7 @@ GameObject:
   - component: {fileID: 37877413}
   - component: {fileID: 37877415}
   - component: {fileID: 37877414}
+  - component: {fileID: 37877416}
   m_Layer: 0
   m_Name: PopupPicture
   m_TagString: Untagged
@@ -794,6 +795,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 37877412}
   m_CullTransparentMesh: 1
+--- !u!114 &37877416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 37877412}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ffb8e43f98a45aaa6e1f46ed5a04891, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &38945850
 GameObject:
   m_ObjectHideFlags: 0
@@ -32886,6 +32899,7 @@ MonoBehaviour:
   _progressBar: {fileID: 1986819804}
   _popupDrawComplete: {fileID: 371911384}
   _imageComplete: {fileID: 453127812}
+  _pictureBase: {fileID: 1888453878}
 --- !u!1 &1602809093
 GameObject:
   m_ObjectHideFlags: 0
@@ -49179,7 +49193,6 @@ MonoBehaviour:
   _backGround: {fileID: 1522121848}
   _topUI: {fileID: 693271306}
   _scoreBar: {fileID: 2069228567}
-  _effectClaimGem: {fileID: 2069725014}
   _warningSand: {fileID: 1941643528}
   _popupCollections: {fileID: 37877412}
   _gemBarMenu: {fileID: 1823746976}
@@ -49263,7 +49276,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5b9922a0b3a40caada6d2597ea90ad9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _effectLevelUp: {fileID: 1606598965}
+  _effectFirework: {fileID: 1606598965}
+  _effectClaimGem: {fileID: 2069725014}
 --- !u!1 &2084049870
 GameObject:
   m_ObjectHideFlags: 0

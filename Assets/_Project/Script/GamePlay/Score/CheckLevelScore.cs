@@ -160,7 +160,7 @@ namespace Sand
             await UniTask.Delay(TimeSpan.FromSeconds(1.25f));
             _effectGame.CloseEffectLevelUp();
             // DisableEffectClaimGem();
-            _gameVisual.DisableEffectClaimGem();
+            _effectGame.CloseEffectClaimGem();
             // _popupLevelUp.SetActive(false);
         }
 
@@ -174,7 +174,7 @@ namespace Sand
         {
             // EnableEffectClaimGem();
             _popupLevelUp.SetActive(false);
-            _gameVisual.EnableEffectClaimGem();
+            _effectGame.OpenEffectClaimGem();
             await UniTask.Delay(TimeSpan.FromSeconds(1.65f));
             _gameResources.ClaimGemsLevelUp();
             ClosePopupLevelUp().Forget();
@@ -183,8 +183,7 @@ namespace Sand
         private async UniTask ClaimCoreReward()
         {
             // EnableEffectClaimGem();
-            _popupLevelUp.SetActive(false);
-            _gameVisual.EnableEffectClaimGem();
+            _popupLevelUp.SetActive(false); 
             _gameResources.StopCoreAnimation().Forget();
             await UniTask.Delay(TimeSpan.FromSeconds(0.75f));
             ClosePopupLevelUp().Forget();
