@@ -13,6 +13,7 @@ namespace Sand
         private Sprite _outlineSprite;
         private Sprite _colorSprite;
         private RenderPicture _renderPicture;
+        private bool _isCompleted = false;
 
         public void Init(Sprite outlineSprite, Sprite colorSprite, RenderPicture renderPicture, int index)
         {
@@ -35,16 +36,27 @@ namespace Sand
         {
             if (_renderPicture == null) return;     
             if (_outlineSprite == null || _colorSprite == null) return;
-
-            Debug.Log("Click " + _index);
+            
+            if (_isCompleted)
+            {
+                Debug.Log("Tranh số " + _index + "vẽ xong");
+                return;
+            }
             Global.Send(new SignalClosePopupCollections());
             _renderPicture.RenderOutLineWithPair(_outlineSprite, _colorSprite, _index);
+        }
+        public void ResetCell()
+        {
+            _isCompleted = false;
+            if (_previewImage != null)
+                _previewImage.sprite = _outlineSprite;
         }
 
         public void SetPreviewSprite(Sprite sprite)
         {
             if (_previewImage != null)
                 _previewImage.sprite = sprite;
+            _isCompleted = true;
         }
     }
 }

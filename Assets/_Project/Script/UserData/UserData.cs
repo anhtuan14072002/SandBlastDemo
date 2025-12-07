@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using R3;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Sand
 {
@@ -23,7 +22,10 @@ namespace Sand
         public SerializableReactiveProperty<int> LevelModClassic = new(0);
         [SerializeField]
         public SerializableReactiveProperty<int> CurrentScore = new(0);
-        
+        [SerializeField]
+        public List<int> CompletedPictureIndices = new();
+        [SerializeField]
+        public Dictionary<int, int> PictureFillProgress = new();
         public void OnDeserialized()
         {
             List<ISerializationCallbackReceiver> receivers = new();

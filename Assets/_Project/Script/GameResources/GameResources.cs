@@ -209,7 +209,6 @@ namespace Sand
         public void ResetGem()
         {
             _rewardSystem.DeductGems(_userData.GemsValue);
-            ;
         }
 
         private void OnDestroy()

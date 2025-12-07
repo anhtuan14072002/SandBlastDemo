@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 namespace Sand
 {
@@ -14,26 +15,35 @@ namespace Sand
 
     public class PictureBase : MonoBehaviour
     {
-        [Header("UI")] 
-        [SerializeField] private ScrollRect _scrollRect;
+        [Header("UI")] [SerializeField] private ScrollRect _scrollRect;
         [SerializeField] private RectTransform _content;
         [SerializeField] private PictureCell _cellPrefab;
 
-        [Header("Data")] 
-        [SerializeField] private List<Sprite> _sprites = new();       // outline sprites
-        [SerializeField] private List<Sprite> _colorSprites = new();  // color sprites
+        [Header("Data")] [SerializeField] private List<Sprite> _sprites = new(); // outline sprites
+        [SerializeField] private List<Sprite> _colorSprites = new(); // color sprites
         [SerializeField] private int _count;
         [SerializeField] private RenderPicture _renderPicture;
 
         private readonly List<PictureData> _datas = new();
-        private readonly List<PictureCell> _cells = new();   // list các cell trong scroll
+        private readonly List<PictureCell> _cells = new(); // list các cell trong scroll
         private bool _initialized = false;
+
+        PictureDrawData _pictureDrawData;
+        UserData _userData;
+
+        [Inject]
+        void Construct(PictureDrawData pictureDrawData, UserData userData)
+        {
+            _pictureDrawData = pictureDrawData;
+            _userData = userData;
+        }
 
         private void Start()
         {
             if (_initialized) return;
             BuildData();
             CreateCells();
+            LoadCompletedPictures();
             _initialized = true;
         }
 
@@ -70,12 +80,35 @@ namespace Sand
             _scrollRect.verticalNormalizedPosition = 1f;
         }
 
+        private void LoadCompletedPictures()
+        {
+            foreach (var completedIndex in _userData.CompletedPictureIndices)
+            {
+                if (completedIndex >= 0 && completedIndex < _datas.Count)
+                {
+                    UpdatePictureSprite(completedIndex, _datas[completedIndex].ColorSprite);
+                }
+            }
+        }
+
         public void UpdatePictureSprite(int index, Sprite newSprite)
         {
             if (index < 0 || index >= _datas.Count) return;
             _datas[index].Sprite = newSprite;
             if (index < _cells.Count && _cells[index] != null)
                 _cells[index].SetPreviewSprite(newSprite);
+        }
+
+        public void ResetAllPictures()
+        {
+            foreach (var cell in _cells)
+            {
+                if (cell != null) cell.ResetCell();
+            }
+            foreach (var data in _datas)
+            {
+                data.Sprite = data.ColorSprite != null ? _sprites[data.Index] : null;
+            }
         }
 
         private void ClearCells()

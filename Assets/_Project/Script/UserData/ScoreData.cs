@@ -20,7 +20,7 @@ namespace Sand
             FirebaseService.Instance.LogEvent("high_score", new EventParameter("high_score", "{" + score + "}"));
             // _saveService.Save();
         }
-
+        
         public void ResetCurrentScore()
         {
             _userData.CurrentScore.Value = 0;
