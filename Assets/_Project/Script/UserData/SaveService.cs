@@ -13,10 +13,6 @@ namespace Sand
             ES3.Save(SaveKeys.Boom, _userData.Boom.Value);
             ES3.Save(SaveKeys.LevelModClassic,_userData.LevelModClassic.Value);
             ES3.Save(SaveKeys.CurrentScore,_userData.CurrentScore.Value);
-            ES3.Save(SaveKeys.CompletedPictureIndices, _userData.CompletedPictureIndices);
-            
-            ES3.Save(SaveKeys.PictureFillProgress, _userData.PictureFillProgress);
-
         }
     }
 }

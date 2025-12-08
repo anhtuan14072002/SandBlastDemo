@@ -11,8 +11,5 @@
         public const string CurrentScore = "UserData.CurrentScore";
         public const string MapData = "UserData.MapData";
         public const string Coin = "UserData.Coin";
-        public const string CompletedPictureIndices = "UserData.CompletedPictureIndices";
-        
-        public const string PictureFillProgress = "UserData.PictureFillProgress";
     }
 }
