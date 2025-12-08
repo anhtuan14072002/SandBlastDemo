@@ -5,12 +5,10 @@ namespace Sand
     public class ScoreData
     {
         UserData _userData;
-        SaveService _saveService;
 
-        public ScoreData(UserData userData, SaveService saveService)
+        public ScoreData(UserData userData)
         {
             _userData = userData;
-            _saveService = saveService;
         }
 
         public void CheckHighScore(int score)
@@ -18,13 +16,11 @@ namespace Sand
             if (score <= _userData.HighScoreValue) return;
             _userData.HighScore.Value = score;
             FirebaseService.Instance.LogEvent("high_score", new EventParameter("high_score", "{" + score + "}"));
-            // _saveService.Save();
         }
 
         public void ResetCurrentScore()
         {
             _userData.CurrentScore.Value = 0;
-            // _saveService.Save();
         }
     }
 }

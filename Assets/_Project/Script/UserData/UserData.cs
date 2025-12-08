@@ -23,8 +23,11 @@ namespace Sand
         [SerializeField]
         public SerializableReactiveProperty<int> CurrentScore = new(0);
         [SerializeField]
+        public SerializableReactiveProperty<int> CountDrawInGame = new(0);
+        [SerializeField]
+        public SerializableReactiveProperty<int> CountDrawPicture = new(0);
+        [SerializeField]
         public List<int> CompletedPictureIndices = new();
-
         [SerializeField]
         public Dictionary<int, int> PictureFillProgress = new();
 
@@ -37,6 +40,8 @@ namespace Sand
             receivers.Add(Boom);
             receivers.Add(LevelModClassic);
             receivers.Add(CurrentScore);
+            receivers.Add(CountDrawInGame);
+            receivers.Add(CountDrawPicture);
 
             foreach (var serializationCallbackReceiver in receivers)
             {

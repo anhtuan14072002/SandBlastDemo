@@ -25,8 +25,6 @@ namespace Sand
         private bool _isDragging;
         private Vector3 _startPos;
         private Vector3 _offset;
-
-        // Chỉ khi true thì mới cho UpdateMagicBrushIcon chạy
         private bool _magicBrushActive = false;
 
         RewardSystem _rewardSystem;
@@ -34,6 +32,7 @@ namespace Sand
         RenderMap _renderMaps;
         SoundManager _soundManager;
         VibrationManager _vibrationManager;
+        CountDrawData _countDrawData;
 
         IDisposable _mouseClickSub;
         IDisposable _mouseClickSubWave;
@@ -46,13 +45,14 @@ namespace Sand
             EffectBlock effectBlock,
             RewardSystem rewardSystem,
             SoundManager soundManager,
-            VibrationManager vibrationManager)
+            VibrationManager vibrationManager, CountDrawData countDrawData)
         {
             _renderMaps = renderMap;
             _effectBlock = effectBlock;
             _rewardSystem = rewardSystem;
             _soundManager = soundManager;
             _vibrationManager = vibrationManager;
+            _countDrawData  = countDrawData;
         }
 
         private void Awake()
@@ -205,7 +205,7 @@ namespace Sand
         {
             _renderMaps._map.IsMovePause = true;
 
-            var colorManager = new SandColorMap(_renderMaps._map, _renderMaps._hight, _renderMaps._wight, _effectBlock, _soundManager);
+            var colorManager = new SandColorMap(_renderMaps._map, _renderMaps._hight, _renderMaps._wight, _effectBlock, _soundManager, _countDrawData);
             connectedComponentDel.Clear();
 
             for (int x = 0; x < _renderMaps._wight; x++)

@@ -32,6 +32,9 @@ namespace Sand
             Container.Bind<PictureDrawData>()
                 .AsSingle()
                 .NonLazy();
+            Container.Bind<CountDrawData>()
+                .AsSingle()
+                .NonLazy();
         }
 
         private void LoadFromES3(UserData userData)
@@ -42,12 +45,11 @@ namespace Sand
             LoadIntValue(SaveKeys.Boom, value => userData.Boom.Value = value);
             LoadIntValue(SaveKeys.LevelModClassic, value => userData.LevelModClassic.Value = value);
             LoadIntValue(SaveKeys.CurrentScore, value => userData.CurrentScore.Value = value);
-
-            LoadListIntValue(SaveKeys.CompletedPictureIndices,
-                value => userData.CompletedPictureIndices = value);
-
-            LoadDictionaryIntIntValue(SaveKeys.PictureFillProgress,
-                value => userData.PictureFillProgress = value);
+            LoadIntValue(SaveKeys.CountDrawInGame, value => userData.CountDrawInGame.Value = value);
+            LoadIntValue(SaveKeys.CountDrawPicture, value => userData.CountDrawPicture.Value = value);
+            
+            LoadListIntValue(SaveKeys.CompletedPictureIndices, value => userData.CompletedPictureIndices = value);
+            LoadDictionaryIntIntValue(SaveKeys.PictureFillProgress, value => userData.PictureFillProgress = value);
         }
 
         private void LoadIntValue(string key, Action<int> setValue)

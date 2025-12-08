@@ -16,6 +16,7 @@ namespace Sand
     {
         [SerializeField] private TextMeshProUGUI _textCountDrawGamePlay;
         [SerializeField] private TextMeshProUGUI _textCountDrawGameOver;
+        [SerializeField] private GameObject _drawCountBar;
         [SerializeField] private float _targetTweenDown;
         [SerializeField] private float _targetTweenUp;
         [SerializeField] private float _timeDelay;
@@ -75,13 +76,13 @@ namespace Sand
 
         public void TweenDownCombo()
         {
-            var rectTransform = gameObject.GetComponent<RectTransform>();
+            var rectTransform = _drawCountBar.gameObject.GetComponent<RectTransform>();
             rectTransform.TweenAnchoredY(_targetTweenDown, 0.2f, Ease.Linear);
         }
 
         public void TweenUpCombo()
         {
-            var rectTransform = gameObject.GetComponent<RectTransform>();
+            var rectTransform = _drawCountBar.gameObject.GetComponent<RectTransform>();
             rectTransform.TweenAnchoredY(_targetTweenUp, 0.2f, Ease.Linear);
         }
 

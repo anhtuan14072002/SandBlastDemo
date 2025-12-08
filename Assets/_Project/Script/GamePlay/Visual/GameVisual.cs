@@ -202,10 +202,10 @@ namespace Sand
         {
             _animLoad.gameObject.SetActive(true);
             // _animLoad.SetTrigger(EndMenu);
+            CloseArtMenu();
             await UniTask.WaitForSeconds(1f);
             
             _renderPicture.OpenMapGamePlay(); // change mapgameplay
-
             Global.Send(new SignalOpenGemBarIngame());
             Global.Send(new SignalToggleGemBarMenu() { IsActivate = false });
             Global.Send(new SignalToggleGemBarInGame() { IsActivate = true });

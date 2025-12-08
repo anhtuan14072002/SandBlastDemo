@@ -11,35 +11,34 @@ namespace Sand
 {
     public class RenderPicture : MonoBehaviour
     {
-        [Header("Maps")] 
-        [SerializeField] private RenderMap _mapGamePlay;
+        [Header("Maps")] [SerializeField] private RenderMap _mapGamePlay;
         [SerializeField] private RenderMap _mapArt;
 
-        [Header("Sprites")] 
-        private Sprite _outlineSprite;
+        [Header("Sprites")] private Sprite _outlineSprite;
         private Sprite _colorSprite;
 
-        [Header("Buttons")]
-        [SerializeField] private Button _btnDraw;
+        [Header("Buttons")] [SerializeField] private Button _btnDraw;
 
-        [Header("Art Settings")] 
-        [SerializeField] private Color _artBackgroundColor = new(0.75f, 0.75f, 0.8f, 1f); // nền xám
+        [Header("Art Settings")] [SerializeField]
+        private Color _artBackgroundColor = new(0.75f, 0.75f, 0.8f, 1f); // nền xám
+
         [SerializeField] private Color _sandLineColor = new(0.16f, 0.16f, 0.18f, 1f); // cát cho viền
         [SerializeField, Range(0f, 1f)] private float _lineLuminanceThreshold = 0.35f; // ngưỡng line tối
         [SerializeField, Range(0f, 1f)] private float _sandLineDensity = 0.9f; // mật độ cát trên viền
 
-        [SerializeField, Range(0f, 1f)] private float _fillSandDensity = 0.9f; // mật độ cát khi tô màu (dùng khi không full)
+        [SerializeField, Range(0f, 1f)]
+        private float _fillSandDensity = 0.9f; // mật độ cát khi tô màu (dùng khi không full)
+
         [SerializeField, Range(0, 255)] private int _colorTolerance = 40; // tolerance so màu vùng
-        
-        [Header("Progress")]
-        [SerializeField] private TextMeshProUGUI _textCountDraw;
+
+        [Header("Progress")] [SerializeField] private TextMeshProUGUI _textCountDraw;
         [SerializeField] private TextMeshProUGUI _textPercent;
         [SerializeField] private Image _fillImage;
         [SerializeField] private float _fillAnimationDuration = 0.5f;
         [SerializeField] private GameObject _progressBar;
         [SerializeField] private GameObject _popupDrawComplete;
         [SerializeField] private Image _imageComplete;
-        
+
         private readonly List<Color32> _regionColors = new();
         private int _currentColorIndex = 0;
         private bool _isCompleteShown = false;
@@ -49,17 +48,22 @@ namespace Sand
         EffectGame _effectGame;
         PictureDrawData _pictureDrawData;
         SaveService _saveService;
+        CountDrawData _countDrawData;
+        UserData _userData;
 
         [SerializeField] private PictureBase _pictureBase;
 
         [Inject]
-        void Construct(EffectGame effectGame, PictureDrawData pictureDrawData, SaveService saveService)
+        void Construct(EffectGame effectGame, PictureDrawData pictureDrawData, SaveService saveService,
+            CountDrawData countDrawData, UserData userData)
         {
             _effectGame = effectGame;
             _pictureDrawData = pictureDrawData;
             _saveService = saveService;
+            _countDrawData = countDrawData;
+            _userData = userData;
         }
-        
+
         private void Awake()
         {
             BuildRegionColorList();
@@ -104,15 +108,15 @@ namespace Sand
         #endregion
 
         #region Outline
-        
+
         public void RenderOutLineWithPair(Sprite outlineSprite, Sprite colorSprite, int pictureIndex)
         {
             if (outlineSprite == null || colorSprite == null) return;
 
-            _isCompleteShown = false; 
+            _isCompleteShown = false;
             _outlineSprite = outlineSprite;
             _colorSprite = colorSprite;
-            _currentPictureIndex = pictureIndex; 
+            _currentPictureIndex = pictureIndex;
 
             _currentColorIndex = 0;
 
@@ -137,7 +141,7 @@ namespace Sand
             _currentColorIndex = savedFilled;
             UpdateUI();
         }
-        
+
         public void RenderOutline()
         {
             if (_outlineSprite == null || _mapArt == null) return;
@@ -268,6 +272,7 @@ namespace Sand
                             break;
                         }
                     }
+
                     if (!exists) _regionColors.Add(c);
                 }
             }
@@ -293,6 +298,14 @@ namespace Sand
             if (_regionColors.Count == 0) return;
             if (_currentPictureIndex < 0) return;
 
+            if (_userData.CountDrawPicture.Value <= 0)
+            {
+                Debug.Log("Hết lượt vẽ (CountDrawPicture = 0)");
+                return;
+            }
+
+            _countDrawData.DecreaseCountDrawPicture(1);
+
             if (_currentColorIndex >= _regionColors.Count)
             {
                 Debug.Log("tô xong");
@@ -308,11 +321,7 @@ namespace Sand
             if (_textCountDraw != null)
                 _textCountDraw.text = $"{_currentColorIndex}/{_regionColors.Count}";
 
-            _pictureDrawData.UpdateFillProgress(
-                _currentPictureIndex,
-                _currentColorIndex,
-                _regionColors.Count);
-
+            _pictureDrawData.UpdateFillProgress(_currentPictureIndex, _currentColorIndex, _regionColors.Count);
             AnimateFillBarAsync(this.GetCancellationTokenOnDestroy()).Forget();
         }
 
@@ -397,9 +406,10 @@ namespace Sand
                     _mapArt._map.SetPixelCell(mapX, mapY, pixelColor);
                 }
             }
+
             _mapArt._map.UpdateTexture();
         }
-        
+
         public void ShowComplete()
         {
             if (_isCompleteShown) return;
@@ -413,7 +423,8 @@ namespace Sand
 
         public void HideComplete()
         {
-            if (_pictureBase != null && _currentPictureIndex >= 0 && _colorSprite != null) _pictureBase.UpdatePictureSprite(_currentPictureIndex, _colorSprite);
+            if (_pictureBase != null && _currentPictureIndex >= 0 && _colorSprite != null)
+                _pictureBase.UpdatePictureSprite(_currentPictureIndex, _colorSprite);
             OpenMapArt();
             _effectGame.CloseEffectLevelUp();
             _popupDrawComplete.SetActive(false);

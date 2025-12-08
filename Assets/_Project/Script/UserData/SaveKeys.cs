@@ -6,12 +6,12 @@
         public const string Gems = "UserData.Gems";
         public const string MagicBrush = "UserData.MagicBrush";
         public const string Boom = "UserData.Boom";
-        public const string Map = "UserData.Map";
         public const string LevelModClassic = "UserData.LevelModClassic";
         public const string CurrentScore = "UserData.CurrentScore";
-        public const string MapData = "UserData.MapData";
-        public const string Coin = "UserData.Coin";
         public const string CompletedPictureIndices = "UserData.CompletedPictureIndices";
         public const string PictureFillProgress = "UserData.PictureFillProgress";
+        
+        public const string CountDrawInGame = "UserData.CountDrawInGame";
+        public const string CountDrawPicture =  "UserData.CountDrawPicture";
     }
 }

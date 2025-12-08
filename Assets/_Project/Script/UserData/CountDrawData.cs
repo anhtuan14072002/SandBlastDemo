@@ -1,38 +1,37 @@
-﻿/*namespace Sand
+﻿namespace Sand
 {
     public class CountDrawData
     {
         UserData _userData;
-        SaveService _saveService;
 
-        public CountDrawData(UserData userData, SaveService saveService)
+        public CountDrawData(UserData userData)
         {
             _userData = userData;
-            _saveService = saveService;
         }
 
-        public int GetCountDraw()
+        public void IncreaseCountDrawInGame(int count)
         {
-            return _userData.CountDraw.Value;
+            _userData.CountDrawInGame.Value +=  count;
         }
 
-        public void DecreaseCountDraw()
+        public void DecreaseCountDrawInGame(int count)
         {
-            if (_userData.CountDraw.Value > 0)
-            {
-                _userData.CountDraw.Value--;
-                _saveService.Save();
-            }
+            _userData.CountDrawInGame.Value -= count;
         }
 
-        public bool CanDraw()
+        public void IncreaseCountDrawPicture(int count)
         {
-            return _userData.CountDraw.Value > 0;
+            _userData.CountDrawPicture.Value += count;
         }
 
-        public void ResetCountDraw()
+        public void DecreaseCountDrawPicture(int count)
         {
-            _userData.CountDraw.Value = 0;
+            _userData.CountDrawPicture.Value -= count;
+        }
+
+        public void CountDrawPicture()
+        {
+            _userData.CountDrawPicture.Value += _userData.CountDrawInGame.Value;
         }
     }
-}*/
+}

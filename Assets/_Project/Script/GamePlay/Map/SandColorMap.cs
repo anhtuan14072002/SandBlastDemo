@@ -2,6 +2,7 @@
 using Core;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using Zenject;
 
 namespace Sand
 {
@@ -17,14 +18,16 @@ namespace Sand
 
         EffectBlock _effectBlock;
         SoundManager _soundManager;
+        CountDrawData _countDrawData; 
         
-        public SandColorMap(Map map, int width, int height, EffectBlock effectBlock, SoundManager soundManager)
+        public SandColorMap(Map map, int width, int height, EffectBlock effectBlock, SoundManager soundManager, CountDrawData countDrawData)
         {
             _map = map;
             _width = width;
             _height = height;
             _effectBlock = effectBlock;
             _soundManager = soundManager;
+            _countDrawData = countDrawData;
         }
 
         public async UniTask SameColorCompleteBands(Color32 color)
@@ -96,25 +99,17 @@ namespace Sand
                         _currentComboCount++;
                         _turnsWithoutCombo = 0;
                         PlayComboSound();
-
+                        Global.Send(new SignalIncreaseNumberCombo(){Count = _currentComboCount});
                         Global.Send(new SignalScoreOnGame() { Score = cellCountAfter });
-
                         Global.Send(new SignalOpenEffectTextScore()
                         {
                             Score = cellCountAfter,
                             Combo = _currentComboCount,
                             Position = Vector3.zero
                         });
-
+                        _countDrawData.IncreaseCountDrawInGame(1);
+                        Global.Send(new SignalIncreaseCountDrawIngame(){ Count = 1 });
                         count++;
-
-                        /*_currentComboCount++;
-                        _turnsWithoutCombo = 0;
-                        PlayComboSound();
-
-                        Global.Send(new SignalScoreOnGame() { Score = cellCountAfter });
-                        Global.Send(new SignalOpenEffectTextScore(){Score = cellCountAfter });
-                        count++;*/
                     }
                 }
             }

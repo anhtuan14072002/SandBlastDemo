@@ -16,6 +16,9 @@ namespace Sand
             ES3.Save(SaveKeys.CurrentScore, _userData.CurrentScore.Value);
             ES3.Save(SaveKeys.CompletedPictureIndices, _userData.CompletedPictureIndices);
             ES3.Save(SaveKeys.PictureFillProgress, _userData.PictureFillProgress);
+            
+            ES3.Save(SaveKeys.CountDrawInGame, _userData.CountDrawInGame.Value);
+            ES3.Save(SaveKeys.CountDrawPicture, _userData.CountDrawPicture.Value);
         }
     }
 }

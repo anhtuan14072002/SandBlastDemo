@@ -26,6 +26,7 @@ namespace Sand
         GameVisual _gameVisual;
         SaveMapData _saveMapData;
         SaveService _saveService;
+        CountDrawData _countDrawData; 
 
         public Map _map;
         private SandColorMap _colorMap;
@@ -37,7 +38,7 @@ namespace Sand
 
         [Inject]
         void Construct(GameRevive gameRevive, EffectBlock effectBlock, SoundManager soundManager, GameVisual gameVisual,
-            SaveMapData saveMapData, SaveService saveService)
+            SaveMapData saveMapData, SaveService saveService, CountDrawData countDrawData)
         {
             _gameRevive = gameRevive;
             _effectBlock = effectBlock;
@@ -45,6 +46,7 @@ namespace Sand
             _gameVisual = gameVisual;
             _saveMapData = saveMapData;
             _saveService = saveService;
+            _countDrawData = countDrawData;
         }
 
         private void Awake()
@@ -58,7 +60,7 @@ namespace Sand
         {
             _map.SetUpMap(_backgroundColor);
             _map.ApplyTexture(_spriteRenderer);
-            _colorMap = new SandColorMap(_map, _wight, _hight, _effectBlock, _soundManager);
+            _colorMap = new SandColorMap(_map, _wight, _hight, _effectBlock, _soundManager, _countDrawData);
             _saveMapData.LoadDataMap();
             // _saveMapData?.LoadDataMap();
             /*_sandSpawnSub = Observable.EveryUpdate()
@@ -96,7 +98,7 @@ namespace Sand
 
             if (_colorMap != null)
             {
-                _colorMap = new SandColorMap(_map, _wight, _hight, _effectBlock, _soundManager);
+                _colorMap = new SandColorMap(_map, _wight, _hight, _effectBlock, _soundManager, _countDrawData);
                 _colorMap.ResetCombo();
             }
 

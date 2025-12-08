@@ -1,17 +1,15 @@
-﻿using Core;
+﻿using R3;
 using TMPro;
 using UnityEngine;
 using Zenject;
 
 namespace Sand
 {
-    public class CountDrawView : MonoBehaviour,
-        IReceive<SignalOpenPopupLibrary>,
-        IReceive<SignalIncreaseCountDrawIngame>
+    public class CountDrawView : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI _textCountDrawPopupLibrary;
-        [SerializeField] private TextMeshProUGUI _textCountDrawIngame;
-
+        [SerializeField] private TextMeshProUGUI _countDrawInGame;
+        [SerializeField] private TextMeshProUGUI _countDrawPicture;
+        
         private UserData _userData;
 
         [Inject]
@@ -22,35 +20,26 @@ namespace Sand
 
         private void Start()
         {
-            UpdateCountDrawDisplay();
-        }
+            if (_userData == null) return;
 
-        private void UpdateCountDrawDisplay()
-        {
-            if (_textCountDrawPopupLibrary != null)
-            {
-                // _textCountDrawPopupLibrary.text = _userData.CountDraw.Value.ToString();
-            }
-        }
+            if (_countDrawInGame != null) 
+                _countDrawInGame.text = _userData.CountDrawInGame.Value.ToString();
+            if (_countDrawPicture != null)
+                _countDrawPicture.text = _userData.CountDrawPicture.Value.ToString();
 
-        private void UpdateCountDrawIngameDisplay(int countIngame)
-        {
-            if (_textCountDrawIngame != null)
-            {
-                _textCountDrawIngame.text = countIngame.ToString();
-            }
-        }
+            _userData.CountDrawInGame.Subscribe(v =>
+                {
+                    if (_countDrawInGame != null)
+                        _countDrawInGame.text = v.ToString();
+                })
+                .AddTo(this);
 
-        public void Receive(in SignalOpenPopupLibrary signal)
-        {
-            UpdateCountDrawDisplay();
-            // Debug.Log($"[CountDrawView] Hiển thị CountDraw: {_userData.CountDraw.Value}");
-        }
-
-        public void Receive(in SignalIncreaseCountDrawIngame signal)
-        {
-            UpdateCountDrawIngameDisplay(signal.Count);
-            Debug.Log($"[CountDrawView] Tăng CountDrawIngame: {signal.Count}");
+            _userData.CountDrawPicture.Subscribe(v =>
+                {
+                    if (_countDrawPicture != null)
+                        _countDrawPicture.text = v.ToString();
+                })
+                .AddTo(this);
         }
     }
 }
