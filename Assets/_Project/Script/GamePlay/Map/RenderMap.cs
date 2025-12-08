@@ -186,8 +186,7 @@ namespace Sand
                 _gameRevive.OpenPopupRevive();
                 // _effectBlock.CheckSandLosingLineWithEffect(_map,_hight, _wight).Forget();
             }
-
-            _gameVisual.WarningSand(warningSand);
+            Global.Send(new SignalWarningSand(){IsWarning = warningSand});
         }
 
         public void MapGameOver()

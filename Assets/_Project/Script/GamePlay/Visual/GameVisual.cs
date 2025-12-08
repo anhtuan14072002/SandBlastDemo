@@ -10,32 +10,20 @@ using Zenject;
 namespace Sand
 {
     public class GameVisual : GameElement,
-        IReceive<SignalOpenPopupGameOver>,
-        IReceive<SignalChangTextBtnSwitchPlay>,
-        IReceive<SignalClosePopupCollections>
+        IReceive<SignalChangTextBtnSwitchPlay>
     {
-        [Header("MainMenu")] 
-        [SerializeField] private LayoutElement[] _layoutElement;
+        [Header("MainMenu")] [SerializeField] private LayoutElement[] _layoutElement;
         [SerializeField] private GameObject[] _focus;
         [SerializeField] private GameObject[] _iconMenu;
         [SerializeField] private GameObject[] _popupCategory;
         [SerializeField] private GameObject[] _skill;
         [SerializeField] private GameObject _groupMenu;
         [SerializeField] private GameObject _groupCategory;
-        [SerializeField] private GameObject _popupGameOver;
         [SerializeField] private GameObject _popupShop;
         [SerializeField] private GameObject _currenScore;
         [SerializeField] private GameObject _backGround;
         [SerializeField] private GameObject _topUI;
         [SerializeField] private GameObject _scoreBar;
-        [SerializeField] private GameObject _warningSand;
-        [SerializeField] private GameObject _popupCollections;
-
-        [Header("Handle Popup Shop")] [SerializeField]
-        private GameObject _gemBarMenu;
-
-        [SerializeField] private GameObject _gemBarInGame;
-        [SerializeField] private GameObject _popupShopInGame;
 
         [SerializeField] private Button[] _btnSelection;
         [SerializeField] private Button _btnPlay;
@@ -58,9 +46,9 @@ namespace Sand
         [SerializeField] private Button _btnNewGame;
 
         [SerializeField] private TextMeshProUGUI _textBtnSwitchPlay;
-        
-        [Header("GamePlayUI")] 
-        [SerializeField] private GameObject _pauseMenu;
+
+        [Header("GamePlayUI")] [SerializeField]
+        private GameObject _pauseMenu;
 
         [Inject] GameResources _gameResources;
         [Inject] CheckLevelScore _checkLevelScore;
@@ -116,7 +104,8 @@ namespace Sand
             OpenHome(index);
             var focusRt = _focus[index].GetComponent<RectTransform>();
             var iconRt = _iconMenu[index].GetComponent<RectTransform>();
-            ClosePopupCollection();
+            Global.Send(new SignalClosePopupCollections());
+
             focusRt.TweenAnchoredY(_targetFocus, 0.25f, Ease.Linear);
             IncreaseElement(index);
             iconRt.TweenAnchoredY(_targetIconMenu, 0.25f, Ease.Linear).OnComplete(() =>
@@ -138,8 +127,7 @@ namespace Sand
                     iconRt.TweenAnchoredY(_currentIconMenu, 0.1f, Ease.Linear)
                         .OnComplete(() =>
                             Tween.Scale(_iconMenu[i1].transform, _iconMenu[i1].transform.localScale, Vector3.one, 0.1f,
-                                Ease.Linear)
-                        );
+                                Ease.Linear));
                 }
             }
         }
@@ -147,7 +135,6 @@ namespace Sand
         private void EnableCategory(int index)
         {
             _popupCategory[index].SetActive(true);
-            OpenArtMenu(index);
         }
 
         private void DisableCategory(int index)
@@ -156,7 +143,8 @@ namespace Sand
             {
                 if (i == index) continue;
                 _popupCategory[i].SetActive(false);
-                if (i == 1) CloseArtMenu(1);
+                CloseArtMenu();
+                Global.Send(new SignalTogglePopupArt() { IsActive = false });
             }
         }
 
@@ -165,6 +153,7 @@ namespace Sand
             for (int i = 0; i < _popupCategory.Length; i++)
             {
                 _popupCategory[i].SetActive(false);
+                Global.Send(new SignalTogglePopupArt() { IsActive = false });
             }
         }
 
@@ -193,16 +182,6 @@ namespace Sand
             _popupCategory[2].gameObject.SetActive(true);
         }
 
-        public void OpenShopInGame()
-        {
-            _popupShopInGame.gameObject.SetActive(true);
-        }
-
-        public void CloseShopInGame()
-        {
-            _popupShopInGame.gameObject.SetActive(false);
-        }
-
         public void CloseAllCategory()
         {
             for (int i = 0; i < _btnSelection.Length; i++)
@@ -211,19 +190,11 @@ namespace Sand
             }
         }
         //------------------------------------------------//
-        
-        //----------------popupArt-------------------------//
-        
-        public void OpenArtMenu(int index)
-        {
-            if (index == 1)
-                _renderPicture.OpenMapArt();
-        }
 
-        public void CloseArtMenu(int index)
+        //----------------popupArt-------------------------//
+        public void CloseArtMenu()
         {
-            if (index == 1)
-                _renderPicture.CloseMapArt();
+            _renderPicture.CloseMapArt();
         }
 
         //===============Game=================//
@@ -232,9 +203,13 @@ namespace Sand
             _animLoad.gameObject.SetActive(true);
             // _animLoad.SetTrigger(EndMenu);
             await UniTask.WaitForSeconds(1f);
+            
             _renderPicture.OpenMapGamePlay(); // change mapgameplay
-            _gemBarMenu.SetActive(false); // gem bar menu
-            _gemBarInGame.SetActive(true); // gem bar ingame
+
+            Global.Send(new SignalOpenGemBarIngame());
+            Global.Send(new SignalToggleGemBarMenu() { IsActivate = false });
+            Global.Send(new SignalToggleGemBarInGame() { IsActivate = true });
+
             // _groupMenu.SetActive(false);
             DisableAllCategory();
             _groupCategory.SetActive(false);
@@ -278,7 +253,7 @@ namespace Sand
             _btnPauseGame.gameObject.SetActive(true);
             ChangTextBtnSwitchPlay(false);
             EnableSkill();
-            DisablePopupGameOver();
+            Global.Send(new SignalClosePopupGameOver());
             _gameRevive.ResetReviveUI();
             _checkLevelScore.ResetLevelScore();
             _scoreData.ResetCurrentScore();
@@ -296,10 +271,12 @@ namespace Sand
             DisableSkill();
             _animLoad.gameObject.SetActive(true);
             ChangTextBtnSwitchPlay(true);
-
+            Global.Send(new SignalCloseGemBarIngame());
             await UniTask.WaitForSeconds(1f);
-            _gemBarInGame.SetActive(false); // gem bar ingame
-            _gemBarMenu.SetActive(true); // gem bar menu
+
+            Global.Send(new SignalToggleGemBarMenu() { IsActivate = true });
+            Global.Send(new SignalToggleGemBarInGame() { IsActivate = false });
+
             AdManager.Instance.HideBanner();
 
             _currenScore.SetActive(false);
@@ -319,7 +296,8 @@ namespace Sand
             _btnPauseGame.gameObject.SetActive(false);
             DisableSkill();
             _animLoad.gameObject.SetActive(true);
-            DisablePopupGameOver();
+            Global.Send(new SignalCloseGemBarIngame());
+            Global.Send(new SignalClosePopupGameOver());
             _gameRevive.ResetReviveUI();
 
             ChangTextBtnSwitchPlay(false);
@@ -327,8 +305,10 @@ namespace Sand
             Global.Send(new SignalResetAllBlocks());
             Global.Send(new SignalRestCurrenScore());
             await UniTask.WaitForSeconds(1f);
-            _gemBarInGame.SetActive(false); // gem bar ingame
-            _gemBarMenu.SetActive(true); // gem bar menu
+
+            Global.Send(new SignalToggleGemBarMenu() { IsActivate = true });
+            Global.Send(new SignalToggleGemBarInGame() { IsActivate = false });
+
             AdManager.Instance.HideBanner();
 
             _currenScore.SetActive(false);
@@ -342,22 +322,11 @@ namespace Sand
             _animLoad.gameObject.SetActive(false);
         }
 
-        private void DisablePopupGameOver()
-        {
-            if (_renderMap != null) _renderMap.Reset();
-            if (_popupGameOver.activeSelf)
-            {
-                _popupGameOver.SetActive(false);
-                AdManager.Instance.HideMrec();
-                AdManager.Instance.ShowBanner();
-            }
-        }
-
         private void OpenPopupHome()
         {
             _popupCategory[2].gameObject.SetActive(true);
         }
-        
+
         public async UniTask NewGame()
         {
             PlayGame().Forget();
@@ -390,11 +359,6 @@ namespace Sand
             }
         }
 
-        public void WarningSand(bool isWarningSand)
-        {
-            _warningSand.SetActive(isWarningSand);
-        }
-
         public void ResetGameStart()
         {
             ChangTextBtnSwitchPlay(false);
@@ -406,37 +370,12 @@ namespace Sand
             Global.Send(new SignalResetAllBlocks());
             Global.Send(new SignalRestCurrenScore());
         }
-        //----------------Collection------------------------//
-        public void OpenPopupCollection()
-        {
-            _popupCollections.SetActive(true);
-            _renderPicture.CloseMapArt();
-        }
-        public void ClosePopupCollection()
-        {
-            _renderPicture.OpenMapArt();
-            _popupCollections.SetActive(false);
-        }
-        //----------------PopupGameOver------------------------//
-        public void OpenPopupGameOver()
-        {}
-        
         //--------------------Signal----------------------//
-        public void Receive(in SignalOpenPopupGameOver signal)
-        {
-            _popupGameOver.SetActive(true);
-            AdManager.Instance.HideBanner();
-            AdManager.Instance.ShowMrec();
-        }
+
 
         public void Receive(in SignalChangTextBtnSwitchPlay signal)
         {
             ChangTextBtnSwitchPlay(signal.IsChange);
-        }
-
-        public void Receive(in SignalClosePopupCollections signal)
-        {
-            ClosePopupCollection();
         }
     }
 }

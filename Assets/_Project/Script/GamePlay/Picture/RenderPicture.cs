@@ -47,13 +47,17 @@ namespace Sand
         private int _currentPictureIndex = -1;
 
         EffectGame _effectGame;
+        PictureDrawData _pictureDrawData;
+        SaveService _saveService;
 
         [SerializeField] private PictureBase _pictureBase;
 
         [Inject]
-        void Construct(EffectGame effectGame)
+        void Construct(EffectGame effectGame, PictureDrawData pictureDrawData, SaveService saveService)
         {
             _effectGame = effectGame;
+            _pictureDrawData = pictureDrawData;
+            _saveService = saveService;
         }
         
         private void Awake()
@@ -63,7 +67,8 @@ namespace Sand
 
         private void Start()
         {
-            _btnDraw.onClick.AddListener(FillColor);
+            if (_btnDraw != null)
+                _btnDraw.onClick.AddListener(FillColor);
         }
 
         #region Map Toggle
@@ -99,7 +104,7 @@ namespace Sand
         #endregion
 
         #region Outline
-
+        
         public void RenderOutLineWithPair(Sprite outlineSprite, Sprite colorSprite, int pictureIndex)
         {
             if (outlineSprite == null || colorSprite == null) return;
@@ -111,15 +116,28 @@ namespace Sand
 
             _currentColorIndex = 0;
 
-            if (!_mapArt.gameObject.activeSelf)
-                OpenMapArt();
-
+            if (!_mapArt.gameObject.activeSelf) OpenMapArt();
             _progressBar.SetActive(true);
             BuildRegionColorList();
-            RenderOutline();
+            RenderImageToMapArt(_outlineSprite);
+
+            int totalRegions = _regionColors.Count;
+            int savedFilled = _pictureDrawData.GetFilledRegionCount(_currentPictureIndex, totalRegions);
+            savedFilled = Mathf.Clamp(savedFilled, 0, totalRegions);
+
+            if (savedFilled > 0)
+            {
+                for (int i = 0; i < savedFilled; i++)
+                {
+                    var c = _regionColors[i];
+                    FillRegionColorFull(c);
+                }
+            }
+
+            _currentColorIndex = savedFilled;
             UpdateUI();
         }
-
+        
         public void RenderOutline()
         {
             if (_outlineSprite == null || _mapArt == null) return;
@@ -257,14 +275,23 @@ namespace Sand
 
         private void UpdateUI()
         {
-            _fillImage.fillAmount = 0f;
-            _textCountDraw.text = $"{_currentColorIndex}/{_regionColors.Count}";
-            _textPercent.text = "0%";
+            int total = _regionColors.Count;
+            float fillValue = (total > 0) ? (float)_currentColorIndex / total : 0f;
+
+            if (_fillImage != null)
+                _fillImage.fillAmount = fillValue;
+
+            if (_textCountDraw != null)
+                _textCountDraw.text = $"{_currentColorIndex}/{total}";
+
+            if (_textPercent != null)
+                _textPercent.text = $"{(int)(fillValue * 100)}%";
         }
 
         private void FillColor()
         {
             if (_regionColors.Count == 0) return;
+            if (_currentPictureIndex < 0) return;
 
             if (_currentColorIndex >= _regionColors.Count)
             {
@@ -275,15 +302,27 @@ namespace Sand
 
             Color32 currentColor = _regionColors[_currentColorIndex];
             FillRegionColorFull(currentColor);
+
             _currentColorIndex++;
-            _textCountDraw.text = $"{_currentColorIndex}/{_regionColors.Count}";
+
+            if (_textCountDraw != null)
+                _textCountDraw.text = $"{_currentColorIndex}/{_regionColors.Count}";
+
+            _pictureDrawData.UpdateFillProgress(
+                _currentPictureIndex,
+                _currentColorIndex,
+                _regionColors.Count);
+
             AnimateFillBarAsync(this.GetCancellationTokenOnDestroy()).Forget();
         }
 
         private async UniTask AnimateFillBarAsync(CancellationToken cancellationToken)
         {
-            float fillTarget = (float)_currentColorIndex / _regionColors.Count;
-            float startFill = _fillImage.fillAmount;
+            float fillTarget = (_regionColors.Count > 0)
+                ? (float)_currentColorIndex / _regionColors.Count
+                : 0f;
+
+            float startFill = _fillImage != null ? _fillImage.fillAmount : 0f;
 
             await UniTask.DelayFrame(0, cancellationToken: cancellationToken);
 
@@ -293,12 +332,19 @@ namespace Sand
                 elapsedTime += Time.deltaTime;
                 float progress = Mathf.Clamp01(elapsedTime / _fillAnimationDuration);
                 float fillValue = Mathf.Lerp(startFill, fillTarget, progress);
-                _fillImage.fillAmount = fillValue;
-                _textPercent.text = $"{(int)(fillValue * 100)}%";
+
+                if (_fillImage != null)
+                    _fillImage.fillAmount = fillValue;
+                if (_textPercent != null)
+                    _textPercent.text = $"{(int)(fillValue * 100)}%";
+
                 await UniTask.Yield(cancellationToken);
             }
-            _fillImage.fillAmount = fillTarget;
-            _textPercent.text = $"{(int)(fillTarget * 100)}%";
+
+            if (_fillImage != null)
+                _fillImage.fillAmount = fillTarget;
+            if (_textPercent != null)
+                _textPercent.text = $"{(int)(fillTarget * 100)}%";
         }
 
         private void FillRegionColorFull(Color32 targetColor)
@@ -358,6 +404,7 @@ namespace Sand
         {
             if (_isCompleteShown) return;
             _isCompleteShown = true;
+            _pictureDrawData.UpdatePictureCollections(_currentPictureIndex);
             CloseMapArt();
             _popupDrawComplete.SetActive(true);
             _effectGame.OpenEffectLevelUp();
@@ -366,14 +413,20 @@ namespace Sand
 
         public void HideComplete()
         {
-            if (_pictureBase != null && _currentPictureIndex >= 0 && _colorSprite != null)
-                _pictureBase.UpdatePictureSprite(_currentPictureIndex, _colorSprite);
+            if (_pictureBase != null && _currentPictureIndex >= 0 && _colorSprite != null) _pictureBase.UpdatePictureSprite(_currentPictureIndex, _colorSprite);
             OpenMapArt();
             _effectGame.CloseEffectLevelUp();
             _popupDrawComplete.SetActive(false);
             _effectGame.OpenEffectTime().Forget();
         }
-        
+
+        public void Reset()
+        {
+            _pictureDrawData.ResetPictureCollections();
+            if (_pictureBase != null)
+                _pictureBase.ResetAllPictures();
+        }
+
         #endregion
     }
 }
