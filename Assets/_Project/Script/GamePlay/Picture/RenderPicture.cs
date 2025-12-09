@@ -305,7 +305,7 @@ namespace Sand
                 return;
             }*/
 
-            _countDrawData.DecreaseCountDrawPicture(1);
+            // _countDrawData.DecreaseCountDrawPicture(1);
 
             if (_currentColorIndex >= _regionColors.Count)
             {

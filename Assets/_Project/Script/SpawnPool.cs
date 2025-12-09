@@ -8,6 +8,12 @@ public static class SpawnPool
 
     public static void InitPool(GameObject prefab, int poolSize, Vector3 scale, Transform parent = null)
     {
+        if (prefab == null)
+        {
+            Debug.LogError("[SpawnPool] InitPool called with null prefab!");
+            return;
+        }
+
         if (!_pools.ContainsKey(prefab))
             _pools[prefab] = new Queue<GameObject>();
 
@@ -23,11 +29,20 @@ public static class SpawnPool
     public static GameObject Spawn(GameObject prefab, Vector3 pos, Quaternion rot, Vector3 scale,
         Transform parent = null, int poolSize = 1)
     {
-        if (!_pools.ContainsKey(prefab)) _pools[prefab] = new Queue<GameObject>();
-
-        if (_pools[prefab].Count > 0)
+        if (prefab == null)
         {
-            var obj = _pools[prefab].Dequeue();
+            Debug.LogError("[SpawnPool] Spawn called with null prefab!");
+            return null;
+        }
+        if (!_pools.ContainsKey(prefab))
+            _pools[prefab] = new Queue<GameObject>();
+        GameObject obj = null;
+        while (_pools[prefab].Count > 0 && obj == null)
+        {
+            obj = _pools[prefab].Dequeue();
+        }
+        if (obj != null)
+        {
             obj.transform.SetPositionAndRotation(pos, rot);
             obj.transform.localScale = scale;
             obj.transform.SetParent(parent);
@@ -56,7 +71,8 @@ public static class SpawnPool
         for (int i = 0; i < count; i++)
         {
             var obj = Spawn(prefab, pos, rot, scale, parent, poolSize);
-            spawnedObjects.Add(obj);
+            if (obj != null)
+                spawnedObjects.Add(obj);
         }
 
         return spawnedObjects;
@@ -64,13 +80,20 @@ public static class SpawnPool
 
     public static void Despawn(GameObject prefab, GameObject obj)
     {
-        if (!_pools.ContainsKey(prefab)) _pools[prefab] = new Queue<GameObject>();
+        if (prefab == null || obj == null)
+            return;
+
+        if (!_pools.ContainsKey(prefab))
+            _pools[prefab] = new Queue<GameObject>();
+
         obj.SetActive(false);
         _pools[prefab].Enqueue(obj);
     }
 
     public static void DespawnMultiple(GameObject prefab, List<GameObject> objects)
     {
+        if (objects == null) return;
+
         foreach (var obj in objects)
         {
             Despawn(prefab, obj);
