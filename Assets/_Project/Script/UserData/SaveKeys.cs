@@ -10,8 +10,8 @@
         public const string CurrentScore = "UserData.CurrentScore";
         public const string CompletedPictureIndices = "UserData.CompletedPictureIndices";
         public const string PictureFillProgress = "UserData.PictureFillProgress";
-        
         public const string CountDrawInGame = "UserData.CountDrawInGame";
         public const string CountDrawPicture =  "UserData.CountDrawPicture";
+        public const string BoxSpawnIsLockState = "UserData.BoxSpawnIsLockState";
     }
 }

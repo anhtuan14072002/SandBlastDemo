@@ -92,41 +92,58 @@ namespace Sand
                 _objDrag.transform.position = mouseWorldPos + _offset;
             }
         }
-
+        
         private void EndDrag()
         {
             if (_objDrag != null)
             {
                 bool placedOnMap = false;
+                bool storedToReserve = false;
+
                 Vector3 dropPosition = _objDrag.transform.position;
+
                 if (IsDroppedOnMap())
                 {
                     var block = _objDrag.GetComponent<BlockInfo>();
                     var sr = _objDrag.GetComponent<SpriteRenderer>();
-                    if (block != null && _blockManager != null && _map != null)
+                    if (block != null && _blockManager != null && _map != null && sr != null)
                     {
                         placedOnMap = _blockManager.SpawnSandWithSprite(_map._map, _map._spriteRenderer, sr.sprite);
+                    }
+                }
+
+                if (!placedOnMap && _blockSpawn != null)
+                {
+                    Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    mouseWorldPos.z = dropPosition.z;
+
+                    if (_blockSpawn.IsPointInReserve(mouseWorldPos))
+                    {
+                        storedToReserve = _blockSpawn.MoveBlockToReserve(_objDrag);
                     }
                 }
 
                 if (placedOnMap)
                 {
                     Delay(0.75f).Forget();
-                    Global.Send(new SignalOpenEffectTextScore()
-                        { Score = Random.Range(20, 40), Position = dropPosition });
+                    Global.Send(new SignalOpenEffectTextScore() { Score = Random.Range(20, 40), Position = dropPosition });
                     _blockSpawn.ReturnBlock(_objDrag);
+                }
+                else if (storedToReserve)
+                {
+                    _objDrag.transform.localScale = Vector3.one * 5f;
                 }
                 else
                 {
                     _objDrag.transform.position = _startPos;
                     _objDrag.transform.localScale = Vector3.one * 5f;
                 }
-
                 _objDrag = null;
             }
 
             _isDragging = false;
         }
+
 
         private bool IsDroppedOnMap()
         {

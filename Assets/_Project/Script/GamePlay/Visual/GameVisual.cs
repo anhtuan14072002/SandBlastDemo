@@ -258,8 +258,8 @@ namespace Sand
             _checkLevelScore.ResetLevelScore();
             _scoreData.ResetCurrentScore();
             _checkLevelScore.NextLevelScoreValue = _checkLevelScore.StepScore;
-            if (_renderMap != null)
-                _renderMap.Reset();
+            if (_renderMap != null) _renderMap.Reset();
+            ResetAllBoxSpawnLocks();
             Global.Send(new SignalResetAllBlocks());
             Global.Send(new SignalRestCurrenScore());
         }
@@ -365,13 +365,22 @@ namespace Sand
             _gameRevive.ResetReviveUI();
             _checkLevelScore.ResetLevelScore();
             _scoreData.ResetCurrentScore();
+            ResetAllBoxSpawnLocks();
             _checkLevelScore.NextLevelScoreValue = _checkLevelScore.StepScore;
             if (_renderMap != null) _renderMap.Reset();
             Global.Send(new SignalResetAllBlocks());
             Global.Send(new SignalRestCurrenScore());
+
+        }
+        private void ResetAllBoxSpawnLocks()
+        {
+            var boxSpawns = FindObjectsOfType<BoxSpawn>();
+            foreach (var boxSpawn in boxSpawns)
+            {
+                boxSpawn.ResetLockState();
+            }
         }
         //--------------------Signal----------------------//
-
 
         public void Receive(in SignalChangTextBtnSwitchPlay signal)
         {

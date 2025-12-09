@@ -21,7 +21,6 @@ namespace Sand
         private void Start()
         {
             if (_userData == null) return;
-
             if (_countDrawInGame != null) 
                 _countDrawInGame.text = _userData.CountDrawInGame.Value.ToString();
             if (_countDrawPicture != null)
@@ -29,15 +28,13 @@ namespace Sand
 
             _userData.CountDrawInGame.Subscribe(v =>
                 {
-                    if (_countDrawInGame != null)
-                        _countDrawInGame.text = v.ToString();
+                    if (_countDrawInGame != null) _countDrawInGame.text = v.ToString();
                 })
                 .AddTo(this);
 
             _userData.CountDrawPicture.Subscribe(v =>
                 {
-                    if (_countDrawPicture != null)
-                        _countDrawPicture.text = v.ToString();
+                    if (_countDrawPicture != null) _countDrawPicture.text = v.ToString();
                 })
                 .AddTo(this);
         }

@@ -1,8 +1,6 @@
-﻿using Core;
-using PrimeTween;
+﻿using PrimeTween;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace WZ

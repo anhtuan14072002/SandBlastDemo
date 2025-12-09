@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using Core;
 using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -298,11 +299,11 @@ namespace Sand
             if (_regionColors.Count == 0) return;
             if (_currentPictureIndex < 0) return;
 
-            if (_userData.CountDrawPicture.Value <= 0)
+            /*if (_userData.CountDrawPicture.Value <= 0)
             {
                 Debug.Log("Hết lượt vẽ (CountDrawPicture = 0)");
                 return;
-            }
+            }*/
 
             _countDrawData.DecreaseCountDrawPicture(1);
 
@@ -313,6 +314,7 @@ namespace Sand
                 return;
             }
 
+            Global.Send(new SignalMoveBottleDraw());
             Color32 currentColor = _regionColors[_currentColorIndex];
             FillRegionColorFull(currentColor);
 

@@ -30,6 +30,8 @@ namespace Sand
         public List<int> CompletedPictureIndices = new();
         [SerializeField]
         public Dictionary<int, int> PictureFillProgress = new();
+        [SerializeField]
+        public Dictionary<int, bool> BoxSpawnIsLockState = new();
 
         public void OnDeserialized()
         {

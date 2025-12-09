@@ -15,11 +15,15 @@ namespace Sand
         [SerializeField] private Transform _posParentSpawn;
         [SerializeField] private int _poolSizePerPrefab = 5;
 
-        public GameObject[] PrefabBlocks => _prefabBlock;
+        [Header("Reserve Slot Settings")] 
+        [SerializeField] private int[] _reserveSlotIndices = new int[1] { 3 };
+        [SerializeField] private float _reserveCatchRadius = 0.5f;
 
+        public GameObject[] PrefabBlocks => _prefabBlock;
+        public int[] ReserveSlotIndices => _reserveSlotIndices;
+        
         private Queue<GameObject> _pool = new();
         private GameObject[] _currentBlocks;
-
         CheckLevelScore _checkLevelScore;
 
         [Inject]
@@ -76,7 +80,10 @@ namespace Sand
         {
             for (int i = 0; i < _posSpawn.Length; i++)
             {
-                SpawnAtSlot(i);
+                if (IsReserveSlot(i))
+                    continue;
+                if (_currentBlocks[i] == null)
+                    SpawnAtSlot(i);
             }
         }
 
@@ -126,13 +133,8 @@ namespace Sand
                 var instance = obj.GetComponent<BlockInfo>();
 
                 if (instance != null && instance.PrefabIndex == prefabIndex)
-                {
                     return obj;
-                }
-                else
-                {
-                    _pool.Enqueue(obj);
-                }
+                _pool.Enqueue(obj);
             }
 
             return null;
@@ -158,17 +160,14 @@ namespace Sand
             bool allEmpty = true;
             for (int i = 0; i < _currentBlocks.Length; i++)
             {
+                if (IsReserveSlot(i)) continue;
                 if (_currentBlocks[i] != null)
                 {
                     allEmpty = false;
                     break;
                 }
             }
-
-            if (allEmpty)
-            {
-                SpawnAllSlots();
-            }
+            if (allEmpty) SpawnAllSlots();
         }
 
         public void ResetAllBlocks()
@@ -194,13 +193,13 @@ namespace Sand
         // random lấy ra 1 khối
         public int GetRandomPrefabIndex(int maxIndex)
         {
-            var totalWeight= 0f;
+            var totalWeight = 0f;
             for (int i = 0; i < maxIndex; i++)
             {
                 var weight = GetPrefabRateSpawn(i);
                 totalWeight += weight;
             }
-            
+
             if (totalWeight <= 0f)
                 return Random.Range(0, maxIndex);
 
@@ -213,16 +212,133 @@ namespace Sand
                 currentWeight += weight;
                 if (randomValue <= currentWeight) return i;
             }
+
             return maxIndex - 1;
         }
+
         public float GetPrefabRateSpawn(int prefabIndex)
-        {
+        {   
             var prefab = _prefabBlock[prefabIndex].GetComponent<BlockInfo>();
             if (prefab != null & prefab.RateSpawn > 0)
                 return prefab.RateSpawn;
             return 1;
         }
+
+        // ----------------- KHO DỰ TRỮ -----------------
         
+        public bool IsReserveSlot(int index)
+        {
+            foreach (var reserveIndex in _reserveSlotIndices)
+            {
+                if (index == reserveIndex) return true;
+            }
+            return false;
+        }
+
+        public List<Transform> ReserveSlots
+        {
+            get
+            {
+                var list = new List<Transform>();
+                if (_posSpawn == null) return list;
+                
+                foreach (var index in _reserveSlotIndices)
+                {
+                    if (index >= 0 && index < _posSpawn.Length)
+                        list.Add(_posSpawn[index]);
+                }
+                return list;
+            }
+        }
+        public bool IsPointInReserve(Vector3 worldPos)
+        {
+            if (_posSpawn == null || _posSpawn.Length == 0) return false;
+            if (_reserveSlotIndices == null || _reserveSlotIndices.Length == 0) return false;
+
+            Vector2 b = worldPos;
+
+            foreach (var index in _reserveSlotIndices)
+            {
+                if (index < 0 || index >= _posSpawn.Length) 
+                    continue;
+
+                var slotTransform = _posSpawn[index];
+                if (slotTransform == null) continue;
+
+                var boxSpawn = slotTransform.GetComponent<BoxSpawn>();
+                if (boxSpawn != null && boxSpawn.IsLock) continue;
+                Vector2 a = slotTransform.position;
+                if (Vector2.Distance(a, b) <= _reserveCatchRadius) return true;
+            }
+            return false;
+        }
+
+        /*public bool IsPointInReserve(Vector3 worldPos)
+        {
+            var reserve = ReserveSlots;
+            if (reserve == null || reserve.Count == 0) return false;
+            foreach (var r in reserve)
+            {
+                Vector2 a = r.position;
+                Vector2 b = worldPos;
+                if (Vector2.Distance(a, b) <= _reserveCatchRadius)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }*/
+        
+        public bool MoveBlockToReserve(GameObject obj)
+        {
+            if (obj == null) return false;
+            if (_posSpawn == null || _posSpawn.Length == 0) return false;
+
+            int availableReserveSlot = -1;
+
+            foreach (var reserveIndex in _reserveSlotIndices)
+            {
+                if (reserveIndex < 0 || reserveIndex >= _currentBlocks.Length)
+                    continue;
+
+                var slotTransform = _posSpawn[reserveIndex];
+                if (slotTransform != null)
+                {
+                    var boxSpawn = slotTransform.GetComponent<BoxSpawn>();
+                    if (boxSpawn != null && boxSpawn.IsLock) continue;
+                }
+                if (_currentBlocks[reserveIndex] == null)
+                {
+                    availableReserveSlot = reserveIndex;
+                    break;
+                }
+            }
+
+            if (availableReserveSlot == -1) 
+                return false;
+
+            int fromIndex = -1;
+            for (int i = 0; i < _currentBlocks.Length; i++)
+            {
+                if (_currentBlocks[i] == obj)
+                {
+                    fromIndex = i;
+                    break;
+                }
+            }
+
+            if (fromIndex == -1) return false;
+
+            _currentBlocks[fromIndex] = null;
+            _currentBlocks[availableReserveSlot] = obj;
+
+            obj.transform.position = _posSpawn[availableReserveSlot].position;
+            obj.transform.localScale = Vector3.one * 5f;
+            obj.transform.SetParent(_posParentSpawn);
+
+            return true;
+        }
+
         public void Receive(in SignalResetAllBlocks signal)
         {
             ResetAllBlocks();

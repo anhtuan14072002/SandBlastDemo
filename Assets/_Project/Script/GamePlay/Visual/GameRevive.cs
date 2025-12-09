@@ -31,7 +31,6 @@ namespace Sand
         GameResources _gameResources;
         SaveMapData _saveMapData;
         
-
         [Inject]
         void Construct(RenderMap renderMap, GameVisual gameVisual, GameResources gameResources, SaveMapData saveMapData)
         {

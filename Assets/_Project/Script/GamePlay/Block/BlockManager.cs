@@ -28,7 +28,6 @@ namespace Sand
             BuildSpritesFromPrefabs();
         }
 
-        //Lấy sprite từ các prefab trong BlockSpawn.PrefabBlocks,
         private void BuildSpritesFromPrefabs()
         {
             if (_blockSpawn == null) return;

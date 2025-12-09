@@ -170,5 +170,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 658106aa7e674d288c4396dacbe42071, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PrefabIndex: 0
+  PrefabIndex: 11
   RateSpawn: 5

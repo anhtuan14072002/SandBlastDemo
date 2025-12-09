@@ -10,7 +10,7 @@ namespace Sand
         {
             var userData = new UserData();
             LoadFromES3(userData);
-            
+
             Container.Bind<UserData>()
                 .FromInstance(userData)
                 .AsSingle()
@@ -47,9 +47,10 @@ namespace Sand
             LoadIntValue(SaveKeys.CurrentScore, value => userData.CurrentScore.Value = value);
             LoadIntValue(SaveKeys.CountDrawInGame, value => userData.CountDrawInGame.Value = value);
             LoadIntValue(SaveKeys.CountDrawPicture, value => userData.CountDrawPicture.Value = value);
-            
+
             LoadListIntValue(SaveKeys.CompletedPictureIndices, value => userData.CompletedPictureIndices = value);
             LoadDictionaryIntIntValue(SaveKeys.PictureFillProgress, value => userData.PictureFillProgress = value);
+            LoadDictionaryIntBoolValue(SaveKeys.BoxSpawnIsLockState, value => userData.BoxSpawnIsLockState = value);
         }
 
         private void LoadIntValue(string key, Action<int> setValue)
@@ -78,12 +79,25 @@ namespace Sand
             }
         }
 
-        private void LoadDictionaryIntIntValue(string key, Action<Dictionary<int,int>> setValue)
+        private void LoadDictionaryIntIntValue(string key, Action<Dictionary<int, int>> setValue)
         {
             if (!ES3.KeyExists(key)) return;
             try
             {
-                setValue(ES3.Load<Dictionary<int,int>>(key));
+                setValue(ES3.Load<Dictionary<int, int>>(key));
+            }
+            catch (Exception ex)
+            {
+                UnityEngine.Debug.LogWarning($"Error loading {key}: {ex.Message}.");
+            }
+        }
+
+        private void LoadDictionaryIntBoolValue(string key, Action<Dictionary<int, bool>> setValue)
+        {
+            if (!ES3.KeyExists(key)) return;
+            try
+            {
+                setValue(ES3.Load<Dictionary<int, bool>>(key));
             }
             catch (Exception ex)
             {
