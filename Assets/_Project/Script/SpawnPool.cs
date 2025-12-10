@@ -6,13 +6,14 @@ public static class SpawnPool
     private static readonly Dictionary<GameObject, Queue<GameObject>> _pools =
         new Dictionary<GameObject, Queue<GameObject>>();
 
-    public static void InitPool(GameObject prefab, int poolSize, Vector3 scale, Transform parent = null)
+    public static void InitPool(GameObject prefab, int poolSize, Vector3 scale = default, Transform parent = null, bool active = false)
     {
         if (prefab == null)
         {
             Debug.LogError("[SpawnPool] InitPool called with null prefab!");
             return;
         }
+        if (scale == default) scale = Vector3.one;
 
         if (!_pools.ContainsKey(prefab))
             _pools[prefab] = new Queue<GameObject>();
@@ -21,21 +22,21 @@ public static class SpawnPool
         {
             var obj = Object.Instantiate(prefab, Vector3.zero, Quaternion.identity, parent);
             obj.transform.localScale = scale;
-            obj.SetActive(false);
+            obj.SetActive(active);
             _pools[prefab].Enqueue(obj);
         }
     }
 
-    public static GameObject Spawn(GameObject prefab, Vector3 pos, Quaternion rot, Vector3 scale,
-        Transform parent = null, int poolSize = 1)
+    public static GameObject Spawn(GameObject prefab, Vector3 pos, Quaternion rot, Vector3 scale = default, Transform parent = null, int poolSize = 1)
     {
         if (prefab == null)
         {
             Debug.LogError("[SpawnPool] Spawn called with null prefab!");
             return null;
         }
-        if (!_pools.ContainsKey(prefab))
-            _pools[prefab] = new Queue<GameObject>();
+        if (scale == default) scale = Vector3.one;
+        
+        if (!_pools.ContainsKey(prefab)) _pools[prefab] = new Queue<GameObject>();
         GameObject obj = null;
         while (_pools[prefab].Count > 0 && obj == null)
         {
@@ -64,7 +65,7 @@ public static class SpawnPool
     }
 
     public static List<GameObject> SpawnMultiple(GameObject prefab, int count, Vector3 pos, Quaternion rot,
-        Vector3 scale, Transform parent = null, int poolSize = 1)
+        Vector3 scale = default, Transform parent = null, int poolSize = 1)
     {
         var spawnedObjects = new List<GameObject>();
 

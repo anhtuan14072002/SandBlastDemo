@@ -15,6 +15,10 @@ namespace Sand
         {
             gameObject.transform.localScale = new Vector3(0.9f, 0.9f, 0.9f);
         }
+        public void OpenPopup()
+        {
+            gameObject.SetActive(true);
+        }
         
         public void ClosePopup()
         {

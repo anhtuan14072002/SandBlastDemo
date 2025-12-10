@@ -335,8 +335,23 @@ namespace Sand
             obj.transform.position = _posSpawn[availableReserveSlot].position;
             obj.transform.localScale = Vector3.one * 5f;
             obj.transform.SetParent(_posParentSpawn);
-
             return true;
+        }
+        public void CheckAndSpawnIfAllSlotEmpty()
+        {
+            bool allSpawnSlotsEmpty = true;
+    
+            for (int i = 0; i < _currentBlocks.Length; i++)
+            {
+                if (IsReserveSlot(i)) continue;
+                if (_currentBlocks[i] != null)
+                {
+                    allSpawnSlotsEmpty = false;
+                    break;
+                }
+            }
+            if (allSpawnSlotsEmpty)
+                SpawnAllSlots();
         }
 
         public void Receive(in SignalResetAllBlocks signal)

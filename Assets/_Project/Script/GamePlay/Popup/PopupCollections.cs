@@ -20,6 +20,11 @@ namespace Sand
             _popupCollections.SetActive(false);
         }
 
+        public void ClosePopupArt()
+        {
+            _popupArt.SetActive(false);
+        }
+
         public void Receive(in SignalClosePopupCollections signal)
         {
             ClosePopupCollection();

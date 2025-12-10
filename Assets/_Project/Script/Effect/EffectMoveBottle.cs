@@ -14,7 +14,6 @@ namespace Sand
 
         [Header("Pool Settings")]
         [SerializeField] private int _poolSize = 3;
-        [SerializeField] private Transform _poolParent;
 
         [Header("Positions")]
         [SerializeField] private Transform _spawnPos;
@@ -38,7 +37,7 @@ namespace Sand
             }
 
             Vector3 scale = _bottlePrefab.transform.localScale;
-            SpawnPool.InitPool(_bottlePrefab, _poolSize, scale, _poolParent);
+            SpawnPool.InitPool(_bottlePrefab, _poolSize, scale);
         }
 
         public void Receive(in SignalMoveBottleDraw signal)
@@ -60,8 +59,7 @@ namespace Sand
                 _bottlePrefab,
                 _spawnPos.position,
                 Quaternion.identity,
-                scale,
-                _poolParent
+                scale
             );
 
             Move();
@@ -79,14 +77,11 @@ namespace Sand
         private async UniTask EndMove()
         {
             await UniTask.Delay(TimeSpan.FromSeconds(_delayBeforeReturn));
-
             if (_bottleInstance == null) return;
-
-            Tween.LocalRotation(_bottleInstance.transform, Quaternion.identity, 0.2f);
-            Tween.Position(_bottleInstance.transform, _originalPos.position, _returnDuration, Ease.OutQuad);
+            // Tween.LocalRotation(_bottleInstance.transform, Quaternion.identity, 0.2f);
+            // Tween.Position(_bottleInstance.transform, _originalPos.position, _returnDuration, Ease.OutQuad);
 
             await UniTask.Delay(TimeSpan.FromSeconds(_returnDuration));
-
             if (_bottleInstance != null)
             {
                 SpawnPool.Despawn(_bottlePrefab, _bottleInstance);

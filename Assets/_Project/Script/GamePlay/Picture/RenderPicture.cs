@@ -51,18 +51,20 @@ namespace Sand
         SaveService _saveService;
         CountDrawData _countDrawData;
         UserData _userData;
+        PopupAuction _popupAuction;
 
         [SerializeField] private PictureBase _pictureBase;
 
         [Inject]
         void Construct(EffectGame effectGame, PictureDrawData pictureDrawData, SaveService saveService,
-            CountDrawData countDrawData, UserData userData)
+            CountDrawData countDrawData, UserData userData, PopupAuction popupAuction)
         {
             _effectGame = effectGame;
             _pictureDrawData = pictureDrawData;
             _saveService = saveService;
             _countDrawData = countDrawData;
             _userData = userData;
+            _popupAuction = popupAuction;
         }
 
         private void Awake()
@@ -113,6 +115,7 @@ namespace Sand
         public void RenderOutLineWithPair(Sprite outlineSprite, Sprite colorSprite, int pictureIndex)
         {
             if (outlineSprite == null || colorSprite == null) return;
+            _popupAuction.CloseLock();
 
             _isCompleteShown = false;
             _outlineSprite = outlineSprite;
@@ -309,11 +312,9 @@ namespace Sand
 
             if (_currentColorIndex >= _regionColors.Count)
             {
-                Debug.Log("tô xong");
                 ShowComplete();
                 return;
             }
-
             Global.Send(new SignalMoveBottleDraw());
             Color32 currentColor = _regionColors[_currentColorIndex];
             FillRegionColorFull(currentColor);
@@ -421,6 +422,8 @@ namespace Sand
             _popupDrawComplete.SetActive(true);
             _effectGame.OpenEffectLevelUp();
             _imageComplete.sprite = _colorSprite;
+            _popupAuction.OpenAuction();
+            _popupAuction.OpenLock(); 
         }
 
         public void HideComplete()

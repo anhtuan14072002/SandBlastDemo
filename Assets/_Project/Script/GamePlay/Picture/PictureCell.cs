@@ -32,6 +32,12 @@ namespace Sand
         {
             if (_renderPicture == null) return;     
             if (_outlineSprite == null || _colorSprite == null) return;
+            if (_isCompleted)
+            {
+                Debug.Log("xong rồi");
+                Global.Send(new SignalOpenEffectDrawCompleted());
+                return;
+            }
             Global.Send(new SignalClosePopupCollections());
             _renderPicture.OpenMapArt();
             Global.Send(new SignalTogglePopupArt(){IsActive = true});

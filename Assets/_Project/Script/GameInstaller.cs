@@ -63,6 +63,10 @@ namespace Sand
             Container.Bind<EffectGame>()
                 .FromComponentInHierarchy()
                 .AsSingle();
+            
+            Container.Bind<PopupAuction>()
+                .FromComponentInHierarchy()
+                .AsSingle();
         }
     }
 }

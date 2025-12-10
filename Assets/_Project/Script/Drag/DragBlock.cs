@@ -132,6 +132,7 @@ namespace Sand
                 else if (storedToReserve)
                 {
                     _objDrag.transform.localScale = Vector3.one * 5f;
+                    _blockSpawn.CheckAndSpawnIfAllSlotEmpty();
                 }
                 else
                 {

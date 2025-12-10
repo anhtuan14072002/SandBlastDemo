@@ -1,6 +1,4 @@
-﻿using Core;
-
-namespace Sand
+﻿namespace Sand
 {
     public class EffectNotEnough : SimpleEffectPool<SignalOpenEffectNotEnough>
     {

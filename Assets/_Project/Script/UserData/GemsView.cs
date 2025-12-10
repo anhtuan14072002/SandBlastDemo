@@ -13,6 +13,7 @@ public class GemsView : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _gemsTextMenuInGame;
     [SerializeField] private TextMeshProUGUI _gemsTextShop;
     [SerializeField] private TextMeshProUGUI _gemsTextShopInGame;
+    [SerializeField] private TextMeshProUGUI _gemsTextArt;
     [Inject] private UserData _userData;
     IDisposable _sub;
 
@@ -27,6 +28,7 @@ public class GemsView : MonoBehaviour
         _gemsTextMenuInGame.text = _currentGems.ToString();
         _gemsTextShop.text = _currentGems.ToString();
         _gemsTextShopInGame.text = _currentGems.ToString();
+        _gemsTextArt.text = _currentGems.ToString();
         
         _sub = _userData.Gems.Subscribe(value =>
         {
@@ -34,6 +36,7 @@ public class GemsView : MonoBehaviour
             AnimText.AnimateNumberChange(_gemsTextShop, _currentGems, value, 0.5f, 2, _gemsTextShop.gameObject, true).Forget();
             AnimText.AnimateNumberChange(_gemsTextMenuInGame, _currentGems, value, 0.5f, 2, _gemsTextShop.gameObject, true).Forget();
             AnimText.AnimateNumberChange(_gemsTextShopInGame, _currentGems, value, 0.5f, 2, _gemsTextShop.gameObject, true).Forget();
+            AnimText.AnimateNumberChange(_gemsTextArt, _currentGems, value, 0.5f, 2, _gemsTextShop.gameObject, true).Forget();
             _currentGems = value;
         });
     }
