@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 namespace Sand
 {
@@ -9,16 +10,25 @@ namespace Sand
         [SerializeField] private GameObject _objLock;
         [SerializeField] private Button _btnAuction;
         private bool _isAuction;
+        
+        RenderPicture _renderPicture;
+
+        [Inject]
+        void Construct(RenderPicture renderPicture)
+        {
+            _renderPicture = renderPicture;
+        }
 
         public void OpenAuction()
         {
             _popupAuction.SetActive(true);
+            _renderPicture.CloseMapArt();
         }
 
         public void CloseAuction()
         {
-            _isAuction = false;
             _popupAuction.SetActive(false);
+            _renderPicture.OpenMapArt();
         }
 
         public void OpenLock()

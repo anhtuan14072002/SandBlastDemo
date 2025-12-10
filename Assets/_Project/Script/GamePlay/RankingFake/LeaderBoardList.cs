@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using PrimeTween;
 using UnityEngine.UI;
+using Zenject;
 using Random = UnityEngine.Random;
 
 namespace Sand
@@ -14,7 +15,7 @@ namespace Sand
         [SerializeField] private GameObject _objRankBot;
         [SerializeField] private Transform _parentPost;
         [SerializeField] private ScrollRect _scrollRect;
-        [SerializeField] private Button _btnTest;
+        [SerializeField] private Button _btnRank;
 
         [Header("Settings")]
         [SerializeField] private int _poolSize = 20;      
@@ -40,10 +41,18 @@ namespace Sand
         private bool _isAnimating;
         private GameObject _targetPlaceholder;
 
+        UserData _UserData;
+
+        [Inject]
+        void Construct(UserData userData)
+        {
+            _UserData = userData;
+        }
+
         private void Start()
         {
             InitPool();
-            if (_btnTest != null) _btnTest.onClick.AddListener(() => SetMainPlayerScoreAnimated(_score));
+            if (_btnRank != null) _btnRank.onClick.AddListener(() => SetMainPlayerScoreAnimated(_UserData.HighScoreValue));
         }
 
         //================= INIT =================
@@ -199,8 +208,8 @@ namespace Sand
             }
 
             _isAnimating = true;
-            if (_btnTest != null)
-                _btnTest.interactable = false;
+            if (_btnRank != null)
+                _btnRank.interactable = false;
 
             Vector3 oldWorldPos = _objRankMain.transform.position;
 
@@ -252,8 +261,8 @@ namespace Sand
                 if (_targetPlaceholder == null)
                 {
                     _isAnimating = false;
-                    if (_btnTest != null)
-                        _btnTest.interactable = true;
+                    if (_btnRank != null)
+                        _btnRank.interactable = true;
                     return;
                 }
 
@@ -276,8 +285,7 @@ namespace Sand
                             .OnComplete(() =>
                             {
                                 _isAnimating = false;
-                                if (_btnTest != null)
-                                    _btnTest.interactable = true;
+                                if (_btnRank != null) _btnRank.interactable = true;
                             });
                     });
             });

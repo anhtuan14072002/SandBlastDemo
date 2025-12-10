@@ -32,13 +32,14 @@ namespace Sand
 
         [SerializeField, Range(0, 255)] private int _colorTolerance = 40; // tolerance so màu vùng
 
-        [Header("Progress")] [SerializeField] private TextMeshProUGUI _textCountDraw;
+        [Header("Progress")] 
+        [SerializeField] private TextMeshProUGUI _textCountDraw;
         [SerializeField] private TextMeshProUGUI _textPercent;
-        [SerializeField] private Image _fillImage;
-        [SerializeField] private float _fillAnimationDuration = 0.5f;
-        [SerializeField] private GameObject _progressBar;
         [SerializeField] private GameObject _popupDrawComplete;
+        [SerializeField] private GameObject _progressBar;
+        [SerializeField] private Image _fillImage;
         [SerializeField] private Image _imageComplete;
+        [SerializeField] private float _fillAnimationDuration = 0.5f;
 
         private readonly List<Color32> _regionColors = new();
         private int _currentColorIndex = 0;
@@ -115,8 +116,7 @@ namespace Sand
         public void RenderOutLineWithPair(Sprite outlineSprite, Sprite colorSprite, int pictureIndex)
         {
             if (outlineSprite == null || colorSprite == null) return;
-            _popupAuction.CloseLock();
-
+            // _popupAuction.CloseLock();
             _isCompleteShown = false;
             _outlineSprite = outlineSprite;
             _colorSprite = colorSprite;
@@ -422,7 +422,7 @@ namespace Sand
             _popupDrawComplete.SetActive(true);
             _effectGame.OpenEffectLevelUp();
             _imageComplete.sprite = _colorSprite;
-            _popupAuction.OpenAuction();
+            // _popupAuction.OpenAuction();
             _popupAuction.OpenLock(); 
         }
 
@@ -439,8 +439,7 @@ namespace Sand
         public void Reset()
         {
             _pictureDrawData.ResetPictureCollections();
-            if (_pictureBase != null)
-                _pictureBase.ResetAllPictures();
+            if (_pictureBase != null) _pictureBase.ResetAllPictures();
         }
 
         #endregion
