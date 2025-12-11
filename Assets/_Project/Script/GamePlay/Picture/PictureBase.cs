@@ -15,18 +15,18 @@ namespace Sand
 
     public class PictureBase : MonoBehaviour
     {
-        [Header("UI")] [SerializeField] private ScrollRect _scrollRect;
+        [Header("UI")]
+        [SerializeField] private ScrollRect _scrollRect;
         [SerializeField] private RectTransform _content;
         [SerializeField] private PictureCell _cellPrefab;
 
-        [Header("Data")] [SerializeField] private List<Sprite>
-            _sprites = new();
-
+        [Header("Data")]
+        [SerializeField] private List<Sprite> _sprites = new();
         [SerializeField] private List<Sprite> _colorSprites = new();
         [SerializeField] private int _count;
         [SerializeField] private RenderPicture _renderPicture;
-        private readonly List<PictureData> _datas = new();
 
+        private readonly List<PictureData> _datas = new();
         private readonly List<PictureCell> _cells = new();
 
         private bool _initialized = false;
@@ -49,6 +49,11 @@ namespace Sand
             _initialized = true;
         }
 
+        private void OnEnable()
+        {
+            if (_initialized) RefreshAllCellsSoldState();
+        }
+
         private void BuildData()
         {
             _datas.Clear();
@@ -56,7 +61,8 @@ namespace Sand
             {
                 _datas.Add(new PictureData
                 {
-                    Index = i, Sprite = i < _sprites.Count ? _sprites[i] : null,
+                    Index = i,
+                    Sprite = i < _sprites.Count ? _sprites[i] : null,
                     ColorSprite = i < _colorSprites.Count ? _colorSprites[i] : null
                 });
             }
@@ -65,13 +71,15 @@ namespace Sand
         private void CreateCells()
         {
             if (_scrollRect == null || _content == null || _cellPrefab == null) return;
+
             ClearCells();
             _cells.Clear();
+
             foreach (var data in _datas)
             {
                 var cell = Instantiate(_cellPrefab, _content);
                 cell.gameObject.SetActive(true);
-                cell.Init(data.Sprite, data.ColorSprite, _renderPicture, data.Index);
+                cell.Init(data.Sprite, data.ColorSprite, _renderPicture, data.Index, _userData);
                 _cells.Add(cell);
             }
 
@@ -89,18 +97,31 @@ namespace Sand
             }
         }
 
+        private void RefreshAllCellsSoldState()
+        {
+            for (int i = 0; i < _cells.Count; i++)
+            {
+                if (_cells[i] != null)
+                    _cells[i].SendMessage("OnEnable", SendMessageOptions.DontRequireReceiver);
+            }
+        }
+
         public void UpdatePictureSprite(int index, Sprite newSprite)
         {
             if (index < 0 || index >= _datas.Count) return;
+
             _datas[index].Sprite = newSprite;
-            if (index < _cells.Count && _cells[index] != null) _cells[index].SetPreviewSprite(newSprite);
+
+            if (index < _cells.Count && _cells[index] != null)
+                _cells[index].SetPreviewSprite(newSprite);
         }
 
         public void ResetAllPictures()
         {
             foreach (var cell in _cells)
             {
-                if (cell != null) cell.ResetCell();
+                if (cell != null)
+                    cell.ResetCell();
             }
 
             foreach (var data in _datas)

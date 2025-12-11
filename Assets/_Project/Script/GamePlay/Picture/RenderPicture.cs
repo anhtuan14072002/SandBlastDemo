@@ -32,8 +32,7 @@ namespace Sand
 
         [SerializeField, Range(0, 255)] private int _colorTolerance = 40; // tolerance so màu vùng
 
-        [Header("Progress")] 
-        [SerializeField] private TextMeshProUGUI _textCountDraw;
+        [Header("Progress")] [SerializeField] private TextMeshProUGUI _textCountDraw;
         [SerializeField] private TextMeshProUGUI _textPercent;
         [SerializeField] private GameObject _popupDrawComplete;
         [SerializeField] private GameObject _progressBar;
@@ -309,7 +308,6 @@ namespace Sand
             }*/
 
             // _countDrawData.DecreaseCountDrawPicture(1);
-
             if (_currentColorIndex >= _regionColors.Count)
             {
                 ShowComplete();
@@ -318,26 +316,17 @@ namespace Sand
             Global.Send(new SignalMoveBottleDraw());
             Color32 currentColor = _regionColors[_currentColorIndex];
             FillRegionColorFull(currentColor);
-
             _currentColorIndex++;
-
-            if (_textCountDraw != null)
-                _textCountDraw.text = $"{_currentColorIndex}/{_regionColors.Count}";
-
+            if (_textCountDraw != null) _textCountDraw.text = $"{_currentColorIndex}/{_regionColors.Count}";
             _pictureDrawData.UpdateFillProgress(_currentPictureIndex, _currentColorIndex, _regionColors.Count);
             AnimateFillBarAsync(this.GetCancellationTokenOnDestroy()).Forget();
         }
 
         private async UniTask AnimateFillBarAsync(CancellationToken cancellationToken)
         {
-            float fillTarget = (_regionColors.Count > 0)
-                ? (float)_currentColorIndex / _regionColors.Count
-                : 0f;
-
+            float fillTarget = (_regionColors.Count > 0) ? (float)_currentColorIndex / _regionColors.Count : 0f;
             float startFill = _fillImage != null ? _fillImage.fillAmount : 0f;
-
             await UniTask.DelayFrame(0, cancellationToken: cancellationToken);
-
             float elapsedTime = 0f;
             while (elapsedTime < _fillAnimationDuration)
             {
@@ -413,6 +402,16 @@ namespace Sand
             _mapArt._map.UpdateTexture();
         }
 
+        public int GetCurrentPictureIndex()
+        {
+            return _currentPictureIndex;
+        }
+
+        public Sprite GetCurrentColorSprite()
+        {
+            return _colorSprite;
+        }
+
         public void ShowComplete()
         {
             if (_isCompleteShown) return;
@@ -420,10 +419,11 @@ namespace Sand
             _pictureDrawData.UpdatePictureCollections(_currentPictureIndex);
             CloseMapArt();
             _popupDrawComplete.SetActive(true);
-            _effectGame.OpenEffectLevelUp();
+            _effectGame.OpenEffectFirework();
             _imageComplete.sprite = _colorSprite;
+            Global.Send(new SignalActiveLockAuction() { IsActive = false });
             // _popupAuction.OpenAuction();
-            _popupAuction.OpenLock(); 
+            // _popupAuction.OpenLock(); 
         }
 
         public void HideComplete()
@@ -431,9 +431,9 @@ namespace Sand
             if (_pictureBase != null && _currentPictureIndex >= 0 && _colorSprite != null)
                 _pictureBase.UpdatePictureSprite(_currentPictureIndex, _colorSprite);
             OpenMapArt();
-            _effectGame.CloseEffectLevelUp();
+            _effectGame.CloseEffectFirework();
             _popupDrawComplete.SetActive(false);
-            _effectGame.OpenEffectTime().Forget();
+            // _effectGame.OpenEffectClaimTime().Forget();
         }
 
         public void Reset()

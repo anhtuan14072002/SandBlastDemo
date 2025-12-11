@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System;
+using Cysharp.Threading.Tasks;
 using PrimeTween;
 using TMPro;
 using UnityEngine;
@@ -8,8 +9,9 @@ namespace Core
     public static class AnimText
     {
         public static async UniTask AnimateNumberChange(TextMeshProUGUI textComponent, int startValue, int endValue,
-            float duration, float frequency, GameObject icon, bool isAcronym)
+            float duration, float frequency, GameObject icon, bool isAcronym, float delay = 0)
         {
+            await UniTask.Delay(TimeSpan.FromSeconds(delay));
             float elapsedTime = 0;
             var startColor = Color.white;
             var targetColor = Color.red;

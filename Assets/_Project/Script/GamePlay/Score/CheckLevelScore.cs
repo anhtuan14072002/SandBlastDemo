@@ -150,7 +150,7 @@ namespace Sand
         {
             _popupLevelUp.SetActive(true);
             _soundManager.OnPlaySound(SoundType.LevelUp);
-            _effectGame.OpenEffectLevelUp();
+            _effectGame.OpenEffectFirework();
             _currentLevelScoreInPopup.text = _currentLevelScoreValue.ToString();
             _gameResources.ResetCoreAnimation();
         }
@@ -158,7 +158,7 @@ namespace Sand
         private async UniTask ClosePopupLevelUp()
         {
             await UniTask.Delay(TimeSpan.FromSeconds(1.25f));
-            _effectGame.CloseEffectLevelUp();
+            _effectGame.CloseEffectFirework();
             // DisableEffectClaimGem();
             _effectGame.CloseEffectClaimGem();
             // _popupLevelUp.SetActive(false);

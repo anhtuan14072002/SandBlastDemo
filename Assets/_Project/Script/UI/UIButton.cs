@@ -6,6 +6,7 @@ using UnityEngine.UI;
 namespace WZ
 {
     [RequireComponent(typeof(Image))]
+    [RequireComponent(typeof(Button))]
     public class UIButton : UIBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler
     {
         [Header("Scale")] [SerializeField] private Vector3 _scalePress = new Vector3(0.9f, 0.9f, 0.9f);
@@ -29,6 +30,7 @@ namespace WZ
         protected override void Awake()
         {
             base.Awake();
+            if (_button == null) _button = gameObject.AddComponent<Button>();
             _image = GetComponent<Image>();
             _rectTransform = GetComponent<RectTransform>();
         }

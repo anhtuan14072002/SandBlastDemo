@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Sand
 {
-    public class AuctionBox : MonoBehaviour
+    public class AuctionInfo : MonoBehaviour
     {
         [Header("Refs")]
         [SerializeField] private GameObject _talkObj;

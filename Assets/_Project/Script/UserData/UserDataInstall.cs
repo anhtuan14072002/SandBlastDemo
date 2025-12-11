@@ -49,6 +49,7 @@ namespace Sand
             LoadIntValue(SaveKeys.CountDrawPicture, value => userData.CountDrawPicture.Value = value);
 
             LoadListIntValue(SaveKeys.CompletedPictureIndices, value => userData.CompletedPictureIndices = value);
+            LoadListIntValue(SaveKeys.SoldPictureIndices, value => userData.SoldPictureIndices = value);
             LoadDictionaryIntIntValue(SaveKeys.PictureFillProgress, value => userData.PictureFillProgress = value);
             LoadDictionaryIntBoolValue(SaveKeys.BoxSpawnIsLockState, value => userData.BoxSpawnIsLockState = value);
         }

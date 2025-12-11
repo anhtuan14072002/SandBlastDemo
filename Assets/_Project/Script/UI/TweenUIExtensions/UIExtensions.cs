@@ -17,8 +17,19 @@ namespace Sand
                 }, ease
             );
         }
-
-        public static Tween TweenAnchoredX(this RectTransform rt, float targetX, float duration, Ease ease, int cycles, CycleMode cycleMode)
+        public static Tween TweenAnchoredX(this RectTransform rt, float targetX, float duration, Ease ease)
+        {
+            float startX = rt.anchoredPosition.x;
+            return Tween.Custom(
+                startX, targetX, duration, value =>
+                {
+                    var pos = rt.anchoredPosition;
+                    pos.x = value;
+                    rt.anchoredPosition = pos;
+                }, ease
+            );
+        }
+        public static Tween TweenAnchoredXCycle(this RectTransform rt, float targetX, float duration, Ease ease, int cycles, CycleMode cycleMode)
         {
             float startX = rt.anchoredPosition.x;
             return Tween.Custom(

@@ -30,7 +30,8 @@ namespace Sand
 
         [Header("Button Use Skill")]
         [SerializeField] private Button _btnUseMagicBrush;
-        [FormerlySerializedAs("_buttonUseBoom")] [SerializeField] private Button _btnUseBoom;
+        [FormerlySerializedAs("_buttonUseBoom")] 
+        [SerializeField] private Button _btnUseBoom;
 
         private bool _isUseBoom;
 

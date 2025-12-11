@@ -54,7 +54,7 @@ namespace Sand
             for (int i = 1; i < _btnBuyGem.Length; i++)
             {
                 int index = i;
-                _btnBuyGem[i].onClick.AddListener(() => BuyGems(_amountGem[index]));
+                _btnBuyGem[i].onClick.AddListener(() => IncreaseGem(_amountGem[index]));
             }
 
             for (int i = 0; i < _textPriceBuyGem.Length; i++)
@@ -109,7 +109,7 @@ namespace Sand
             ClaimCoreGemsLevelUp(0);
         }
 
-        private void BuyGems(int gems)
+        private void IncreaseGem(int gems)
         {
             _rewardSystem.AddGems(gems);
         }
@@ -127,7 +127,7 @@ namespace Sand
         private void StartCoreAnimation()
         {
             if (_isPauseCoreReward) return;
-            _currentTween = _pointerRectTransform.TweenAnchoredX(_targetX, 0.75f, Ease.Linear, -1, CycleMode.Yoyo);
+            _currentTween = _pointerRectTransform.TweenAnchoredXCycle(_targetX, 0.75f, Ease.Linear, -1, CycleMode.Yoyo);
         }
 
 
@@ -209,7 +209,6 @@ namespace Sand
         public void ResetGem()
         {
             _rewardSystem.DeductGems(_userData.GemsValue);
-            ;
         }
 
         private void OnDestroy()

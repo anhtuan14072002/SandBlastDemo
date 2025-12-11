@@ -8,29 +8,39 @@ namespace Sand
 {
     public class EffectGame : GameElement
     {
-        [FormerlySerializedAs("_effectLevelUp")]
-        [SerializeField] private GameObject _effectFirework;
+        [FormerlySerializedAs("_effectLevelUp")] [SerializeField]
+        private GameObject _effectFirework;
+
         [SerializeField] private GameObject _effectClaimGem;
-        
-        public void OpenEffectLevelUp()
+
+        public void OpenEffectFirework()
         {
             _effectFirework.SetActive(true);
         }
 
-        public void CloseEffectLevelUp()
+        public void CloseEffectFirework()
         {
             _effectFirework.SetActive(false);
         }
+
         public void OpenEffectClaimGem()
         {
             _effectClaimGem.SetActive(true);
         }
+
         public void CloseEffectClaimGem()
         {
             _effectClaimGem.SetActive(false);
         }
 
-        public async UniTask OpenEffectTime()
+        public async UniTask OpenEffectFireworkTime()
+        {
+            OpenEffectFirework();
+            await UniTask.Delay(TimeSpan.FromSeconds(3.5f));
+            CloseEffectFirework();
+        }
+
+        public async UniTask OpenEffectClaimTime()
         {
             OpenEffectClaimGem();
             await UniTask.Delay(TimeSpan.FromSeconds(1.5f));

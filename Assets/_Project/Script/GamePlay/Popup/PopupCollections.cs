@@ -4,17 +4,22 @@ using Zenject;
 
 namespace Sand
 {
+    public struct SignalOpenPopupCollections { }
     public class PopupCollections : GameElement,
         IReceive<SignalClosePopupCollections>,
-        IReceive<SignalTogglePopupArt>
+        IReceive<SignalTogglePopupArt>,
+        IReceive<SignalOpenPopupCollections>
     {
         [SerializeField] private GameObject _popupCollections;
         [SerializeField] private GameObject _popupArt;
+
         [Inject] RenderPicture _renderPicture;
+
         public void OpenPopupCollection()
         {
             _popupCollections.SetActive(true);
         }
+
         public void ClosePopupCollection()
         {
             _popupCollections.SetActive(false);
@@ -33,6 +38,12 @@ namespace Sand
         public void Receive(in SignalTogglePopupArt signal)
         {
             _popupArt.SetActive(signal.IsActive);
+        }
+
+        public void Receive(in SignalOpenPopupCollections signal)
+        {
+            OpenPopupCollection();
+            ClosePopupArt();
         }
     }
 }

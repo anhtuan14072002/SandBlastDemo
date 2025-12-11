@@ -32,6 +32,8 @@ namespace Sand
         public Dictionary<int, int> PictureFillProgress = new();
         [SerializeField]
         public Dictionary<int, bool> BoxSpawnIsLockState = new();
+        [SerializeField] 
+        public List<int> SoldPictureIndices = new();
 
         public void OnDeserialized()
         {
@@ -54,6 +56,8 @@ namespace Sand
                 PictureFillProgress = new Dictionary<int, int>();
             if (CompletedPictureIndices == null)
                 CompletedPictureIndices = new List<int>();
+            if (SoldPictureIndices == null)
+                SoldPictureIndices = new List<int>();
         }
 
         public int CurrentScoreValue => CurrentScore.Value;

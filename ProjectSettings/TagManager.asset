@@ -53,5 +53,8 @@ TagManager:
   - name: MapArt
     uniqueID: 3742483591
     locked: 0
+  - name: Block
+    uniqueID: 7462141
+    locked: 0
   m_RenderingLayers:
   - Default

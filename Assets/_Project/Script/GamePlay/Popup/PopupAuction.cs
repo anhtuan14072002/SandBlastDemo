@@ -1,17 +1,19 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using Core;
+using UnityEngine;
 using Zenject;
 
 namespace Sand
 {
-    public class PopupAuction : MonoBehaviour
+    public class PopupAuction : GameElement,
+        IReceive<SignalActiveLockAuction>,
+        IReceive<SignalActivePopupAuction>
     {
         [SerializeField] private GameObject _popupAuction;
         [SerializeField] private GameObject _objLock;
-        [SerializeField] private Button _btnAuction;
+        [SerializeField] private AuctionSate _auctionState;
+
         private bool _isAuction;
-        
-        RenderPicture _renderPicture;
+        private RenderPicture _renderPicture;
 
         [Inject]
         void Construct(RenderPicture renderPicture)
@@ -22,6 +24,14 @@ namespace Sand
         public void OpenAuction()
         {
             _popupAuction.SetActive(true);
+
+            if (_auctionState != null && _renderPicture != null)
+            {
+                var sprite = _renderPicture.GetCurrentColorSprite();
+                int index = _renderPicture.GetCurrentPictureIndex();
+                _auctionState.SetAuctionPicture(sprite, index);
+            }
+
             _renderPicture.CloseMapArt();
         }
 
@@ -31,14 +41,16 @@ namespace Sand
             _renderPicture.OpenMapArt();
         }
 
-        public void OpenLock()
+        public void Receive(in SignalActiveLockAuction signal)
         {
-            _objLock.SetActive(false);
+            if (_objLock != null)
+                _objLock.SetActive(signal.IsActive);
         }
 
-        public void CloseLock()
+        public void Receive(in SignalActivePopupAuction signal)
         {
-            _objLock.SetActive(true);
+            if (signal.IsActive) OpenAuction();
+            else CloseAuction();
         }
     }
 }

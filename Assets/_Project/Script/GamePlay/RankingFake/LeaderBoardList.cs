@@ -16,6 +16,7 @@ namespace Sand
         [SerializeField] private Transform _parentPost;
         [SerializeField] private ScrollRect _scrollRect;
         [SerializeField] private Button _btnRank;
+        [SerializeField] private Button _btnTest;
 
         [Header("Settings")]
         [SerializeField] private int _poolSize = 20;      
@@ -53,6 +54,7 @@ namespace Sand
         {
             InitPool();
             if (_btnRank != null) _btnRank.onClick.AddListener(() => SetMainPlayerScoreAnimated(_UserData.HighScoreValue));
+            _btnTest.onClick.AddListener(() => SetMainPlayerScoreAnimated(_score));
         }
 
         //================= INIT =================

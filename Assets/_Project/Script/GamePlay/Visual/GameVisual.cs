@@ -170,6 +170,8 @@ namespace Sand
         {
             CloseAllCategory();
             OpenCategory(3);
+            _renderPicture.CloseMapArt(); // map art
+            Global.Send(new SignalTogglePopupArt(){IsActive = false});//popup draw picture
             _popupCategory[2].gameObject.SetActive(false);
             _popupCategory[3].gameObject.SetActive(true);
         }

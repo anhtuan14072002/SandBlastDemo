@@ -388,6 +388,7 @@ GameObject:
   - component: {fileID: 5753970183296455039}
   - component: {fileID: 1714971475935974606}
   - component: {fileID: 682341884998175469}
+  - component: {fileID: 3789168681582625893}
   m_Layer: 5
   m_Name: Shop
   m_TagString: Untagged
@@ -518,6 +519,18 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &3789168681582625893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2497524454206689875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3001bbcc5214103b8cfda90fe8a1510, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3234843518934567996
 GameObject:
   m_ObjectHideFlags: 0
@@ -848,6 +861,7 @@ GameObject:
   - component: {fileID: 1613349434261204642}
   - component: {fileID: 5513925089772320224}
   - component: {fileID: 4446102042024153386}
+  - component: {fileID: 4709741997699702981}
   m_Layer: 5
   m_Name: Setting
   m_TagString: Untagged
@@ -978,6 +992,18 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &4709741997699702981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3588052541437633196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3001bbcc5214103b8cfda90fe8a1510, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3845057803920411166
 GameObject:
   m_ObjectHideFlags: 0
@@ -1643,6 +1669,7 @@ GameObject:
   - component: {fileID: 8978295645926494985}
   - component: {fileID: 8912892975196481729}
   - component: {fileID: 938143069638575188}
+  - component: {fileID: 3770430760221440100}
   m_Layer: 5
   m_Name: Share
   m_TagString: Untagged
@@ -1773,6 +1800,18 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &3770430760221440100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5025092542739112360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3001bbcc5214103b8cfda90fe8a1510, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5060356115193314601
 GameObject:
   m_ObjectHideFlags: 0
@@ -1913,7 +1952,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: SPELLS
+  m_text: LIBRARY
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5bbff4e78f2634c139739f1d90982c46, type: 2}
   m_sharedMaterial: {fileID: 7512481295523713106, guid: 5bbff4e78f2634c139739f1d90982c46, type: 2}
@@ -2608,6 +2647,7 @@ GameObject:
   - component: {fileID: 6443046078442757499}
   - component: {fileID: 1863969756502348785}
   - component: {fileID: 2587241966159154654}
+  - component: {fileID: 5062488479377929607}
   m_Layer: 5
   m_Name: Home
   m_TagString: Untagged
@@ -2738,6 +2778,18 @@ MonoBehaviour:
   m_FlexibleWidth: 1.5
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &5062488479377929607
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6282783536181906175}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3001bbcc5214103b8cfda90fe8a1510, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8438029722092507004
 GameObject:
   m_ObjectHideFlags: 0
@@ -2751,8 +2803,9 @@ GameObject:
   - component: {fileID: 7800237517086058792}
   - component: {fileID: 2088253847493569809}
   - component: {fileID: 3307043056441660}
+  - component: {fileID: 2807648016816334984}
   m_Layer: 5
-  m_Name: Skill
+  m_Name: Art
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2881,3 +2934,15 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &2807648016816334984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8438029722092507004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3001bbcc5214103b8cfda90fe8a1510, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
