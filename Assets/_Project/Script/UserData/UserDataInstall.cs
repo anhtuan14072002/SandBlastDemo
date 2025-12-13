@@ -35,6 +35,7 @@ namespace Sand
             Container.Bind<CountDrawData>()
                 .AsSingle()
                 .NonLazy();
+            
         }
 
         private void LoadFromES3(UserData userData)

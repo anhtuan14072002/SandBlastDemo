@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:VisualElement style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); flex-direction: row; height: 20px;">
+        <ui:Toggle value="true" binding-path="active" name="active-toggle" />
+        <uie:ColorField value="RGBA(0.000, 1.000, 1.000, 1.000)" binding-path="mainColor" name="main-color" show-eye-dropper="false" show-alpha="false" picking-mode="Ignore" focusable="false" enabled="false" style="width: 20px; opacity: 1;" />
+        <uie:ObjectField name="region-data" binding-path="texture" type="UnityEngine.Texture2D, UnityEngine.CoreModule" style="flex-grow: 1; flex-shrink: 1;" />
+    </ui:VisualElement>
+</ui:UXML>

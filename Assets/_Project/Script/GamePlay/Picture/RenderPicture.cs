@@ -55,6 +55,16 @@ namespace Sand
 
         [SerializeField] private PictureBase _pictureBase;
 
+        [Header("Color Buttons")]
+        [SerializeField] private Transform _colorButtonContainer;
+        [SerializeField] private float _buttonSize = 50f;
+        [SerializeField] private float _buttonSpacing = 5f;
+        private Color32 _selectedColor = Color.white;
+        private bool _isColorSelected = false;
+
+        [SerializeField] private ColorButton _colorButtonPrefab;
+        private List<ColorButton> _colorButtons = new();
+
         [Inject]
         void Construct(EffectGame effectGame, PictureDrawData pictureDrawData, SaveService saveService,
             CountDrawData countDrawData, UserData userData, PopupAuction popupAuction)
@@ -115,7 +125,6 @@ namespace Sand
         public void RenderOutLineWithPair(Sprite outlineSprite, Sprite colorSprite, int pictureIndex)
         {
             if (outlineSprite == null || colorSprite == null) return;
-            // _popupAuction.CloseLock();
             _isCompleteShown = false;
             _outlineSprite = outlineSprite;
             _colorSprite = colorSprite;
@@ -127,6 +136,9 @@ namespace Sand
             _progressBar.SetActive(true);
             BuildRegionColorList();
             RenderImageToMapArt(_outlineSprite);
+            
+            // Instantiate color buttons
+            InstantiateColorButtons();
 
             int totalRegions = _regionColors.Count;
             int savedFilled = _pictureDrawData.GetFilledRegionCount(_currentPictureIndex, totalRegions);
@@ -400,6 +412,66 @@ namespace Sand
             }
 
             _mapArt._map.UpdateTexture();
+        }
+
+        private void InstantiateColorButtons()
+        {
+            // Clear old buttons
+            foreach (var btn in _colorButtons)
+            {
+                if (btn != null)
+                    Destroy(btn.gameObject);
+            }
+            _colorButtons.Clear();
+
+            if (_colorButtonContainer == null || _colorButtonPrefab == null) return;
+
+            // Create button for each region color
+            for (int i = 0; i < _regionColors.Count; i++)
+            {
+                var buttonGO = Instantiate(_colorButtonPrefab, _colorButtonContainer);
+                var colorButton = buttonGO.GetComponent<ColorButton>();
+                
+                if (colorButton != null)
+                {
+                    colorButton.Init(_regionColors[i], OnColorButtonClicked);
+                    _colorButtons.Add(colorButton);
+                }
+            }
+        }
+
+        private void OnColorButtonClicked(Color32 selectedColor)
+        {
+            _selectedColor = selectedColor;
+            _isColorSelected = true;
+            
+            // Fill the selected color immediately
+            FillColorBySelected();
+        }
+
+        private void FillColorBySelected()
+        {
+            if (_regionColors.Count == 0) return;
+            if (_currentPictureIndex < 0) return;
+
+            Global.Send(new SignalMoveBottleDraw());
+            FillRegionColorFull(_selectedColor);
+            
+            // Update current color index
+            for (int i = _currentColorIndex; i < _regionColors.Count; i++)
+            {
+                if (IsColorClose(_regionColors[i], _selectedColor, _colorTolerance))
+                {
+                    _currentColorIndex = i + 1;
+                    break;
+                }
+            }
+            
+            if (_textCountDraw != null) 
+                _textCountDraw.text = $"{_currentColorIndex}/{_regionColors.Count}";
+            
+            _pictureDrawData.UpdateFillProgress(_currentPictureIndex, _currentColorIndex, _regionColors.Count);
+            AnimateFillBarAsync(this.GetCancellationTokenOnDestroy()).Forget();
         }
 
         public int GetCurrentPictureIndex()

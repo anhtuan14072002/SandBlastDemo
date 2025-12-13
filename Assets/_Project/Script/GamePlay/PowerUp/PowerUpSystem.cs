@@ -19,20 +19,20 @@ namespace Sand
         [SerializeField] private float _minY;
         [SerializeField] private float _maxY;
 
-        private List<(int x, int y)> connectedComponentDel = new();
+        private readonly List<(int x, int y)> _connectedComponentDel = new();
+
         private SpriteRenderer _spriteRenderer;
 
         private bool _isDragging;
-        private Vector3 _startPos;
         private Vector3 _offset;
-        private bool _magicBrushActive = false;
+        private bool _magicBrushActive;
 
-        RewardSystem _rewardSystem;
-        EffectBlock _effectBlock;
-        RenderMap _renderMaps;
-        SoundManager _soundManager;
-        VibrationManager _vibrationManager;
-        CountDrawData _countDrawData;
+        private RewardSystem _rewardSystem;
+        private EffectBlock _effectBlock;
+        private RenderMap _renderMaps;
+        private SoundManager _soundManager;
+        private VibrationManager _vibrationManager;
+        private CountDrawData _countDrawData;
 
         IDisposable _mouseClickSub;
         IDisposable _mouseClickSubWave;
@@ -45,14 +45,15 @@ namespace Sand
             EffectBlock effectBlock,
             RewardSystem rewardSystem,
             SoundManager soundManager,
-            VibrationManager vibrationManager, CountDrawData countDrawData)
+            VibrationManager vibrationManager,
+            CountDrawData countDrawData)
         {
             _renderMaps = renderMap;
             _effectBlock = effectBlock;
             _rewardSystem = rewardSystem;
             _soundManager = soundManager;
             _vibrationManager = vibrationManager;
-            _countDrawData  = countDrawData;
+            _countDrawData = countDrawData;
         }
 
         private void Awake()
@@ -60,10 +61,6 @@ namespace Sand
             _spriteRenderer = GetComponent<SpriteRenderer>();
             if (_spriteRenderer == null)
                 _spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-            if (_iconMagicBrush != null)
-            {
-                _iconMagicBrush.transform.position = Vector3.zero;
-            }
         }
 
         private void Update()
@@ -120,38 +117,49 @@ namespace Sand
         }
 
         //================ MAGIC BRUSH ===================//
+
         public void EnableMagicBrushIcon()
         {
             _magicBrushActive = true;
             _isDragging = false;
 
             var cam = Camera.main;
-            if (cam != null)
+            if (cam != null && _iconMagicBrush != null)
             {
-                var screenPos = new Vector3(Screen.width / 2f, Screen.height / 2f, Mathf.Abs(cam.transform.position.z - _iconMagicBrush.transform.position.z));
-            
+                var screenPos = new Vector3(
+                    Screen.width / 2f,
+                    Screen.height / 2f,
+                    Mathf.Abs(cam.transform.position.z - _iconMagicBrush.transform.position.z));
+
                 var worldPos = cam.ScreenToWorldPoint(screenPos);
                 worldPos.z = 0f;
                 _iconMagicBrush.transform.position = worldPos;
             }
-            _colorMagic.color = Color.clear;
+
+            if (_colorMagic != null)
+                _colorMagic.color = Color.clear;
         }
-        
+
         public void DisableMagicBrushIcon()
         {
             _magicBrushActive = false;
             _isDragging = false;
-            _colorMagic.color = Color.clear;
+
+            if (_colorMagic != null)
+                _colorMagic.color = Color.clear;
         }
 
         //------MagicBrush Icon Drag & Pick Color-----//
         public void UpdateMagicBrushIcon()
         {
-            if (Input.GetMouseButtonDown(0) /*&& !EventSystem.current.IsPointerOverGameObject()*/)
+            if (!_magicBrushActive || _iconMagicBrush == null) return;
+
+            if (Input.GetMouseButtonDown(0))
             {
                 Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                Vector3 iconPos = _iconMagicBrush.transform.position;
+                mouseWorldPos.z = 0;
 
+                Vector3 iconPos = _iconMagicBrush.transform.position;
                 _offset = iconPos - mouseWorldPos;
                 _isDragging = true;
             }
@@ -205,8 +213,9 @@ namespace Sand
         {
             _renderMaps._map.IsMovePause = true;
 
-            var colorManager = new SandColorMap(_renderMaps._map, _renderMaps._hight, _renderMaps._wight, _effectBlock, _soundManager, _countDrawData);
-            connectedComponentDel.Clear();
+            var colorManager = new SandColorMap(_renderMaps._map, _renderMaps._hight,
+                _renderMaps._wight, _effectBlock, _soundManager, _countDrawData);
+            _connectedComponentDel.Clear();
 
             for (int x = 0; x < _renderMaps._wight; x++)
             {
@@ -215,12 +224,12 @@ namespace Sand
                     var cell = _renderMaps._map.GetCell(x, y);
                     if (cell.hasValue == 1 && colorManager.SameColor(cell.color, targetColor))
                     {
-                        connectedComponentDel.Add((x, y));
+                        _connectedComponentDel.Add((x, y));
                     }
                 }
             }
 
-            if (connectedComponentDel.Count > 0)
+            if (_connectedComponentDel.Count > 0)
             {
                 var countCellsWithColor = colorManager.CountCellsWithColor(targetColor);
                 _soundManager.OnPlaySound(SoundType.Combo2);
@@ -228,12 +237,12 @@ namespace Sand
 
                 await _effectBlock.ShrinkEffectFadeOut(
                     _renderMaps._map,
-                    connectedComponentDel,
+                    _connectedComponentDel,
                     targetColor,
                     _renderMaps._backgroundColor);
 
-                Global.Send(new SignalScoreOnGame() { Score = countCellsWithColor });
-                Global.Send(new SignalOpenEffectTextScore() { Score = countCellsWithColor });
+                Global.Send(new SignalScoreOnGame { Score = countCellsWithColor });
+                Global.Send(new SignalOpenEffectTextScore { Score = countCellsWithColor });
             }
 
             await UniTask.Delay(TimeSpan.FromSeconds(0.25f));
@@ -246,7 +255,7 @@ namespace Sand
         {
             _renderMaps._map.IsMovePause = true;
 
-            List<(int x, int y)> cellsToErase = new List<(int x, int y)>();
+            List<(int x, int y)> cellsToErase = new();
 
             int minX = Mathf.Max(0, Mathf.FloorToInt(centerX - radius));
             int maxX = Mathf.Min(_renderMaps._wight - 1, Mathf.CeilToInt(centerX + radius));
@@ -281,8 +290,8 @@ namespace Sand
 
                 _vibrationManager.SelectionButton();
 
-                Global.Send(new SignalScoreOnGame() { Score = cellsToErase.Count });
-                Global.Send(new SignalOpenEffectTextScore() { Score = cellsToErase.Count });
+                Global.Send(new SignalScoreOnGame { Score = cellsToErase.Count });
+                Global.Send(new SignalOpenEffectTextScore { Score = cellsToErase.Count });
             }
 
             _renderMaps._map.IsMovePause = false;

@@ -8,7 +8,7 @@ namespace Sand
 {
     public class BoomView : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI _textAmountBoom;
+        [SerializeField] private TextMeshPro _textAmountBoom;
         UserData _userData;
         IDisposable _sub;
 

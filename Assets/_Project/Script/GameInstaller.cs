@@ -67,6 +67,10 @@ namespace Sand
             Container.Bind<PopupAuction>()
                 .FromComponentInHierarchy()
                 .AsSingle();
+            
+            Container.Bind<PowerUp>()
+                .FromComponentInHierarchy()
+                .AsSingle();
         }
     }
 }

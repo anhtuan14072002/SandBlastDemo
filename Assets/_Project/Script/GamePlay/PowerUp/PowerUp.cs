@@ -4,7 +4,6 @@ using Cysharp.Threading.Tasks;
 using R3;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Zenject;
 
@@ -12,32 +11,33 @@ namespace Sand
 {
     public class PowerUp : MonoBehaviour
     {
+        [Header("Popups")]
         [SerializeField] private GameObject _popupSkillMagicBrush;
         [SerializeField] private GameObject _popupSkillBoom;
         [SerializeField] private GameObject _popupConfirmBuyMagicBrush;
         [SerializeField] private GameObject _popupConfirmBuyBoom;
+
+        [Header("Texts")]
         [SerializeField] private TextMeshProUGUI _textPriceMagicBrush;
         [SerializeField] private TextMeshProUGUI _textPriceBoom;
-        [SerializeField] private Button _btnOpenSkillMagicBrush;
+
+        [Header("Buttons")]
         [SerializeField] private Button _btnCloseSkillMagicBrush;
         [SerializeField] private Button _btnCloseSkillBoom;
-        [SerializeField] private Button _btnBuyMagicBrush;
         [SerializeField] private Button _btnConfirmMagicBrush;
         [SerializeField] private Button _btnConfirmBoom;
-        [SerializeField] private Button _btnBuyBoom;
+        [SerializeField] private Button _btnUseMagicBrush;
+
+        [Header("Prices")]
         [SerializeField] private int _priceSkillMagicBrush;
         [SerializeField] private int _priceSkillBoom;
 
-        [Header("Button Use Skill")]
-        [SerializeField] private Button _btnUseMagicBrush;
-        [FormerlySerializedAs("_buttonUseBoom")] 
-        [SerializeField] private Button _btnUseBoom;
-
         private bool _isUseBoom;
 
-        PowerUpSystem _powerUpSystem;
-        RewardSystem _rewardSystem;
-        UserData _userData;
+        private PowerUpSystem _powerUpSystem;
+        private RewardSystem _rewardSystem;
+        private UserData _userData;
+
         IDisposable _mouseClickSubWave;
 
         [Inject]
@@ -50,24 +50,43 @@ namespace Sand
 
         private void Start()
         {
-            _textPriceMagicBrush.text = _priceSkillMagicBrush.ToString();
-            _textPriceBoom.text = _priceSkillBoom.ToString();
-            
+            if (_textPriceMagicBrush != null)
+                _textPriceMagicBrush.text = _priceSkillMagicBrush.ToString();
+
+            if (_textPriceBoom != null)
+                _textPriceBoom.text = _priceSkillBoom.ToString();
+
             //--------Boom---------//
-            _btnBuyBoom.onClick.AddListener(OpenPopupConfirmBuyBoom);
-            _btnConfirmBoom.onClick.AddListener(BuyBoom);
-            _btnUseBoom.onClick.AddListener(UsePowerUpBoom);
-            _btnCloseSkillBoom.onClick.AddListener(ClosePowerUpBoom);
-            
+            if (_btnConfirmBoom != null) _btnConfirmBoom.onClick.AddListener(BuyBoom);
+            if (_btnCloseSkillBoom != null) _btnCloseSkillBoom.onClick.AddListener(ClosePowerUpBoom);
             //-----MagicBrush----//
-            _btnBuyMagicBrush.onClick.AddListener(OpenPopupConfirmBuyMagicBrush);
-            _btnConfirmMagicBrush.onClick.AddListener(BuyMagicBrush);
-            _btnOpenSkillMagicBrush.onClick.AddListener(OpenPopupMagicBrush);
-            _btnUseMagicBrush.onClick.AddListener(UsePowerUpMagicBrush);
-            _btnCloseSkillMagicBrush.onClick.AddListener(ClosePopupMagicBrush);
+            if (_btnConfirmMagicBrush != null) _btnConfirmMagicBrush.onClick.AddListener(BuyMagicBrush);
+            if (_btnUseMagicBrush != null) _btnUseMagicBrush.onClick.AddListener(UsePowerUpMagicBrush);
+            if (_btnCloseSkillMagicBrush != null) _btnCloseSkillMagicBrush.onClick.AddListener(ClosePopupMagicBrush);
         }
 
+        //================ ENTRY FROM WORLD ICON ===================//
+
+        public void OnClickPowerUp(PowerUpType type, bool isPlusIcon)
+        {
+            switch (type)
+            {
+                case PowerUpType.Boom:
+                    if (isPlusIcon)
+                        OpenPopupConfirmBuyBoom();
+                    else
+                        UsePowerUpBoom();
+                    break;
+                case PowerUpType.MagicBrush:
+                    if (isPlusIcon)
+                        OpenPopupConfirmBuyMagicBrush();
+                    else
+                        OpenPopupMagicBrush();
+                    break;
+            }
+        }
         //===================== BOOM =======================//
+
         private void BuyBoom()
         {
             if (_userData.GemsValue >= _priceSkillBoom)
@@ -88,6 +107,7 @@ namespace Sand
             {
                 OpenSkillBoom();
                 _isUseBoom = true;
+
                 _mouseClickSubWave?.Dispose();
                 _mouseClickSubWave = Observable.EveryUpdate()
                     .Where(_ => Input.GetMouseButtonDown(0) && _isUseBoom)
@@ -101,13 +121,17 @@ namespace Sand
 
         private void OpenSkillBoom()
         {
-            _popupSkillBoom.SetActive(true);
+            if (_popupSkillBoom != null)
+                _popupSkillBoom.SetActive(true);
         }
 
         private void ClosePowerUpBoom()
         {
             _isUseBoom = false;
-            _popupSkillBoom.SetActive(false);
+
+            if (_popupSkillBoom != null)
+                _popupSkillBoom.SetActive(false);
+
             _mouseClickSubWave?.Dispose();
         }
 
@@ -140,29 +164,33 @@ namespace Sand
                 Global.Send(new SignalOpenEffectNotEnough());
             }
         }
-        
+
         private void OpenPopupMagicBrush()
         {
             if (_userData.MagicBrushValue > 0)
             {
-                _popupSkillMagicBrush.SetActive(true);
+                if (_popupSkillMagicBrush != null)
+                    _popupSkillMagicBrush.SetActive(true);
+
                 _powerUpSystem.EnableMagicBrushIcon();
             }
             else
             {
                 Global.Send(new SignalOpenEffectNotEnough());
             }
-
         }
+
         private void UsePowerUpMagicBrush()
         {
-            if (!_popupSkillMagicBrush.activeSelf) return;
+            if (_popupSkillMagicBrush != null && !_popupSkillMagicBrush.activeSelf) return;
+
             var selectedColor = _powerUpSystem._colorMagic.color;
             if (selectedColor.a <= 0f)
             {
                 ClosePopupMagicBrush();
                 return;
             }
+
             _rewardSystem.DeductMagicBrush(1);
             RemoveSameColorCompleteBands(selectedColor);
             ClosePopupMagicBrush();
@@ -170,10 +198,12 @@ namespace Sand
 
         private void ClosePopupMagicBrush()
         {
-            _popupSkillMagicBrush.SetActive(false);
+            if (_popupSkillMagicBrush != null)
+                _popupSkillMagicBrush.SetActive(false);
+
             _powerUpSystem.DisableMagicBrushIcon();
         }
-        
+
         private void RemoveSameColorCompleteBands(Color32 selectedColor)
         {
             _powerUpSystem.PowerUpMagicBrush(selectedColor).Forget();
@@ -183,25 +213,27 @@ namespace Sand
 
         private void OpenPopupConfirmBuyMagicBrush()
         {
-            _popupConfirmBuyMagicBrush.SetActive(true);
+            if (_popupConfirmBuyMagicBrush != null)
+                _popupConfirmBuyMagicBrush.SetActive(true);
         }
 
         public void ClosePopupConfirmBuyMagicBrush()
         {
-            _popupConfirmBuyMagicBrush.SetActive(false);
+            if (_popupConfirmBuyMagicBrush != null)
+                _popupConfirmBuyMagicBrush.SetActive(false);
         }
 
         private void OpenPopupConfirmBuyBoom()
         {
-            _popupConfirmBuyBoom.SetActive(true);
+            if (_popupConfirmBuyBoom != null)
+                _popupConfirmBuyBoom.SetActive(true);
         }
 
         public void ClosePopupConfirmBuyBoom()
         {
-            _popupConfirmBuyBoom.SetActive(false);
+            if (_popupConfirmBuyBoom != null)
+                _popupConfirmBuyBoom.SetActive(false);
         }
-
-        //================ OTHERS =======================//
         
         private void OnDestroy()
         {

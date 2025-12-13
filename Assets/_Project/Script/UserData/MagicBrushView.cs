@@ -10,7 +10,7 @@ namespace Sand
 {
     public class MagicBrushView : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI _textAmountMagicBrush;
+        [SerializeField] private TextMeshPro _textAmountMagicBrush;
         UserData _userData;
         IDisposable _sub;
 

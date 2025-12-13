@@ -1,187 +1,260 @@
-﻿/*using System;
+﻿/*
+using System;
 using Core;
 using Cysharp.Threading.Tasks;
-using PrimeTween;
+using R3;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Tween = PrimeTween.Tween;
+using Zenject;
 
-namespace WZ
+namespace Sand
 {
-    public class MainMenuPopup : Visual, IReceive<SignalOpenCategoryByIndex>
+    public class PowerUp : MonoBehaviour
     {
-        [SerializeField] private float _targetPosYFocusOpen;
-        [SerializeField] private float _targetPosYFocusClose;
+        [Header("Popups")]
+        [SerializeField] private GameObject _popupSkillMagicBrush;
+        [SerializeField] private GameObject _popupSkillBoom;
+        [SerializeField] private GameObject _popupConfirmBuyMagicBrush;
+        [SerializeField] private GameObject _popupConfirmBuyBoom;
 
-        [SerializeField] private float _targetPosYFocusIconOpen;
-        [SerializeField] private float _targetPosYFocusIconClose;
-        
-        [SerializeField] private float _durationTweenOpen;
-        [SerializeField] private float _durationTweenObjComp;
-        [SerializeField] private float _durationDelayOneTweenObjComp;
-        [SerializeField] private float _durationDelayAllTweenObjComp;
-        
-        private int _currentCategoryIndex = -1;
-        
-        [Serializable]
-        private class CategoryMain
+        [Header("Texts")]
+        [SerializeField] private TextMeshProUGUI _textPriceMagicBrush;
+        [SerializeField] private TextMeshProUGUI _textPriceBoom;
+
+        [Header("Buttons")]
+        [SerializeField] private Button _btnCloseSkillMagicBrush;
+        [SerializeField] private Button _btnCloseSkillBoom;
+        [SerializeField] private Button _btnBuyMagicBrush;
+        [SerializeField] private Button _btnConfirmMagicBrush;
+        [SerializeField] private Button _btnConfirmBoom;
+        [SerializeField] private Button _btnBuyBoom;
+        [SerializeField] private Button _btnUseMagicBrush; // trong popup MagicBrush (nếu còn dùng)
+
+        [Header("Prices")]
+        [SerializeField] private int _priceSkillMagicBrush;
+        [SerializeField] private int _priceSkillBoom;
+
+        private bool _isUseBoom;
+
+        private PowerUpSystem _powerUpSystem;
+        private RewardSystem _rewardSystem;
+        private UserData _userData;
+
+        IDisposable _mouseClickSubWave;
+
+        [Inject]
+        void Construct(UserData userData, RewardSystem rewardSystem, PowerUpSystem powerUpSystem)
         {
-            [SerializeField] public Button _buttonCategory;
-            [SerializeField] public PopupType _thisPopupType;
-
-            [SerializeField] public GameObject _prefabCategory;
-            [SerializeField] public GameObject _focus;
-            [SerializeField] public Image _imageFocus;
-            [SerializeField] public GameObject _focusIcon;
-            [SerializeField] public GameObject[] _objComponent;
-
-            [SerializeField] public Vector3 _posObj;
-            [SerializeField] public float _targetPosObj;
-            [NonSerialized] public Vector3[] _originalPositions;
-
-            [SerializeField] public int _indexCat;
-
-            public LayoutElement _thisLayoutElement;
+            _userData = userData;
+            _rewardSystem = rewardSystem;
+            _powerUpSystem = powerUpSystem;
         }
-
-        [SerializeField] private CategoryMain[] _categories;
 
         private void Start()
         {
-            for (int i = 0; i < _categories.Length; i++)
+            if (_textPriceMagicBrush != null)
+                _textPriceMagicBrush.text = _priceSkillMagicBrush.ToString();
+
+            if (_textPriceBoom != null)
+                _textPriceBoom.text = _priceSkillBoom.ToString();
+
+            //--------Boom---------//
+            if (_btnBuyBoom != null)
+                _btnBuyBoom.onClick.AddListener(OpenPopupConfirmBuyBoom);
+
+            if (_btnConfirmBoom != null)
+                _btnConfirmBoom.onClick.AddListener(BuyBoom);
+
+            if (_btnCloseSkillBoom != null)
+                _btnCloseSkillBoom.onClick.AddListener(ClosePowerUpBoom);
+
+            //-----MagicBrush----//
+            if (_btnBuyMagicBrush != null)
+                _btnBuyMagicBrush.onClick.AddListener(OpenPopupConfirmBuyMagicBrush);
+
+            if (_btnConfirmMagicBrush != null)
+                _btnConfirmMagicBrush.onClick.AddListener(BuyMagicBrush);
+
+            if (_btnUseMagicBrush != null)
+                _btnUseMagicBrush.onClick.AddListener(UsePowerUpMagicBrush);
+
+            if (_btnCloseSkillMagicBrush != null)
+                _btnCloseSkillMagicBrush.onClick.AddListener(ClosePopupMagicBrush);
+        }
+
+        //================ ENTRY FROM WORLD ICON ===================//
+
+        public void OnClickPowerUpIcon(PowerUpType type)
+        {
+            switch (type)
             {
-                var index = i;
-                var cat = _categories[i];
-                cat._buttonCategory.onClick.AddListener(() =>
-                {
-                    if (_currentCategoryIndex == index) return;
-                    _currentCategoryIndex = index;
-                    
-                    ResetAllButtons();
-                    FocusButton(_categories[index]._thisLayoutElement);
-
-                    cat._prefabCategory.SetActive(true);
-
-                    TweenOpenCategory(index);
-                    SwitchTweenCat(index);
-                });
-                cat._originalPositions = new Vector3[cat._objComponent.Length];
-                for (int j = 0; j < cat._objComponent.Length; j++)
-                {
-                    cat._originalPositions[j] = cat._objComponent[j].transform.position;
-                }
-            }
-        }
-
-        public void Receive(in SignalOpenCategoryByIndex signal)
-        {
-            OpenCategoryByIndex(0);
-        }
-        
-        private void ResetAllButtons()
-        {
-            foreach (var category in _categories)
-            {
-                category._thisLayoutElement.flexibleWidth = 1.0f;
-                category._prefabCategory.SetActive(false);
-                
-                Tween.Alpha(category._imageFocus, 1, 0.25f, Ease.Linear);
-                Tween.PositionY(category._focus.transform, _targetPosYFocusClose, 0.1f, Ease.Linear);
-                Tween.PositionY(category._focusIcon.transform, _targetPosYFocusIconClose, 0.2f, Ease.Linear);
-                category._focusIcon.transform.localScale = Vector3.one;
-                
-            }
-        }
-
-        private void FocusButton(LayoutElement layoutElement)
-        {
-            layoutElement.flexibleWidth = 1.5f;
-        }
-
-        private void TweenOpenCategory(int index)
-        {
-            Tween.Alpha(_categories[index]._imageFocus, 1, 0.5f, Ease.Linear);
-            
-            Tween.PositionY(_categories[index]._focus.transform, _targetPosYFocusOpen, _durationTweenOpen, Ease.Linear);
-            
-            _categories[index]._focus.transform.localScale = Vector3.one;
-
-            Tween.PositionY(_categories[index]._focusIcon.transform, _targetPosYFocusIconOpen, _durationTweenOpen,
-                    Ease.Linear)
-                .OnComplete(() =>
-                    Tween.Scale(_categories[index]._focusIcon.transform, 1.5f, _durationTweenOpen, Ease.OutBack)
-                );
-        }
-
-        private void SwitchTweenCat(int index)
-        {
-            ResetObjComponentsExcept(index);
-            
-            var category = _categories[index];
-
-            switch (category._indexCat)
-            {
-                case 1:
-                    TweenObjXComponent(index);
+                case PowerUpType.Boom:
+                    UsePowerUpBoom();
                     break;
-                case 2:
-                    TweenObjYComponent(index);
+
+                case PowerUpType.MagicBrush:
+                    OpenPopupMagicBrush();
                     break;
             }
         }
 
-        private async void TweenObjXComponent(int index)
+        //===================== BOOM =======================//
+
+        private void BuyBoom()
         {
-            var category = _categories[index];
-
-            foreach (var obj in category._objComponent)
+            if (_userData.GemsValue >= _priceSkillBoom)
             {
-                var pos = obj.transform.position;
-                obj.transform.position = new Vector3(category._posObj.x, pos.y, pos.z);
-
-                Tween.PositionX(obj.transform, category._targetPosObj, _durationTweenObjComp, Ease.Linear);
-                await UniTask.Delay(TimeSpan.FromSeconds(_durationDelayAllTweenObjComp));
+                _userData.Gems.Value -= _priceSkillBoom;
+                _rewardSystem.AddBoom(1);
+                ClosePopupConfirmBuyBoom();
             }
-
-            await UniTask.Delay(TimeSpan.FromSeconds(_durationDelayOneTweenObjComp));
+            else
+            {
+                Global.Send(new SignalOpenEffectNotEnough());
+            }
         }
 
-        private async void TweenObjYComponent(int index)
+        private void UsePowerUpBoom()
         {
-            var category = _categories[index];
-
-            foreach (var obj in category._objComponent)
+            if (_userData.BoomValue > 0)
             {
-                var pos = obj.transform.position;
-                obj.transform.position = new Vector3(pos.x, category._posObj.y, pos.z);
+                OpenSkillBoom();
+                _isUseBoom = true;
 
-                Tween.PositionY(obj.transform, category._targetPosObj, 0.2f, Ease.Linear);
-                await UniTask.Delay(TimeSpan.FromSeconds(0.05f));
+                _mouseClickSubWave?.Dispose();
+                _mouseClickSubWave = Observable.EveryUpdate()
+                    .Where(_ => Input.GetMouseButtonDown(0) && _isUseBoom)
+                    .Subscribe(_ => { MouseClickBoom(); });
             }
-
-            await UniTask.Delay(TimeSpan.FromSeconds(0.1f));
+            else
+            {
+                Global.Send(new SignalOpenEffectNotEnough());
+            }
         }
 
-        private void ResetObjComponentsExcept(int exceptIndex)
+        private void OpenSkillBoom()
         {
-            for (int i = 0; i < _categories.Length; i++)
-            {
-                if (i == exceptIndex) continue;
-                var cat = _categories[i];
+            if (_popupSkillBoom != null)
+                _popupSkillBoom.SetActive(true);
+        }
 
-                for (int j = 0; j < cat._objComponent.Length; j++)
+        private void ClosePowerUpBoom()
+        {
+            _isUseBoom = false;
+
+            if (_popupSkillBoom != null)
+                _popupSkillBoom.SetActive(false);
+
+            _mouseClickSubWave?.Dispose();
+        }
+
+        private void MouseClickBoom()
+        {
+            if (_userData.BoomValue > 0 && _isUseBoom)
+            {
+                bool hasEffect = _powerUpSystem.PowerUpBoom();
+                if (hasEffect)
                 {
-                    cat._objComponent[j].transform.position = cat._originalPositions[j];
+                    _rewardSystem.DeductBoom(1);
+                    if (_userData.BoomValue <= 0)
+                        ClosePowerUpBoom();
                 }
             }
         }
 
-        private void OpenCategoryByIndex(int index)
+        //===================== MAGIC BRUSH =======================//
+
+        private void BuyMagicBrush()
         {
-            ResetAllButtons();
-            _categories[index]._prefabCategory.SetActive(true);
-            TweenOpenCategory(0);
-            FocusButton(_categories[index]._thisLayoutElement);
+            if (_userData.GemsValue >= _priceSkillMagicBrush)
+            {
+                _userData.Gems.Value -= _priceSkillMagicBrush;
+                _rewardSystem.AddMagicBrush(1);
+                ClosePopupConfirmBuyMagicBrush();
+            }
+            else
+            {
+                Global.Send(new SignalOpenEffectNotEnough());
+            }
+        }
+
+        private void OpenPopupMagicBrush()
+        {
+            if (_userData.MagicBrushValue > 0)
+            {
+                if (_popupSkillMagicBrush != null)
+                    _popupSkillMagicBrush.SetActive(true);
+
+                _powerUpSystem.EnableMagicBrushIcon();
+            }
+            else
+            {
+                Global.Send(new SignalOpenEffectNotEnough());
+            }
+        }
+
+        private void UsePowerUpMagicBrush()
+        {
+            if (_popupSkillMagicBrush != null && !_popupSkillMagicBrush.activeSelf) return;
+
+            var selectedColor = _powerUpSystem._colorMagic.color;
+            if (selectedColor.a <= 0f)
+            {
+                ClosePopupMagicBrush();
+                return;
+            }
+
+            _rewardSystem.DeductMagicBrush(1);
+            RemoveSameColorCompleteBands(selectedColor);
+            ClosePopupMagicBrush();
+        }
+
+        private void ClosePopupMagicBrush()
+        {
+            if (_popupSkillMagicBrush != null)
+                _popupSkillMagicBrush.SetActive(false);
+
+            _powerUpSystem.DisableMagicBrushIcon();
+        }
+
+        private void RemoveSameColorCompleteBands(Color32 selectedColor)
+        {
+            _powerUpSystem.PowerUpMagicBrush(selectedColor).Forget();
+        }
+
+        //================ POPUP BUY POWER UP ================//
+
+        private void OpenPopupConfirmBuyMagicBrush()
+        {
+            if (_popupConfirmBuyMagicBrush != null)
+                _popupConfirmBuyMagicBrush.SetActive(true);
+        }
+
+        public void ClosePopupConfirmBuyMagicBrush()
+        {
+            if (_popupConfirmBuyMagicBrush != null)
+                _popupConfirmBuyMagicBrush.SetActive(false);
+        }
+
+        private void OpenPopupConfirmBuyBoom()
+        {
+            if (_popupConfirmBuyBoom != null)
+                _popupConfirmBuyBoom.SetActive(true);
+        }
+
+        public void ClosePopupConfirmBuyBoom()
+        {
+            if (_popupConfirmBuyBoom != null)
+                _popupConfirmBuyBoom.SetActive(false);
+        }
+
+        //================ OTHERS =======================//
+
+        private void OnDestroy()
+        {
+            _mouseClickSubWave?.Dispose();
         }
     }
-}*/
+}
+*/

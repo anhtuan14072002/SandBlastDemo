@@ -36,6 +36,7 @@ MonoBehaviour:
     assemblyNames:
     - Assembly-CSharp
     - Assembly-CSharp-firstpass
+    - ColoringBook
     - DamageNumbersPro
     - GamesTan.SuperScrollRect
     - IngameDebugConsole.Runtime

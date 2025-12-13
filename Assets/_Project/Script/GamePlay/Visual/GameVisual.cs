@@ -347,18 +347,18 @@ namespace Sand
         //Skill
         private void EnableSkill()
         {
-            for (int i = 0; i < _skill.Length; i++)
+            /*for (int i = 0; i < _skill.Length; i++)
             {
                 _skill[i].SetActive(true);
-            }
+            }*/
         }
 
         private void DisableSkill()
         {
-            for (int i = 0; i < _skill.Length; i++)
+            /*for (int i = 0; i < _skill.Length; i++)
             {
                 _skill[i].SetActive(false);
-            }
+            }*/
         }
 
         public void ResetGameStart()

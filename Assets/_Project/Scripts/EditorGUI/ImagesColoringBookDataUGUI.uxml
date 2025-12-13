@@ -1,0 +1,45 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <uie:ObjectField label="Texture" binding-path="texture" type="UnityEngine.Texture2D, UnityEngine.CoreModule" name="texture" />
+    <ui:EnumField label="Book Coloring Style" type="HootyBird.ColoringBook.Data.ColoringStyle, ColoringBook" name="coloring-style" binding-path="coloringStyle" style="display: none;" />
+    <ui:Foldout text="Add region" name="add-region-panel">
+        <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row;">
+            <ui:Label tabindex="-1" text="Error Size" display-tooltip-when-elided="true" style="-unity-text-align: middle-left;" />
+            <ui:SliderInt picking-mode="Ignore" value="120" high-value="200" name="error-size" show-input-field="true" binding-path="errorSize" style="flex-grow: 1; flex-shrink: 1;" />
+            <ui:Button text="Add Region" display-tooltip-when-elided="true" name="add-region" style="flex-grow: 0; flex-shrink: 0; background-color: rgba(255, 255, 255, 0); color: rgb(0, 0, 0); max-width: 100px;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="VisualElement" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; display: none;">
+            <uie:ColorField label="Regions Of Color" value="RGBA(0.000, 1.000, 1.000, 1.000)" name="regions-of-color" style="flex-grow: 1; flex-shrink: 1;" />
+            <ui:Button text="Add All Of Color" display-tooltip-when-elided="true" name="add-regions-from-color" />
+        </ui:VisualElement>
+    </ui:Foldout>
+    <ui:ListView focusable="true" show-foldout-header="true" header-title="Regions" show-add-remove-footer="false" binding-path="regions" name="regions" virtualization-method="FixedHeight" fixed-item-height="20" show-bound-collection-size="false" selection-type="Multiple" style="max-height: 240px;" />
+    <ui:Foldout text="Control Panel" name="control-panel">
+        <ui:VisualElement name="single-panel" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row;" />
+        <ui:VisualElement name="any-panel" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
+            <ui:Button text="Grow Selected" display-tooltip-when-elided="true" name="grow-button" style="flex-grow: 1;" />
+            <ui:VisualElement name="delete" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row;">
+                <ui:Toggle label="Remove attached texture?" name="remove-texture-toggle" value="true" style="-unity-text-align: middle-left;" />
+                <ui:Button text="Delete" display-tooltip-when-elided="true" name="delete-button" style="flex-grow: 1;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="changeState" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row;">
+                <ui:Button text="Show Selected" display-tooltip-when-elided="true" name="show-button" style="flex-grow: 1;" />
+                <ui:Button text="Hide Selected" display-tooltip-when-elided="true" name="hide-button" style="flex-grow: 1;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="multi-panel" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: column;">
+            <ui:VisualElement name="merge" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row;">
+                <ui:Toggle label="Remove merged?" name="remove-merged" value="true" />
+                <ui:Button text="Merge" display-tooltip-when-elided="true" name="merge-button" style="flex-grow: 1; flex-shrink: 1;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="update-colors" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row;">
+            <uie:ColorField value="RGBA(0.000, 1.000, 1.000, 1.000)" show-alpha="false" name="custom-color" show-eye-dropper="true" style="width: 50%;" />
+            <ui:Button text="Update colors" display-tooltip-when-elided="true" name="update-colors" style="flex-grow: 1;" />
+        </ui:VisualElement>
+    </ui:Foldout>
+    <ui:ListView focusable="true" fixed-item-height="20" show-bound-collection-size="false" show-foldout-header="true" header-title="Colors" name="colors-list" selection-type="Multiple" />
+    <ui:VisualElement name="scroll-view" focusable="true" style="background-color: rgba(0, 0, 0, 0); border-left-width: 2px; border-right-width: 2px; border-top-width: 2px; border-bottom-width: 2px; border-left-color: rgba(0, 0, 0, 0.4); border-right-color: rgba(0, 0, 0, 0.4); border-top-color: rgba(0, 0, 0, 0.4); border-bottom-color: rgba(0, 0, 0, 0.4); overflow: hidden; flex-shrink: 0; height: 500px; justify-content: center;">
+        <ui:VisualElement name="texture-container" style="flex-grow: 0; background-color: rgba(0, 0, 0, 0.3); -unity-background-scale-mode: scale-to-fit; flex-shrink: 0; position: relative; align-self: center; height: 100px; width: 100px;" />
+        <ui:Label tabindex="-1" text="Label" display-tooltip-when-elided="true" name="info-label" picking-mode="Ignore" style="color: rgb(255, 255, 255); background-color: rgb(0, 0, 0); position: absolute; left: 0; top: 0; visibility: hidden; translate: 5px -10px;" />
+    </ui:VisualElement>
+</ui:UXML>
