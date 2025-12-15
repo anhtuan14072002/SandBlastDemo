@@ -65,9 +65,9 @@ namespace Sand
             Color32 cellColor = MulColor(baseColor, brightness);
 
             if (isBorderPixel)
-                pixels[index] = MulColor(baseColor, 0.8f); // cellColor // baseColor
+                pixels[index] = MulColor(cellColor, 0.8f); // cellColor // baseColor
             else
-                pixels[index] = baseColor; // cellColor // baseColor
+                pixels[index] = cellColor; // cellColor // baseColor
         }
 
         private static Color32 MulColor(Color32 c, float mul)

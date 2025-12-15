@@ -55,7 +55,7 @@ namespace Sand
         [Inject] GameRevive _gameRevive;
         [Inject] SoundManager _soundManager;
         [Inject] ScoreData _scoreData;
-        [Inject] RenderPicture _renderPicture;
+        // [Inject] RenderPicture _renderPicture;
 
         private void Start()
         {
@@ -144,7 +144,7 @@ namespace Sand
                 if (i == index) continue;
                 _popupCategory[i].SetActive(false);
                 CloseArtMenu();
-                Global.Send(new SignalTogglePopupArt() { IsActive = false });
+                Global.Send(new SignalTogglePopupDraw() { IsActive = false });
             }
         }
 
@@ -153,7 +153,7 @@ namespace Sand
             for (int i = 0; i < _popupCategory.Length; i++)
             {
                 _popupCategory[i].SetActive(false);
-                Global.Send(new SignalTogglePopupArt() { IsActive = false });
+                Global.Send(new SignalTogglePopupDraw() { IsActive = false });
             }
         }
 
@@ -170,8 +170,8 @@ namespace Sand
         {
             CloseAllCategory();
             OpenCategory(3);
-            _renderPicture.CloseMapArt(); // map art
-            Global.Send(new SignalTogglePopupArt(){IsActive = false});//popup draw picture
+            // _renderPicture.CloseMapArt(); // map art
+            Global.Send(new SignalTogglePopupDraw(){IsActive = false});//popup draw picture
             _popupCategory[2].gameObject.SetActive(false);
             _popupCategory[3].gameObject.SetActive(true);
         }
@@ -196,7 +196,7 @@ namespace Sand
         //----------------popupArt-------------------------//
         public void CloseArtMenu()
         {
-            _renderPicture.CloseMapArt();
+            // _renderPicture.CloseMapArt();
         }
 
         //===============Game=================//
@@ -207,8 +207,9 @@ namespace Sand
             CloseArtMenu();
             await UniTask.WaitForSeconds(1f);
             
-            _renderPicture.OpenMapGamePlay(); // change mapgameplay
+            // _renderPicture.OpenMapGamePlay(); // change mapgameplay
             Global.Send(new SignalOpenGemBarIngame());
+            Global.Send(new SignalTogglePopupDraw(){IsActive = false});
             Global.Send(new SignalToggleGemBarMenu() { IsActivate = false });
             Global.Send(new SignalToggleGemBarInGame() { IsActivate = true });
 

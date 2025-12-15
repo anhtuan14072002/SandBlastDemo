@@ -31,16 +31,16 @@ namespace Sand
         private int _auctionPictureIndex = -1;
         private int _currentMoney = 0;
 
-        RenderPicture _renderPicture;
+        // RenderPicture _renderPicture;
         UserData _userData;
         EffectGame _effectGame;
         RewardSystem _rewardSystem;
 
         [Inject]
-        void Construct(UserData userData, RenderPicture renderPicture, EffectGame effectGame, RewardSystem rewardSystem)
+        void Construct(UserData userData,/* RenderPicture renderPicture,*/ EffectGame effectGame, RewardSystem rewardSystem)
         {
             _userData = userData;
-            _renderPicture = renderPicture;
+            // _renderPicture = renderPicture;
             _effectGame = effectGame;
             _rewardSystem = rewardSystem;
         }
@@ -137,8 +137,8 @@ namespace Sand
             
             _effectGame.CloseEffectFirework();
             Global.Send(new SignalActivePopupAuction() { IsActive = false });
-            Global.Send(new SignalTogglePopupArt() { IsActive = false });
-            _renderPicture.CloseMapArt();
+            Global.Send(new SignalTogglePopupDraw() { IsActive = false });
+            // _renderPicture.CloseMapArt();
             Global.Send(new SignalOpenPopupCollections());
         }
     }

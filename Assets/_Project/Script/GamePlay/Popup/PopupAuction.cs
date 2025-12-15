@@ -13,32 +13,15 @@ namespace Sand
         [SerializeField] private AuctionSate _auctionState;
 
         private bool _isAuction;
-        private RenderPicture _renderPicture;
-
-        [Inject]
-        void Construct(RenderPicture renderPicture)
-        {
-            _renderPicture = renderPicture;
-        }
-
         public void OpenAuction()
         {
             _popupAuction.SetActive(true);
-
-            if (_auctionState != null && _renderPicture != null)
-            {
-                var sprite = _renderPicture.GetCurrentColorSprite();
-                int index = _renderPicture.GetCurrentPictureIndex();
-                _auctionState.SetAuctionPicture(sprite, index);
-            }
-
-            _renderPicture.CloseMapArt();
         }
 
         public void CloseAuction()
         {
             _popupAuction.SetActive(false);
-            _renderPicture.OpenMapArt();
+            // _renderPicture.OpenMapArt();
         }
 
         public void Receive(in SignalActiveLockAuction signal)

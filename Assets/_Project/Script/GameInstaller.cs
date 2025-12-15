@@ -56,10 +56,6 @@ namespace Sand
                 .FromComponentInHierarchy()
                 .AsSingle();
             
-            Container.Bind<RenderPicture>()
-                .FromComponentInHierarchy()
-                .AsSingle();
-            
             Container.Bind<EffectGame>()
                 .FromComponentInHierarchy()
                 .AsSingle();
@@ -69,6 +65,10 @@ namespace Sand
                 .AsSingle();
             
             Container.Bind<PowerUp>()
+                .FromComponentInHierarchy()
+                .AsSingle();
+            
+            Container.Bind<PopupCollections>()
                 .FromComponentInHierarchy()
                 .AsSingle();
         }
