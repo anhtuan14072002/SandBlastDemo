@@ -3,8 +3,7 @@ using UnityEngine;
 
 public static class SpawnPool
 {
-    private static readonly Dictionary<GameObject, Queue<GameObject>> _pools =
-        new Dictionary<GameObject, Queue<GameObject>>();
+    private static readonly Dictionary<GameObject, Queue<GameObject>> _pools = new Dictionary<GameObject, Queue<GameObject>>();
 
     public static void InitPool(GameObject prefab, int poolSize, Vector3 scale = default, Transform parent = null, bool active = false)
     {

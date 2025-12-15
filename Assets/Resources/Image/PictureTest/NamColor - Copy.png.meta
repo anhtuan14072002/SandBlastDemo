@@ -1,25 +1,10 @@
 fileFormatVersion: 2
-guid: b728d65302943dd4fabd3f3ee0fee22f
+guid: 22a65ed8a52f3ac4a82f59d7574792d7
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8754799269323070621
-    second: sactx-0-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_0
-  - first:
-      213: -3425478392827202170
-    second: sactx-0-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_1
-  - first:
-      213: -3821915999320128419
-    second: sactx-0-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_2
-  - first:
-      213: 8453552307051384821
-    second: sactx-0-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_3
-  - first:
-      213: 4576583741154713850
-    second: sactx-0-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_4
-  - first:
-      213: 1965370425542077330
-    second: sactx-0-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_5
+      213: 5492956268517607567
+    second: NamColor - Copy_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -141,23 +126,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: kembaymau
+      name: NamColor - Copy_0
       rect:
         serializedVersion: 2
-        x: 516
-        y: 1664
-        width: 510
-        height: 320
+        x: 0
+        y: 0
+        width: 1920
+        height: 1080
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d9cd9dfec8b4f7970800000000000000
-      internalID: 8754799269323070621
+      spriteID: f884fbf8f96ea3c40800000000000000
+      internalID: 5492956268517607567
       vertices: []
       indices: 
       edges: []
@@ -166,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: df8f2141568606546b0a81ca70b94f6e
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -176,12 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      kembaymau: 8754799269323070621
-      sactx-0-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_1: -3425478392827202170
-      sactx-0-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_2: -3821915999320128419
-      sactx-0-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_3: 8453552307051384821
-      sactx-0-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_4: 4576583741154713850
-      sactx-0-2048x2048-ASTC 6x6-512X512_Brack-1a10b6cf_5: 1965370425542077330
+      NamColor - Copy_0: 5492956268517607567
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

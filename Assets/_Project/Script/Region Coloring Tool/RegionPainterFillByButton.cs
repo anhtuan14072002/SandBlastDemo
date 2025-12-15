@@ -40,34 +40,22 @@ public class RegionPainterFillByButton : MonoBehaviour
     private void Awake()
     {
         if (_sr == null) _sr = GetComponent<SpriteRenderer>();
-    
         _hasLoggedComplete = false;
     }
 
     private void BuildRuntimeTextureClone()
     {
-        if (_asset == null || _asset.outlineTexture == null)
-        {
-            Debug.LogError("[Painter] Missing outlineTexture");
-            return;
-        }
-
+        if (_asset == null || _asset.outlineTexture == null) return;
         var src = _asset.outlineTexture;
         _w = src.width;
         _h = src.height;
-
-        _pixels = src.GetPixels32(); // clone OUTLINE (trắng / chưa tô)
+        _pixels = src.GetPixels32();
         _runtimeTex = new Texture2D(_w, _h, TextureFormat.RGBA32, false);
         _runtimeTex.SetPixels32(_pixels);
         _runtimeTex.Apply(false, false);
 
         float ppu = (_sr.sprite != null) ? _sr.sprite.pixelsPerUnit : 100f;
-        _sr.sprite = Sprite.Create(
-            _runtimeTex,
-            new Rect(0, 0, _w, _h),
-            new Vector2(0.5f, 0.5f),
-            ppu
-        );
+        _sr.sprite = Sprite.Create(_runtimeTex, new Rect(0, 0, _w, _h), new Vector2(0.5f, 0.5f), ppu);
     }
 
 
@@ -97,11 +85,11 @@ public class RegionPainterFillByButton : MonoBehaviour
         _hasLoggedComplete = false;
         _map.Clear();
     
-        // ✅ Tạo clone texture khi chọn ảnh
+        // Tạo clone texture khi chọn ảnh
         BuildRuntimeTextureClone(); 
         BuildMapBySampledColor();
     
-        // ✅ Reset trạng thái filled của các vùng
+        // Reset trạng thái filled của các vùng
         if (_asset != null && _asset.regions != null)
             foreach (var r in _asset.regions)
                 if (r != null) r.filled = false;
@@ -263,25 +251,20 @@ public class RegionPainterFillByButton : MonoBehaviour
             h ^= y * 668265263;
             h = (h ^ (h >> 13)) * 1274126177;
             h ^= (h >> 16);
-            // map to 0..1
             return (h & 0x7fffffff) / 2147483647f;
         }
     }
 
     private Color32 ApplyBrightness(Color32 c, float delta)
     {
-        // Làm việc ở không gian HSV để giữ độ đậm, tránh bị “bệt/nhạt”
         Color rgb = c;
         float h, s, v;
         Color.RGBToHSV(rgb, out h, out s, out v);
-
         // Boost độ sáng (Value) và áp nhiễu theo kiểu nhân để không bạc màu
         v = Mathf.Clamp01(v * _colorBoost);
         v = Mathf.Clamp01(v * (1f + delta));
-
         // Tăng độ bão hòa để màu đậm hơn, ít bị nhạt
         s = Mathf.Clamp01(s * _saturationBoost);
-
         Color outRgb = Color.HSVToRGB(h, s, v);
         outRgb.a = c.a / 255f;
         return (Color32)outRgb;

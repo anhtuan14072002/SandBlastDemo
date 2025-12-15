@@ -9,8 +9,8 @@ using Zenject;
 public class CollectionItemUI : MonoBehaviour
 {
     [Header("UI")] 
+    [SerializeField] private TextMeshProUGUI _colorCountText;
     [SerializeField] private Image _thumbnail;
-    [SerializeField] private TMP_Text _colorCountText;
     [SerializeField] private Button _button;
 
     private ColoringBookRuntime _runtime;
@@ -58,7 +58,6 @@ public class CollectionItemUI : MonoBehaviour
             int key = (r.sampledColor.r << 16) | (r.sampledColor.g << 8) | r.sampledColor.b;
             set.Add(key);
         }
-
         return set.Count;
     }
 }

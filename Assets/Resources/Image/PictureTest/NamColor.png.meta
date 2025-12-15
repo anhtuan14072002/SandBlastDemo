@@ -1,25 +1,10 @@
 fileFormatVersion: 2
-guid: a3c360d479fd1c144b68fc56eca554dd
+guid: 4fada8ea92ecdbb49bf7a52df687c746
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8194617565083070432
-    second: sactx-1-2048x2048-ASTC 6x6-512X512-4d3af114_0
-  - first:
-      213: -7781206943415051592
-    second: sactx-1-2048x2048-ASTC 6x6-512X512-4d3af114_1
-  - first:
-      213: -3504213915367562796
-    second: sactx-1-2048x2048-ASTC 6x6-512X512-4d3af114_2
-  - first:
-      213: 1676154049196208584
-    second: sactx-1-2048x2048-ASTC 6x6-512X512-4d3af114_3
-  - first:
-      213: -8776918818693224001
-    second: sactx-1-2048x2048-ASTC 6x6-512X512-4d3af114_4
-  - first:
-      213: 2716166285277906453
-    second: sactx-1-2048x2048-ASTC 6x6-512X512-4d3af114_5
+      213: 1490189711728066406
+    second: NamColor_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -141,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: sactx-1-2048x2048-ASTC 6x6-512X512-4d3af114_0
+      name: NamColor_0
       rect:
         serializedVersion: 2
-        x: 516
-        y: 667
-        width: 510
-        height: 320
+        x: 0
+        y: 0
+        width: 1920
+        height: 1080
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -156,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0201c03ddbed64e80800000000000000
-      internalID: -8194617565083070432
+      spriteID: 66f3e7fb5a73ea410800000000000000
+      internalID: 1490189711728066406
       vertices: []
       indices: 
       edges: []
@@ -166,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: b07c3ee6dd941af4f9f1ab89b884bd25
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -176,12 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      sactx-1-2048x2048-ASTC 6x6-512X512-4d3af114_0: -8194617565083070432
-      sactx-1-2048x2048-ASTC 6x6-512X512-4d3af114_1: -7781206943415051592
-      sactx-1-2048x2048-ASTC 6x6-512X512-4d3af114_2: -3504213915367562796
-      sactx-1-2048x2048-ASTC 6x6-512X512-4d3af114_3: 1676154049196208584
-      sactx-1-2048x2048-ASTC 6x6-512X512-4d3af114_4: -8776918818693224001
-      sactx-1-2048x2048-ASTC 6x6-512X512-4d3af114_5: 2716166285277906453
+      NamColor_0: 1490189711728066406
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
