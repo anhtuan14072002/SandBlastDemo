@@ -5,6 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ColoringRegionsAsset", menuName = "ColoringBook/Coloring Regions Asset")]
 public class ColoringRegionsAsset : ScriptableObject
 {
+    [Header("Info")] public int imageId; 
     [Header("Input")] public Texture2D sourceTexture; // Ảnh gốc dùng để xử lý flood fill
     [Header("FloodFill Settings")] 
     [Range(0f, 0.5f)] public float blackThreshold = 0.18f; // Ngưỡng để coi pixel nào là đen (viền)

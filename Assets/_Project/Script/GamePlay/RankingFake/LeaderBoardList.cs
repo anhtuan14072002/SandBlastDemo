@@ -49,10 +49,11 @@ namespace Sand
         {
             _UserData = userData;
         }
-
+        
         private void Start()
         {
-            InitPool();
+            Instantiate(_objRankBot, _parentPost);
+            // InitPool();
             if (_btnRank != null) _btnRank.onClick.AddListener(() => SetMainPlayerScoreAnimated(_UserData.HighScoreValue));
             _btnTest.onClick.AddListener(() => SetMainPlayerScoreAnimated(_score));
         }

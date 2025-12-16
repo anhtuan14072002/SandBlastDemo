@@ -75,6 +75,10 @@ namespace Sand
             Container.Bind<ColorPaletteSpawner>()
                 .FromComponentInHierarchy()
                 .AsSingle();
+            
+            Container.Bind<AuctionSate>()
+                .FromComponentInHierarchy()
+                .AsSingle();
         }
     }
 }

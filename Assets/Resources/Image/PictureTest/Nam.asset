@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61256c7d2e74406981468f424c48af40, type: 3}
   m_Name: Nam
   m_EditorClassIdentifier: 
+  imageId: 1
   sourceTexture: {fileID: 2800000, guid: 4fada8ea92ecdbb49bf7a52df687c746, type: 3}
   blackThreshold: 0.5
   colorTolerance: 0.2143
@@ -228,4 +229,3 @@ MonoBehaviour:
   - serializedVersion: 2
     rgba: 4284307711
   outlineTexture: {fileID: 2800000, guid: 22a65ed8a52f3ac4a82f59d7574792d7, type: 3}
-  colorTexture: {fileID: 2800000, guid: 4fada8ea92ecdbb49bf7a52df687c746, type: 3}

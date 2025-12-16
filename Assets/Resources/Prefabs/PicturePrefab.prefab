@@ -207,9 +207,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da583ddfdcea4482a7b3eba5388c2b38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _thumbnail: {fileID: 6178756006742887865}
   _colorCountText: {fileID: 2809598742084697470}
   _button: {fileID: 5485072913907099935}
+  _thumbnail: {fileID: 6178756006742887865}
+  _iconSold: {fileID: 1206060618399991718}
 --- !u!114 &5485072913907099935
 MonoBehaviour:
   m_ObjectHideFlags: 0

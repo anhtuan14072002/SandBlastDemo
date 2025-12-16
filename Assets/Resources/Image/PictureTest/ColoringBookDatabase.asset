@@ -17,8 +17,5 @@ MonoBehaviour:
     displayName: ConEch
     asset: {fileID: 11400000, guid: 95a95ba125173ae489ca894d4bd94254, type: 2}
   - id: 1
-    displayName: Test
-    asset: {fileID: 11400000, guid: a147f5e5122b3404a9b1819cf2f64a9d, type: 2}
-  - id: 2
     displayName: Nam
     asset: {fileID: 11400000, guid: 10ff522ea964ec54185f1f63c697696e, type: 2}

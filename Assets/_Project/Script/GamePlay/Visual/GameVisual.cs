@@ -24,6 +24,7 @@ namespace Sand
         [SerializeField] private GameObject _backGround;
         [SerializeField] private GameObject _topUI;
         [SerializeField] private GameObject _scoreBar;
+        [SerializeField] private GameObject _puStart;
 
         [SerializeField] private Button[] _btnSelection;
         [SerializeField] private Button _btnPlay;
@@ -214,6 +215,7 @@ namespace Sand
             Global.Send(new SignalToggleGemBarInGame() { IsActivate = true });
 
             // _groupMenu.SetActive(false);
+            _puStart.SetActive(true);
             DisableAllCategory();
             _groupCategory.SetActive(false);
             _backGround.SetActive(false);
@@ -275,13 +277,13 @@ namespace Sand
             _animLoad.gameObject.SetActive(true);
             ChangTextBtnSwitchPlay(true);
             Global.Send(new SignalCloseGemBarIngame());
+            _puStart.SetActive(false);
             await UniTask.WaitForSeconds(1f);
 
             Global.Send(new SignalToggleGemBarMenu() { IsActivate = true });
             Global.Send(new SignalToggleGemBarInGame() { IsActivate = false });
 
             AdManager.Instance.HideBanner();
-
             _currenScore.SetActive(false);
             _scoreBar.SetActive(false);
             _groupMenu.SetActive(true);
@@ -307,6 +309,7 @@ namespace Sand
 
             Global.Send(new SignalResetAllBlocks());
             Global.Send(new SignalRestCurrenScore());
+            _puStart.SetActive(false);
             await UniTask.WaitForSeconds(1f);
 
             Global.Send(new SignalToggleGemBarMenu() { IsActivate = true });

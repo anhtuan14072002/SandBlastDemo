@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Zenject;
 
 public class CollectionsPanel : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class CollectionsPanel : MonoBehaviour
     [SerializeField] private Transform _contentParent;
     [SerializeField] private CollectionItemUI _itemPrefab;
 
+    [Inject] private DiContainer _container;
+
     private void Start()
     {
         Build();
@@ -19,12 +22,7 @@ public class CollectionsPanel : MonoBehaviour
 
     public void Build()
     {
-        if (_database == null || _database.Count == 0)
-        {
-            Debug.LogWarning("[CollectionsPanel] Database empty");
-            return;
-        }
-
+        if (_database == null || _database.Count == 0) return;
         // clear
         for (int i = _contentParent.childCount - 1; i >= 0; i--)
             Destroy(_contentParent.GetChild(i).gameObject);
@@ -35,7 +33,7 @@ public class CollectionsPanel : MonoBehaviour
             var entry = _database.Get(i);
             if (entry == null || entry.asset == null) continue;
 
-            var item = Instantiate(_itemPrefab, _contentParent);
+            var item = _container.InstantiatePrefabForComponent<CollectionItemUI>(_itemPrefab.gameObject, _contentParent);
             item.Setup(i, entry.asset, _runtime);
         }
     }

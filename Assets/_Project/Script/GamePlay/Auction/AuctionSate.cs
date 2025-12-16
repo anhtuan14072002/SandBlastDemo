@@ -20,27 +20,26 @@ namespace Sand
         [Header("Image Picture auction")] [SerializeField]
         private Image _imagePicture;
 
-        [Header("Button Close")]
-        [SerializeField] private GameObject _closeButton;
+        [Header("Button Close")] [SerializeField]
+        private GameObject _closeButton;
+
         [SerializeField] private float _targetTweenOpen;
         [SerializeField] private float _targetTweenClose;
         [SerializeField] private GameObject _groupBtn;
-        
+
         private int _currentIndex = -1;
         private bool _isFinished = false;
         private int _auctionPictureIndex = -1;
         private int _currentMoney = 0;
 
-        // RenderPicture _renderPicture;
         UserData _userData;
         EffectGame _effectGame;
         RewardSystem _rewardSystem;
 
         [Inject]
-        void Construct(UserData userData,/* RenderPicture renderPicture,*/ EffectGame effectGame, RewardSystem rewardSystem)
+        void Construct(UserData userData, EffectGame effectGame, RewardSystem rewardSystem)
         {
             _userData = userData;
-            // _renderPicture = renderPicture;
             _effectGame = effectGame;
             _rewardSystem = rewardSystem;
         }
@@ -112,16 +111,13 @@ namespace Sand
         {
             if (_isFinished) return;
             _isFinished = true;
-
             if (_auctionPictureIndex >= 0 && _userData != null)
             {
-                if (_userData.SoldPictureIndices == null)
-                    _userData.SoldPictureIndices = new System.Collections.Generic.List<int>();
-
-                if (!_userData.SoldPictureIndices.Contains(_auctionPictureIndex))
-                    _userData.SoldPictureIndices.Add(_auctionPictureIndex);
+                _userData.PictureIsSoldState[_auctionPictureIndex] = true;
             }
+
             _effectGame.OpenEffectFirework();
+            Global.Send(new SignalUpdateSoldIcon() { PictureIndex = _auctionPictureIndex });
             _groupBtn.SetActive(false);
             _closeButton.SetActive(true);
             _effectGame.OpenEffectClaimTime().Forget();
@@ -134,12 +130,11 @@ namespace Sand
         {
             var rectBtnClose = _closeButton.GetComponent<RectTransform>();
             rectBtnClose.TweenAnchoredX(_targetTweenClose, 0.25f, Ease.Linear);
-            
+
             _effectGame.CloseEffectFirework();
             Global.Send(new SignalActivePopupAuction() { IsActive = false });
             Global.Send(new SignalTogglePopupDraw() { IsActive = false });
-            // _renderPicture.CloseMapArt();
             Global.Send(new SignalOpenPopupCollections());
         }
     }
-}       
+}

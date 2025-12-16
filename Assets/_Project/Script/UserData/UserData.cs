@@ -32,10 +32,10 @@ namespace Sand
         public Dictionary<int, int> PictureFillProgress = new();
         [SerializeField]
         public Dictionary<int, bool> BoxSpawnIsLockState = new();
-        [SerializeField] 
-        public List<int> SoldPictureIndices = new();
         [SerializeField]
         public Dictionary<int, int> PictureFilledRegions = new();
+        [SerializeField]
+        public Dictionary<int, bool> PictureIsSoldState = new();
         public void OnDeserialized()
         {
             List<ISerializationCallbackReceiver> receivers = new();
@@ -57,10 +57,11 @@ namespace Sand
                 PictureFillProgress = new Dictionary<int, int>();
             if (CompletedPictureIndices == null)
                 CompletedPictureIndices = new List<int>();
-            if (SoldPictureIndices == null)
-                SoldPictureIndices = new List<int>();
+            if (PictureIsSoldState == null)
+                PictureIsSoldState = new Dictionary<int, bool>();
             if (PictureFilledRegions == null)
                 PictureFilledRegions = new Dictionary<int, int>();
+           
         }
         
         public int CurrentScoreValue => CurrentScore.Value;

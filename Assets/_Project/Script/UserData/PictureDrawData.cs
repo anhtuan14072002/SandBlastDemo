@@ -75,7 +75,7 @@ namespace Sand
         {
             _userData.CompletedPictureIndices.Clear();
             _userData.PictureFillProgress?.Clear();
-            _userData.SoldPictureIndices?.Clear();
+            _userData.PictureIsSoldState?.Clear();
         }
     }
 }

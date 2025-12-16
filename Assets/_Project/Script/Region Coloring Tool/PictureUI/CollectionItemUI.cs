@@ -6,16 +6,25 @@ using UnityEngine.UI;
 using TMPro;
 using Zenject;
 
-public class CollectionItemUI : MonoBehaviour
+public class CollectionItemUI : GameElement,
+    IReceive<SignalUpdateSoldIcon>
 {
-    [Header("UI")] 
-    [SerializeField] private TextMeshProUGUI _colorCountText;
-    [SerializeField] private Image _thumbnail;
+    [Header("UI")] [SerializeField] private TextMeshProUGUI _colorCountText;
     [SerializeField] private Button _button;
-
+    [SerializeField] private Image _thumbnail;
+    [SerializeField] private Image _iconSold;
     private ColoringBookRuntime _runtime;
     private int _index;
+    private bool _isSold = false;
     
+    private UserData _userData;
+
+    [Inject]
+    void Construct(UserData userData)
+    {
+        _userData = userData;
+    }
+
     public void Setup(int index, ColoringRegionsAsset asset, ColoringBookRuntime runtime)
     {
         _index = index;
@@ -38,12 +47,30 @@ public class CollectionItemUI : MonoBehaviour
             _button.onClick.RemoveAllListeners();
             _button.onClick.AddListener(OnClick);
         }
+
+        UpdateSoldIcon();
+    }
+
+    public void UpdateSoldIcon()
+    {
+        if (_iconSold == null) return;
+
+        bool isSold = false;
+        if (_userData != null && _userData.PictureIsSoldState != null)
+        {
+            bool val;
+            if (_userData.PictureIsSoldState.TryGetValue(_index, out val))
+                isSold = val;
+        }
+        _iconSold.gameObject.SetActive(isSold);
+        _isSold = isSold;
     }
 
     private void OnClick()
     {
+        if (_isSold) return;
         Global.Send(new SignalClosePopupCollections());
-        Global.Send(new SignalTogglePopupDraw(){IsActive = true});
+        Global.Send(new SignalTogglePopupDraw() { IsActive = true });
         _runtime.SetIndex(_index);
     }
 
@@ -58,6 +85,14 @@ public class CollectionItemUI : MonoBehaviour
             int key = (r.sampledColor.r << 16) | (r.sampledColor.g << 8) | r.sampledColor.b;
             set.Add(key);
         }
+
         return set.Count;
+    }
+
+    public void Receive(in SignalUpdateSoldIcon signal)
+    {
+        // Chỉ update item có index tương ứng
+        if (signal.PictureIndex == _index)
+            UpdateSoldIcon();
     }
 }

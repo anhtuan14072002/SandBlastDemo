@@ -13,7 +13,7 @@
         public const string CountDrawInGame = "UserData.CountDrawInGame";
         public const string CountDrawPicture =  "UserData.CountDrawPicture";
         public const string BoxSpawnIsLockState = "UserData.BoxSpawnIsLockState";
-        public const string SoldPictureIndices = "UserData.SoldPictureIndices";
-        public const string PictureFilledRegions = "UserData.PictureFilledRegions"; 
+        public const string PictureIsSoldState = "UserData.PictureIsSoldState";
+ 
     }
 }

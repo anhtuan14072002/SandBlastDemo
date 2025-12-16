@@ -20,7 +20,7 @@ namespace Sand
             ES3.Save(SaveKeys.CountDrawInGame, _userData.CountDrawInGame.Value);
             ES3.Save(SaveKeys.CountDrawPicture, _userData.CountDrawPicture.Value);
             ES3.Save(SaveKeys.BoxSpawnIsLockState, _userData.BoxSpawnIsLockState);
-            ES3.Save(SaveKeys.SoldPictureIndices, _userData.SoldPictureIndices);
+            ES3.Save(SaveKeys.PictureIsSoldState, _userData.PictureIsSoldState);
         }
     }
 }

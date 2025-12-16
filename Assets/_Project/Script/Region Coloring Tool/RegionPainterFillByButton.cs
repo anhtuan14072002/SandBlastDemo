@@ -4,6 +4,7 @@ using Core;
 using Cysharp.Threading.Tasks;
 using Sand;
 using UnityEngine;
+using Zenject;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class RegionPainterFillByButton : MonoBehaviour
@@ -36,6 +37,13 @@ public class RegionPainterFillByButton : MonoBehaviour
     private bool _hasLoggedComplete; // Đánh dấu đã log "hoàn thành tô hết"
     private int _w, _h; // Chiều rộng & chiều cao ảnh
 
+    AuctionSate _auctionSate;
+
+    [Inject]
+    void Construct(AuctionSate auctionSate)
+    {
+        _auctionSate = auctionSate;
+    }
     private void Reset()
     {
         _sr = GetComponent<SpriteRenderer>();
@@ -215,20 +223,22 @@ public class RegionPainterFillByButton : MonoBehaviour
             var r = _asset.regions[i];
             if (r == null) continue;
             if (r.maskBits == null || r.maskBits.Length == 0) continue; // ignore empty
-            if (!r.filled) return; // còn vùng chưa tô
+            if (!r.filled) return;
         }
         _hasLoggedComplete = true;
-        Debug.Log("Đã tô xong");
+        // Set anh vao auction
+        _auctionSate.SetAuctionPicture(_sr.sprite, _asset.imageId);
         CompleteAllRegions().Forget();       
     }
 
     public async UniTask CompleteAllRegions()
     {
-        // Global.Send(new SignaOpenEffecFireWork());
-        await UniTask.Delay(TimeSpan.FromSeconds(2f));
+        Global.Send(new SignaOpenEffecFireWork());
+        await UniTask.Delay(TimeSpan.FromSeconds(0.4f));
         Global.Send(new SignalActivePopupAuction(){IsActive = true});
         Global.Send(new SignalTogglePopupDraw(){IsActive = false});
     }
+    
     // ---------------- helpers ----------------
     private static bool GetBit(byte[] bits, int index)
     {
