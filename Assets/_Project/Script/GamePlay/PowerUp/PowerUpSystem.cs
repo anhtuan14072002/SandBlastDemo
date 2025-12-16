@@ -27,13 +27,14 @@ namespace Sand
         private Vector3 _offset;
         private bool _magicBrushActive;
 
-        private RewardSystem _rewardSystem;
-        private EffectBlock _effectBlock;
-        private RenderMap _renderMaps;
-        private SoundManager _soundManager;
-        private VibrationManager _vibrationManager;
-        private CountDrawData _countDrawData;
-
+        RewardSystem _rewardSystem;
+        EffectBlock _effectBlock;
+        RenderMap _renderMaps;
+        SoundManager _soundManager;
+        VibrationManager _vibrationManager;
+        CountDrawData _countDrawData;
+        PowerUp _powerUp;
+        
         IDisposable _mouseClickSub;
         IDisposable _mouseClickSubWave;
         IDisposable _magicBrushSub;
@@ -46,7 +47,7 @@ namespace Sand
             RewardSystem rewardSystem,
             SoundManager soundManager,
             VibrationManager vibrationManager,
-            CountDrawData countDrawData)
+            CountDrawData countDrawData, PowerUp PowerUp)
         {
             _renderMaps = renderMap;
             _effectBlock = effectBlock;
@@ -54,6 +55,7 @@ namespace Sand
             _soundManager = soundManager;
             _vibrationManager = vibrationManager;
             _countDrawData = countDrawData;
+            _powerUp = PowerUp;
         }
 
         private void Awake()
@@ -202,10 +204,12 @@ namespace Sand
             if (cell.hasValue == 1)
             {
                 _colorMagic.color = cell.color;
+                _powerUp.SetActiveButtonUseMagicBrush(true);
             }
             else
             {
                 _colorMagic.color = Color.clear;
+                _powerUp.SetActiveButtonUseMagicBrush(false);
             }
         }
 

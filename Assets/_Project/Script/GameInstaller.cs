@@ -71,6 +71,10 @@ namespace Sand
             Container.Bind<PopupCollections>()
                 .FromComponentInHierarchy()
                 .AsSingle();
+            
+            Container.Bind<ColorPaletteSpawner>()
+                .FromComponentInHierarchy()
+                .AsSingle();
         }
     }
 }

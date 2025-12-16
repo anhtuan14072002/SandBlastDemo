@@ -95,7 +95,7 @@ namespace Sand
                     {
                         completedCollectionMap.Add(count, connectedComponent);
                         var cellCountAfter = CountCellsWithColor(targetColor);
-
+                        Global.Send(new SignalSyncBackgroundGamePlay(){Color = targetColor});
                         _currentComboCount++;
                         _turnsWithoutCombo = 0;
                         PlayComboSound();

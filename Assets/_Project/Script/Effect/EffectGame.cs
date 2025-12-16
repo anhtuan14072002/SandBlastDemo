@@ -6,11 +6,11 @@ using UnityEngine.Serialization;
 
 namespace Sand
 {
-    public class EffectGame : GameElement
+    public class EffectGame : GameElement,
+        IReceive<SignaOpenEffecFireWork>
     {
         [FormerlySerializedAs("_effectLevelUp")] [SerializeField]
         private GameObject _effectFirework;
-
         [SerializeField] private GameObject _effectClaimGem;
 
         public void OpenEffectFirework()
@@ -45,6 +45,11 @@ namespace Sand
             OpenEffectClaimGem();
             await UniTask.Delay(TimeSpan.FromSeconds(1.5f));
             CloseEffectClaimGem();
+        }
+
+        public void Receive(in SignaOpenEffecFireWork signal)
+        {
+            OpenEffectFireworkTime().Forget();
         }
     }
 }

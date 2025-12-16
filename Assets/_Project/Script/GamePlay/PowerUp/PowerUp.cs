@@ -55,7 +55,6 @@ namespace Sand
 
             if (_textPriceBoom != null)
                 _textPriceBoom.text = _priceSkillBoom.ToString();
-
             //--------Boom---------//
             if (_btnConfirmBoom != null) _btnConfirmBoom.onClick.AddListener(BuyBoom);
             if (_btnCloseSkillBoom != null) _btnCloseSkillBoom.onClick.AddListener(ClosePowerUpBoom);
@@ -190,7 +189,6 @@ namespace Sand
                 ClosePopupMagicBrush();
                 return;
             }
-
             _rewardSystem.DeductMagicBrush(1);
             RemoveSameColorCompleteBands(selectedColor);
             ClosePopupMagicBrush();
@@ -209,6 +207,13 @@ namespace Sand
             _powerUpSystem.PowerUpMagicBrush(selectedColor).Forget();
         }
 
+        public void SetActiveButtonUseMagicBrush(bool isActive)
+        {
+            if (isActive)
+                _btnUseMagicBrush.interactable = true;
+            else
+                _btnUseMagicBrush.interactable = false;
+        }
         //================ POPUP BUY POWER UP ================//
 
         private void OpenPopupConfirmBuyMagicBrush()

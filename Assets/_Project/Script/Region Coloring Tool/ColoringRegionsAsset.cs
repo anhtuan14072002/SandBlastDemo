@@ -6,19 +6,13 @@ using UnityEngine;
 public class ColoringRegionsAsset : ScriptableObject
 {
     [Header("Input")] public Texture2D sourceTexture; // Ảnh gốc dùng để xử lý flood fill
-
-    [Header("FloodFill Settings")] [Range(0f, 0.5f)]
-    public float blackThreshold = 0.18f; // Ngưỡng để coi pixel nào là đen (viền)
-
+    [Header("FloodFill Settings")] 
+    [Range(0f, 0.5f)] public float blackThreshold = 0.18f; // Ngưỡng để coi pixel nào là đen (viền)
     [Range(0f, 0.25f)] public float colorTolerance = 0.04f; // Độ chênh lệch màu được chấp nhận khi tìm vùng cùng màu
     [Header("Regions")] public List<RegionEntry> regions = new(); // Danh sách tất cả các vùng tô trong ảnh
-
     [Header("Colors Cache (for UI palette)")]
     public List<Color32> colorsCache = new(); // Bộ nhớ đệm màu dùng cho palette UI
-
     [Header("Textures")] public Texture2D outlineTexture; // Ảnh đã qua xử lý (viền trắng, chưa tô)
-    public Texture2D colorTexture; // Ảnh đã qua xử lý (chứa thông tin màu)
-
     public int GetNextId()
     {
         int max = 0;
@@ -35,8 +29,7 @@ public class ColoringRegionsAsset : ScriptableObject
         foreach (var r in regions)
         {
             if (r == null) continue;
-            int key = (r.overrideColor.r << 24) | (r.overrideColor.g << 16) | (r.overrideColor.b << 8) |
-                      r.overrideColor.a;
+            int key = (r.overrideColor.r << 24) | (r.overrideColor.g << 16) | (r.overrideColor.b << 8) | r.overrideColor.a;
             if (set.Add(key)) colorsCache.Add(r.overrideColor);
         }
     }

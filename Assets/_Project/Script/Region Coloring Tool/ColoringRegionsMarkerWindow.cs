@@ -26,10 +26,10 @@ public class ColoringRegionsMarkerWindow_Pro : EditorWindow
     // Regions list scroll
     private Vector2 scrollRegions; // Vị trí cuộn preview
     private float regionsListHeight = 170f; // Chiều cao danh sách vùng
-    [MenuItem("Tools/ColoringBook/Region Marker PRO")]
+    [MenuItem("Tools/ColoringBook/Region Marker BETA")]
     public static void Open()
     {
-        GetWindow<ColoringRegionsMarkerWindow_Pro>("Region Marker PRO");
+        GetWindow<ColoringRegionsMarkerWindow_Pro>("Region Marker BETA");
     }
 
     private void OnDisable()

@@ -272,30 +272,17 @@ namespace Sand
             }
             return false;
         }
-
-        /*public bool IsPointInReserve(Vector3 worldPos)
-        {
-            var reserve = ReserveSlots;
-            if (reserve == null || reserve.Count == 0) return false;
-            foreach (var r in reserve)
-            {
-                Vector2 a = r.position;
-                Vector2 b = worldPos;
-                if (Vector2.Distance(a, b) <= _reserveCatchRadius)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }*/
         
         public bool MoveBlockToReserve(GameObject obj)
         {
             if (obj == null) return false;
             if (_posSpawn == null || _posSpawn.Length == 0) return false;
 
-            int availableReserveSlot = -1;
+            Vector3 dropPosition = obj.transform.position;
+            int closestReserveSlot = -1;
+            float closestDistance = float.MaxValue;
 
+            // Tìm slot reserve trống **gần nhất** với vị trí thả
             foreach (var reserveIndex in _reserveSlotIndices)
             {
                 if (reserveIndex < 0 || reserveIndex >= _currentBlocks.Length)
@@ -307,14 +294,19 @@ namespace Sand
                     var boxSpawn = slotTransform.GetComponent<BoxSpawn>();
                     if (boxSpawn != null && boxSpawn.IsLock) continue;
                 }
+
                 if (_currentBlocks[reserveIndex] == null)
                 {
-                    availableReserveSlot = reserveIndex;
-                    break;
+                    float distance = Vector3.Distance(dropPosition, _posSpawn[reserveIndex].position);
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestReserveSlot = reserveIndex;
+                    }
                 }
             }
 
-            if (availableReserveSlot == -1) 
+            if (closestReserveSlot == -1) 
                 return false;
 
             int fromIndex = -1;
@@ -330,9 +322,9 @@ namespace Sand
             if (fromIndex == -1) return false;
 
             _currentBlocks[fromIndex] = null;
-            _currentBlocks[availableReserveSlot] = obj;
+            _currentBlocks[closestReserveSlot] = obj;
 
-            obj.transform.position = _posSpawn[availableReserveSlot].position;
+            obj.transform.position = _posSpawn[closestReserveSlot].position;
             obj.transform.localScale = Vector3.one * 5f;
             obj.transform.SetParent(_posParentSpawn);
             return true;
