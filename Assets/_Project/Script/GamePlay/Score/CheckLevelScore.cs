@@ -87,48 +87,42 @@ namespace Sand
         }
 
         private void UpdateLevel()
-{
-    // Validation để đảm bảo các giá trị hợp lệ
-    if (_nextLevelScoreValue <= 0 || _currentLevelScoreValue < 0)
-    {
-        Debug.LogError($"Invalid level score values! Current: {_currentLevelScoreValue}, Next: {_nextLevelScoreValue}");
-        InitializeLevel(); // Reset lại nếu bị lỗi
-        return;
-    }
-
-    bool levelChanged = false;
-    int loopCount = 0; // Prevent infinite loop
-    
-    while (_userData.CurrentScoreValue >= _nextLevelScoreValue && loopCount < 100)
-    {
-        loopCount++;
-        _level++;
-        _levelModClassicData.IncreaseLevelModClassic();
-        _currentLevelScoreValue = _nextLevelScoreValue;
-        _nextLevelScoreValue += _stepScore;
-        
-        Debug.Log($"Level Up! New Level: {_level}, Current Score: {_userData.CurrentScoreValue}, Next Milestone: {_nextLevelScoreValue}");
-        
-        if (FirebaseService.Instance != null)
         {
-            FirebaseService.Instance.LogEvent("level_up", new EventParameter("level_up", "{" + _level + "}"));
+            bool levelChanged = false;
+            while (_userData.CurrentScoreValue >= _nextLevelScoreValue)
+            {
+                _level++;
+                _levelModClassicData.IncreaseLevelModClassic();
+                _currentLevelScoreValue = _nextLevelScoreValue;
+                _nextLevelScoreValue += _stepScore;
+                
+                if (FirebaseService.Instance != null)
+                {
+                    FirebaseService.Instance.LogEvent("level_up", new EventParameter("level_up", "{" + _level + "}"));
+                }
+                else
+                {
+                    Debug.Log("FirebaseService is null");
+                }
+
+                levelChanged = true;
+            }
+
+            if (levelChanged)
+            {
+                _currentFillTween.Stop();
+                _fillScoreBar.fillAmount = 0;
+                
+                CurrentLevelScore();
+                NextLevelScore();
+                UpdateFillBarSmooth();
+                DelayOpenPopupLevelUp().Forget();
+            }
+            else
+            {
+                UpdateFillBarSmooth();
+            }
         }
-
-        levelChanged = true;
-    }
-
-    if (levelChanged)
-    {
-        _currentFillTween.Stop();
-        _fillScoreBar.fillAmount = 0;
-        UpdateFillBarSmooth();
-        OpenPopupLevelUp();
-    }
-    else
-    {
-        UpdateFillBarSmooth();
-    }
-}
 
         private void UpdateFillBarSmooth()
         {
@@ -171,6 +165,12 @@ namespace Sand
             // DisableEffectClaimGem();
             _effectGame.CloseEffectClaimGem();
             // _popupLevelUp.SetActive(false);
+        }
+        
+        private async UniTask DelayOpenPopupLevelUp()
+        {
+            await UniTask.Delay(TimeSpan.FromSeconds(1.25f));
+            OpenPopupLevelUp();
         }
         
         private async UniTask ClaimReward()
