@@ -14,9 +14,11 @@ public class CollectionItemUI : GameElement,
     [SerializeField] private Image _thumbnail;
     [SerializeField] private Image _iconSold;
     private ColoringBookRuntime _runtime;
+    private ColoringRegionsAsset _asset;
     private int _index;
+    public int Index => _index;
     private bool _isSold = false;
-    
+
     private UserData _userData;
 
     [Inject]
@@ -29,15 +31,12 @@ public class CollectionItemUI : GameElement,
     {
         _index = index;
         _runtime = runtime;
+        _asset = asset;
 
         if (_thumbnail != null && asset != null && asset.outlineTexture != null)
         {
-            _thumbnail.sprite = Sprite.Create(
-                asset.outlineTexture,
-                new Rect(0, 0, asset.outlineTexture.width, asset.outlineTexture.height),
-                new Vector2(0.5f, 0.5f),
-                100f
-            );
+            _thumbnail.sprite = Sprite.Create(asset.outlineTexture,
+                new Rect(0, 0, asset.outlineTexture.width, asset.outlineTexture.height), new Vector2(0.5f, 0.5f), 100f);
         }
 
         int colorCount = CountUniqueColors(asset);
@@ -62,8 +61,18 @@ public class CollectionItemUI : GameElement,
             if (_userData.PictureIsSoldState.TryGetValue(_index, out val))
                 isSold = val;
         }
+
         _iconSold.gameObject.SetActive(isSold);
         _isSold = isSold;
+    }
+
+    public void UpdateThumbnailCompleted(int index)
+    { 
+        if (_thumbnail == null || _asset == null) return;
+        if (index != _index) return;
+        _thumbnail.sprite = Sprite.Create(_asset.sourceTexture,
+            new Rect(0, 0, _asset.sourceTexture.width, _asset.sourceTexture.height), new Vector2(0.5f, 0.5f), 100f);
+        Debug.Log("UpdateThumbnailCompleted");
     }
 
     private void OnClick()
@@ -91,7 +100,6 @@ public class CollectionItemUI : GameElement,
 
     public void Receive(in SignalUpdateSoldIcon signal)
     {
-        // Chỉ update item có index tương ứng
         if (signal.PictureIndex == _index)
             UpdateSoldIcon();
     }

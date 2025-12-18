@@ -79,6 +79,10 @@ namespace Sand
             Container.Bind<AuctionSate>()
                 .FromComponentInHierarchy()
                 .AsSingle();
+            
+            Container.Bind<CollectionsPanel>()
+                .FromComponentInHierarchy()
+                .AsSingle();
         }
     }
 }

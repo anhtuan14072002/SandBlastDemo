@@ -8,34 +8,21 @@ namespace Sand
     [Serializable]
     public class UserData
     {
-        [SerializeField] 
-        public SerializableReactiveProperty<int> HighScore = new(0);
-        [SerializeField] 
-        public SerializableReactiveProperty<int> Gems = new(0);
-        [SerializeField]
-        public SerializableReactiveProperty<int> MagicBrush = new(0);
-        [SerializeField]
-        public SerializableReactiveProperty<int> Boom = new(0);
-        [SerializeField]
-        public SerializableReactiveProperty<int> Map = new(0);
-        [SerializeField]
-        public SerializableReactiveProperty<int> LevelModClassic = new(0);
-        [SerializeField]
-        public SerializableReactiveProperty<int> CurrentScore = new(0);
-        [SerializeField]
-        public SerializableReactiveProperty<int> CountDrawInGame = new(0);
-        [SerializeField]
-        public SerializableReactiveProperty<int> CountDrawPicture = new(0);
-        [SerializeField]
-        public List<int> CompletedPictureIndices = new();
-        [SerializeField]
-        public Dictionary<int, int> PictureFillProgress = new();
-        [SerializeField]
-        public Dictionary<int, bool> BoxSpawnIsLockState = new();
-        [SerializeField]
-        public Dictionary<int, int> PictureFilledRegions = new();
-        [SerializeField]
-        public Dictionary<int, bool> PictureIsSoldState = new();
+        [SerializeField] public SerializableReactiveProperty<int> HighScore = new(0);
+        [SerializeField] public SerializableReactiveProperty<int> Gems = new(0);
+        [SerializeField] public SerializableReactiveProperty<int> MagicBrush = new(0);
+        [SerializeField] public SerializableReactiveProperty<int> Boom = new(0);
+        [SerializeField] public SerializableReactiveProperty<int> Map = new(0);
+        [SerializeField] public SerializableReactiveProperty<int> LevelModClassic = new(0);
+        [SerializeField] public SerializableReactiveProperty<int> CurrentScore = new(0);
+        [SerializeField] public SerializableReactiveProperty<int> CountDrawInGame = new(0);
+        [SerializeField] public SerializableReactiveProperty<int> CountDrawPicture = new(0);
+        [SerializeField] public List<int> CompletedPictureIndices = new();
+        [SerializeField] public Dictionary<int, int> PictureFillProgress = new();
+        [SerializeField] public Dictionary<int, bool> BoxSpawnIsLockState = new();
+        [SerializeField] public Dictionary<int, int> PictureFilledRegions = new();
+        [SerializeField] public Dictionary<int, bool> PictureIsSoldState = new();
+
         public void OnDeserialized()
         {
             List<ISerializationCallbackReceiver> receivers = new();
@@ -61,9 +48,26 @@ namespace Sand
                 PictureIsSoldState = new Dictionary<int, bool>();
             if (PictureFilledRegions == null)
                 PictureFilledRegions = new Dictionary<int, int>();
-           
         }
-        
+
+        public void ClearAllData()
+        {
+            HighScore.Value = 0;
+            Gems.Value = 0;
+            MagicBrush.Value = 0;
+            Boom.Value = 0;
+            Map.Value = 0;
+            LevelModClassic.Value = 0;
+            CurrentScore.Value = 0;
+            CountDrawInGame.Value = 0;
+            CountDrawPicture.Value = 0;
+            CompletedPictureIndices.Clear();
+            PictureFillProgress.Clear();
+            BoxSpawnIsLockState.Clear();
+            PictureFilledRegions.Clear();
+            PictureIsSoldState.Clear();
+        }
+
         public int CurrentScoreValue => CurrentScore.Value;
         public int HighScoreValue => HighScore.Value;
         public int GemsValue => Gems.Value;

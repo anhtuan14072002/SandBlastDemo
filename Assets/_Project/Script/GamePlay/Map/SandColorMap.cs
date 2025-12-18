@@ -82,8 +82,7 @@ namespace Sand
                             if (visited[nx, ny]) return;
 
                             Cell neighborCell = _map.GetCell(nx, ny);
-                            if (neighborCell.hasValue == 1 && neighborCell.isBorder == 0 &&
-                                SameColor(neighborCell.color, targetColor))
+                            if (neighborCell.hasValue == 1 && neighborCell.isBorder == 0 && SameColor(neighborCell.color, targetColor))
                             {
                                 visited[nx, ny] = true;
                                 queue.Enqueue((nx, ny));

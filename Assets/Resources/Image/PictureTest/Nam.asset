@@ -15,7 +15,7 @@ MonoBehaviour:
   imageId: 1
   sourceTexture: {fileID: 2800000, guid: 4fada8ea92ecdbb49bf7a52df687c746, type: 3}
   blackThreshold: 0.5
-  colorTolerance: 0.2143
+  colorTolerance: 0.25
   regions:
   - id: 2
     displayName: fb02d782-texture

@@ -16,20 +16,26 @@ namespace Sand
         private Vector3 _startPos;
         private Vector3 _offset;
         private bool _isDragging;
+        
         VibrationManager _vibrationManager;
+        CheckLevelScore _checkLevelScore;
         BlockManager _blockManager;
         BlockSpawn _blockSpawn;
         RenderMap _map;
+        PowerUp _powerUp;
+        
         IDisposable _dragSub;
 
         [Inject]
         void Construct(VibrationManager vibrationManager, BlockManager blockManager, RenderMap map,
-            BlockSpawn blockSpawn)
+            BlockSpawn blockSpawn, PowerUp powerUp, CheckLevelScore checkLevelScore)
         {
             _vibrationManager = vibrationManager;
             _blockManager = blockManager;
             _blockSpawn = blockSpawn;
             _map = map;
+            _powerUp = powerUp;
+            _checkLevelScore = checkLevelScore;
         }
 
         private void Update()
@@ -39,6 +45,11 @@ namespace Sand
 
         private void HandleDragInput()
         {
+            if (_powerUp.IsAnyPopupActive() || _checkLevelScore.IsAnyPopupActive())
+            {
+                if (_isDragging) CancelDrag(); 
+                return;
+            }
             if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) StartDrag();
             else if (Input.GetMouseButton(0) && _isDragging) Drag();
             else if (Input.GetMouseButtonUp(0) && _isDragging) EndDrag();
@@ -46,6 +57,7 @@ namespace Sand
 
         private void StartDrag()
         {
+            
             Vector2 worldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero, Mathf.Infinity, 1 << 6);
             if (hit.collider == null) return;
@@ -131,13 +143,13 @@ namespace Sand
                 }
                 else if (storedToReserve)
                 {
-                    _objDrag.transform.localScale = Vector3.one * 5f;
+                    _objDrag.transform.localScale = Vector3.one * 7;
                     _blockSpawn.CheckAndSpawnIfAllSlotEmpty();
                 }
                 else
                 {
                     _objDrag.transform.position = _startPos;
-                    _objDrag.transform.localScale = Vector3.one * 5f;
+                    _objDrag.transform.localScale = Vector3.one * 7;
                 }
                 _objDrag = null;
             }
@@ -164,6 +176,16 @@ namespace Sand
         private void OnDestroy()
         {
             _dragSub?.Dispose();
+        }
+        private void CancelDrag()
+        {
+            if (_objDrag != null)
+            {
+                _objDrag.transform.position = _startPos;
+                _objDrag.transform.localScale = Vector3.one * 7;
+                _objDrag = null;
+            }
+            _isDragging = false;
         }
     }
 }

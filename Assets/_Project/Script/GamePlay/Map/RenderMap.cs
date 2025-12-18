@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Core;
 using Cysharp.Threading.Tasks;
+using HadesSDK.Ads.Runtime;
 using UnityEngine;
 using Zenject;
 
@@ -62,14 +63,7 @@ namespace Sand
             _map.ApplyTexture(_spriteRenderer);
             _colorMap = new SandColorMap(_map, _wight, _hight, _effectBlock, _soundManager, _countDrawData);
             _saveMapData.LoadDataMap();
-            // _saveMapData?.LoadDataMap();
-            /*_sandSpawnSub = Observable.EveryUpdate()
-                .Where(_ => Input.GetMouseButton(1))
-                .TimeInterval()
-                .Chunk(2, 1)
-                .Where(clicks => clicks[1].Interval.TotalSeconds <= 0.5f)
-                .ThrottleFirst(TimeSpan.FromSeconds(0.25f))
-                .Subscribe(_ => _blockManager.SpawnSandWithRandomShape(_map, _spriteRenderer));*/
+            AdManager.Instance.ShowBanner();
         }
 
         private void Update()
@@ -231,7 +225,7 @@ namespace Sand
             _saveMapData?.SaveDataMap();
             _saveService.Save();
         }
-
+        
         private void OnDestroy()
         {
             _map?.Dispose();

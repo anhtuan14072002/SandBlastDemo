@@ -11,25 +11,21 @@ namespace Sand
 {
     public class PowerUp : MonoBehaviour
     {
-        [Header("Popups")]
-        [SerializeField] private GameObject _popupSkillMagicBrush;
+        [Header("Popups")] [SerializeField] private GameObject _popupSkillMagicBrush;
         [SerializeField] private GameObject _popupSkillBoom;
         [SerializeField] private GameObject _popupConfirmBuyMagicBrush;
         [SerializeField] private GameObject _popupConfirmBuyBoom;
 
-        [Header("Texts")]
-        [SerializeField] private TextMeshProUGUI _textPriceMagicBrush;
+        [Header("Texts")] [SerializeField] private TextMeshProUGUI _textPriceMagicBrush;
         [SerializeField] private TextMeshProUGUI _textPriceBoom;
 
-        [Header("Buttons")]
-        [SerializeField] private Button _btnCloseSkillMagicBrush;
+        [Header("Buttons")] [SerializeField] private Button _btnCloseSkillMagicBrush;
         [SerializeField] private Button _btnCloseSkillBoom;
         [SerializeField] private Button _btnConfirmMagicBrush;
         [SerializeField] private Button _btnConfirmBoom;
         [SerializeField] private Button _btnUseMagicBrush;
 
-        [Header("Prices")]
-        [SerializeField] private int _priceSkillMagicBrush;
+        [Header("Prices")] [SerializeField] private int _priceSkillMagicBrush;
         [SerializeField] private int _priceSkillBoom;
 
         private bool _isUseBoom;
@@ -189,6 +185,7 @@ namespace Sand
                 ClosePopupMagicBrush();
                 return;
             }
+
             _rewardSystem.DeductMagicBrush(1);
             RemoveSameColorCompleteBands(selectedColor);
             ClosePopupMagicBrush();
@@ -239,10 +236,18 @@ namespace Sand
             if (_popupConfirmBuyBoom != null)
                 _popupConfirmBuyBoom.SetActive(false);
         }
-        
+
         private void OnDestroy()
         {
             _mouseClickSubWave?.Dispose();
+        }
+
+        public bool IsAnyPopupActive()
+        {
+            return (_popupSkillMagicBrush != null && _popupSkillMagicBrush.activeSelf) ||
+                   (_popupSkillBoom != null && _popupSkillBoom.activeSelf) ||
+                   (_popupConfirmBuyMagicBrush != null && _popupConfirmBuyMagicBrush.activeSelf) ||
+                   (_popupConfirmBuyBoom != null && _popupConfirmBuyBoom.activeSelf);
         }
     }
 }

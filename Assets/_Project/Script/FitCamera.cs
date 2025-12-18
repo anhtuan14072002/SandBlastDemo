@@ -1,39 +1,54 @@
-﻿using UnityEngine;
+﻿#region Demo
+
+using UnityEngine;
 
 namespace Sand
 {
     public class FitCamera : MonoBehaviour
     {
         [SerializeField] private Camera _camera;
-        [SerializeField] private float _mapWidth;
-        [SerializeField] private float _mapHeight;
-        private void Start()
+
+        [Header("Map width (world units)")]
+        [SerializeField] private float _mapWidth = 16f;
+
+        [Header("Padding (world units)")]
+        [SerializeField] private float _extraWidth = 0f;
+
+        [Header("Clamp")]
+        [SerializeField] private float _minOrthoSize = 7f;
+
+        int _lastW, _lastH;
+
+        private void Reset() => _camera = Camera.main;
+
+        private void Awake()
         {
-            FitCameraForAllDevices(_camera, _mapWidth);
+            if (_camera == null) _camera = Camera.main;
         }
 
-        /*void FitCameraToWidth(Camera cam, float mapWidth)
+        private void Start() => Apply();
+
+        private void Update()
         {
-            float aspect = (float)Screen.width / Screen.height;
-            cam.orthographicSize = (mapWidth / 2f) / aspect;
+            if (Screen.width != _lastW || Screen.height != _lastH)
+                Apply();
         }
-        void FitCameraToMap(Camera cam, float mapWidth, float mapHeight)
+
+        private void Apply()
         {
+            if (_camera == null) return;
+
+            _lastW = Screen.width;
+            _lastH = Screen.height;
+
             float aspect = (float)Screen.width / Screen.height;
+            float targetWidth = Mathf.Max(0.01f, _mapWidth + _extraWidth);
 
-            float sizeByHeight = mapHeight / 2f;
-            float sizeByWidth  = (mapWidth / 2f) / aspect;
-
-            cam.orthographicSize = Mathf.Max(sizeByHeight, sizeByWidth);
-        }*/
-        void FitCameraForAllDevices(Camera cam, float mapWidth)
-        {
-            float aspect = (float)Screen.width / Screen.height;
-
-            const float designAspect = 9f / 16f;
-            float usedAspect = Mathf.Min(aspect, designAspect);
-            cam.orthographic = true;
-            cam.orthographicSize = (mapWidth / 2f) / usedAspect;
+            _camera.orthographic = true;
+            float sizeByWidth = (targetWidth / 2f) / aspect;
+            _camera.orthographicSize = Mathf.Max(sizeByWidth, _minOrthoSize);
         }
     }
 }
+
+#endregion

@@ -226,7 +226,7 @@ namespace Sand
             _animLoad.SetTrigger(LoadGame);
             await UniTask.WaitForSeconds(1f);
 
-            AdManager.Instance.ShowBanner();
+            // AdManager.Instance.ShowBanner();
 
             if (_renderMap != null)
                 _renderMap.StartGame();
@@ -283,7 +283,7 @@ namespace Sand
             Global.Send(new SignalToggleGemBarMenu() { IsActivate = true });
             Global.Send(new SignalToggleGemBarInGame() { IsActivate = false });
 
-            AdManager.Instance.HideBanner();
+            // AdManager.Instance.HideBanner();
             _currenScore.SetActive(false);
             _scoreBar.SetActive(false);
             _groupMenu.SetActive(true);
@@ -315,7 +315,7 @@ namespace Sand
             Global.Send(new SignalToggleGemBarMenu() { IsActivate = true });
             Global.Send(new SignalToggleGemBarInGame() { IsActivate = false });
 
-            AdManager.Instance.HideBanner();
+            // AdManager.Instance.HideBanner();
 
             _currenScore.SetActive(false);
             _scoreBar.SetActive(false);

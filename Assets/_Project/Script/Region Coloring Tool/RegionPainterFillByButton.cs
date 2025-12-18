@@ -37,12 +37,16 @@ public class RegionPainterFillByButton : MonoBehaviour
     private bool _hasLoggedComplete; // Đánh dấu đã log "hoàn thành tô hết"
     private int _w, _h; // Chiều rộng & chiều cao ảnh
 
+    UserData _userData;
     AuctionSate _auctionSate;
-
+    CollectionsPanel _collectionsPanel;
+    
     [Inject]
-    void Construct(AuctionSate auctionSate)
+    void Construct(UserData userData, AuctionSate auctionSate, CollectionsPanel collectionsPanel)
     {
+        _userData = userData;
         _auctionSate = auctionSate;
+        _collectionsPanel = collectionsPanel;
     }
     private void Reset()
     {
@@ -226,7 +230,10 @@ public class RegionPainterFillByButton : MonoBehaviour
             if (!r.filled) return;
         }
         _hasLoggedComplete = true;
-        // Set anh vao auction
+        if (!_userData.CompletedPictureIndices.Contains(_asset.imageId))
+            _userData.CompletedPictureIndices.Add(_asset.imageId);
+        
+        _collectionsPanel.UpdateThumbnailCompleted(_asset.imageId);
         _auctionSate.SetAuctionPicture(_sr.sprite, _asset.imageId);
         CompleteAllRegions().Forget();       
     }

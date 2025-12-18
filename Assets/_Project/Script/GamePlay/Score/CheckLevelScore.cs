@@ -163,13 +163,7 @@ namespace Sand
             _effectGame.CloseEffectClaimGem();
             // _popupLevelUp.SetActive(false);
         }
-
-        private void OnDestroy()
-        {
-            _currentFillTween.Stop();
-            _subLevel?.Dispose();
-        }
-
+        
         private async UniTask ClaimReward()
         {
             // EnableEffectClaimGem();
@@ -192,8 +186,19 @@ namespace Sand
         public void ResetLevelScore()
         {
             _currentLevelScoreValue = 0;
+            _nextLevelScoreValue = _stepScore;
             CurrentLevel = 0;
             _levelModClassicData.ResetLevelModClassic();
         }
+        public bool IsAnyPopupActive()
+        {
+            return (_popupLevelUp != null && _popupLevelUp.activeSelf);
+        }
+        private void OnDestroy()
+        {
+            _currentFillTween.Stop();
+            _subLevel?.Dispose();
+        }
+
     }
 }

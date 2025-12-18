@@ -113,7 +113,7 @@ namespace Sand
 
             var newObj = Instantiate(_prefabBlock[randomPrefabIndex], transform.position, Quaternion.identity);
             newObj.transform.SetParent(_posParentSpawn.transform);
-            newObj.transform.localScale = Vector3.one * 5;
+            newObj.transform.localScale = Vector3.one * 7;
 
             var instance = newObj.GetComponent<BlockInfo>();
             if (instance == null) instance = newObj.AddComponent<BlockInfo>();
@@ -144,7 +144,7 @@ namespace Sand
         {
             if (obj == null) return;
 
-            obj.transform.localScale = Vector3.one * 5f;
+            obj.transform.localScale = Vector3.one * 7;
             obj.SetActive(false);
             _pool.Enqueue(obj);
 
@@ -177,7 +177,7 @@ namespace Sand
                 if (_currentBlocks[i] != null)
                 {
                     var obj = _currentBlocks[i];
-                    obj.transform.localScale = Vector3.one * 5f;
+                    obj.transform.localScale = Vector3.one * 7;
                     obj.SetActive(false);
                     _pool.Enqueue(obj);
                     _currentBlocks[i] = null;
@@ -325,7 +325,7 @@ namespace Sand
             _currentBlocks[closestReserveSlot] = obj;
 
             obj.transform.position = _posSpawn[closestReserveSlot].position;
-            obj.transform.localScale = Vector3.one * 5f;
+            obj.transform.localScale = Vector3.one * 7;
             obj.transform.SetParent(_posParentSpawn);
             return true;
         }

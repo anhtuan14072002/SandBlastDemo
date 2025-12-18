@@ -29,9 +29,7 @@ namespace Sand
             Container.Bind<SaveMapData>()
                 .AsSingle()
                 .NonLazy();
-            Container.Bind<PictureDrawData>()
-                .AsSingle()
-                .NonLazy();
+          
             Container.Bind<CountDrawData>()
                 .AsSingle()
                 .NonLazy();

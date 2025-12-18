@@ -25,13 +25,15 @@ namespace Sand
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0)) CheckClick();
+            if (Input.GetMouseButtonDown(0)) OnClick();
         }
 
-        private void CheckClick()
+        private void OnClick()
         {
             if (_powerUp == null) return;
-            Vector3 mousePos = _cam.ScreenToWorldPoint(Input.mousePosition);
+            if (_powerUp.IsAnyPopupActive()) return;
+            
+            var mousePos = _cam.ScreenToWorldPoint(Input.mousePosition);
             mousePos.z = 0f;
             Collider2D hit = Physics2D.OverlapPoint(mousePos);
             if (hit != null && hit.gameObject == gameObject)
