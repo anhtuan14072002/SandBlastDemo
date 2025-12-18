@@ -24,35 +24,75 @@ namespace Sand
 
                 for (int y = 1; y < height; y++)
                 {
-                    for (int x = 0; x < width; x++)
+                    if (y % 2 == 0)
                     {
-                        int idx = Idx(x, y);
-                        Cell c = cells[idx];
-                        if (c.hasValue != 1 || c.isBorder == 1) continue;
-
-                        if (CanMove(x, y, x, y - 1))
+                        for (int x = 0; x < width; x++)
                         {
-                            Swap(x, y, x, y - 1);
-                            movedThisIter = true;
+                            if (ProcessCell(x, y)) movedThisIter = true;
                         }
-                        else if (CanMove(x, y, x - 1, y - 1))
+                    }
+                    else
+                    {
+                        for (int x = width - 1; x >= 0; x--)
                         {
-                            Swap(x, y, x - 1, y - 1);
-                            movedThisIter = true;
-                        }
-                        else if (CanMove(x, y, x + 1, y - 1))
-                        {
-                            Swap(x, y, x + 1, y - 1);
-                            movedThisIter = true;
+                            if (ProcessCell(x, y)) movedThisIter = true;
                         }
                     }
                 }
-
                 if (movedThisIter) moved = true;
                 else break;
             }
 
             movedOut[0] = (byte)(moved ? 1 : 0);
+        }
+
+        private bool ProcessCell(int x, int y)
+        {
+            int idx = Idx(x, y);
+            Cell c = cells[idx];
+            if (c.hasValue != 1 || c.isBorder == 1) return false;
+
+            if (In(x, y - 1))
+            {
+                Cell belowCell = cells[Idx(x, y - 1)];
+                // Nếu ô dưới k có hasValue -> di chuyển xuống
+                if (belowCell.hasValue == 0 && belowCell.isBorder == 0)
+                {
+                    Swap(x, y, x, y - 1);
+                    return true;
+                }
+                // Nếu ô dưới có hasValue -> kiểm tra trái dưới và phải dưới
+                if (belowCell.hasValue == 1)
+                {
+                    bool canMoveLeft = CanMove(x, y, x - 1, y - 1);
+                    bool canMoveRight = CanMove(x, y, x + 1, y - 1);
+                    
+                    //  Kiểm tra thêm ô bên cạnh (cùng hàng y) để tránh hiệu ứng kéo theo
+                    // Nếu ô bên trái (cùng hàng) có pixel → KHÔNG cho di chuyển sang trái dưới
+                    if (canMoveLeft)
+                    {
+                        // Chỉ di chuyển trái dưới nếu ô trái (cùng hàng) k có pixel
+                        // hoặc nếu ô trái dưới thực sự trống và k phải do pixel bên cạnh vừa rời đi
+                        bool hasLeftNeighbor = In(x - 1, y) && cells[Idx(x - 1, y)].hasValue == 1;
+                        if (!hasLeftNeighbor)
+                        {
+                            Swap(x, y, x - 1, y - 1);
+                            return true;
+                        }
+                    }
+                    if (canMoveRight)
+                    {
+                        bool hasRightNeighbor = In(x + 1, y) && cells[Idx(x + 1, y)].hasValue == 1;
+                        if (!hasRightNeighbor)
+                        {
+                            Swap(x, y, x + 1, y - 1);
+                            return true;
+                        }
+                    }
+                }
+            }
+            
+            return false;
         }
 
         private int Idx(int x, int y) => y * width + x;

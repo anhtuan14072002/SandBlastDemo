@@ -217,9 +217,14 @@ namespace Sand
             {
                 _saveMapData?.SaveDataMap();
                 _saveService.Save();
+                Debug.Log("thoát");
+            }
+            else
+            {
+                Debug.Log("vào");
             }
         }
-
+        
         private void OnApplicationQuit()
         {
             _saveMapData?.SaveDataMap();
