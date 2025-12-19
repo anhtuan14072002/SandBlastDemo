@@ -34,8 +34,11 @@ namespace Sand
         private bool _isSettled = false;
         private bool _isGameStarted = false;
         private bool _hasPlayedTickSound = false;
+        private bool _isCheckingGameOver = false;
         private int Idx(int x, int y) => y * _wight + x;
         IDisposable _sandSpawnSub;
+        private bool _pendingGameOverCheck = false;
+        private float _lastSandMovementTime = 0f;
 
         [Inject]
         void Construct(GameRevive gameRevive, EffectBlock effectBlock, SoundManager soundManager, GameVisual gameVisual,
@@ -106,6 +109,8 @@ namespace Sand
             if (isTick)
             {
                 _isSettled = false;
+                _lastSandMovementTime = Time.time;
+                
                 if (!_hasPlayedTickSound)
                 {
                     _soundManager?.OnPlaySound(SoundType.SandDrop);
@@ -116,7 +121,6 @@ namespace Sand
             {
                 if (!_isSettled && !_map.IsMovePause)
                 {
-                    // CheckSandLosingLine();
                     ProcessSettledSand().Forget();
                     _isSettled = true;
                     _hasPlayedTickSound = false;
@@ -130,7 +134,21 @@ namespace Sand
         {
             await _colorMap.SameColorCompleteBands(_backgroundColor);
             await WaitForSandToSettle();
+            CheckSandLosingLineDelayed().Forget();
+        }
+
+        private async UniTask CheckSandLosingLineDelayed()
+        {
+            if (_pendingGameOverCheck) return;
+            _pendingGameOverCheck = true;
+            float waitTime = 0.5f;
+            while (Time.time - _lastSandMovementTime < waitTime)
+            {
+                await UniTask.Yield(); 
+            }
             CheckSandLosingLine();
+            
+            _pendingGameOverCheck = false;
         }
 
         private async UniTask WaitForSandToSettle()
@@ -155,60 +173,58 @@ namespace Sand
             if (_hight <= _hightGameOver) return;
             bool foundSand = false;
             bool warningSand = false;
-            int sandCount = 0;
 
-            List<(int x, int y)> sandCells = new List<(int x, int y)>();
             for (int y = _hightGameOver; y < _hight; y++)
             {
                 for (int x = 0; x < _wight; x++)
                 {
                     var cell = _map.GetCell(x, y);
-                    var cellWarning = _map.GetCell(x, 75);
                     if (cell.hasValue == 1)
                     {
                         foundSand = true;
-                        sandCount++;
-                        sandCells.Add((x, y));
+                        break;
                     }
-                    else if (cellWarning.hasValue == 1)
+                    
+                    var cellWarning = _map.GetCell(x, 75);
+                    if (cellWarning.hasValue == 1)
                     {
                         warningSand = true;
                     }
                 }
+                if (foundSand) break;
             }
 
             if (foundSand)
             {
                 _gameRevive.OpenPopupRevive();
-                // _effectBlock.CheckSandLosingLineWithEffect(_map,_hight, _wight).Forget();
             }
+            
             Global.Send(new SignalWarningSand(){IsWarning = warningSand});
         }
 
+        private async UniTask DelayGameOverCheck(List<(int x, int y)> sandCells, int sandCount)
+        {
+            await UniTask.Delay(TimeSpan.FromSeconds(0.3f));
+            int stillHighCount = 0;
+            foreach (var (x, y) in sandCells)
+            {
+                var cell = _map.GetCell(x, y);
+                if (cell.hasValue == 1 && y >= _hightGameOver)
+                {
+                    stillHighCount++;
+                }
+            }
+            if (stillHighCount > sandCount / 2)
+            {
+                _gameRevive.OpenPopupRevive();
+            }
+            _isCheckingGameOver = false;
+        }
+        
         public void MapGameOver()
         {
             _effectBlock.CheckSandLosingLineWithEffect(_map, _hight, _wight).Forget();
             _soundManager.OnPlaySound(SoundType.GameOver);
-        }
-
-        private void CheckValueAllMap()
-        {
-            bool hasData = false;
-            for (int y = 0; y < _map.Height; y++)
-            {
-                for (int x = 0; x < _map.Width ; x++)
-                {
-                    if (_map.GetCell(x, y).hasValue == 1)
-                    {
-                        hasData = true;
-                        Debug.Log("co data");
-                        break;
-                    }
-                    Debug.Log("khong co data");
-                    break;
-                }
-            }
-            Global.Send(new SignalChangTextBtnSwitchPlay() { IsChange = hasData });
         }
 
         private void OnApplicationPause(bool pause)

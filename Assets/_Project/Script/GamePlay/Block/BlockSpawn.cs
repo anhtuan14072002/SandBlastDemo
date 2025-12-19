@@ -57,25 +57,6 @@ namespace Sand
             }
         }
 
-        private int BlockMaxInLevel()
-        {
-            if (_prefabBlock == null || _prefabBlock.Length == 0)
-                return 0;
-
-            if (_checkLevelScore == null)
-                return _prefabBlock.Length;
-
-            int level = _checkLevelScore.CurrentLevel;
-
-            return level switch
-            {
-                0 => Mathf.Min(5, _prefabBlock.Length),
-                1 => Mathf.Min(9, _prefabBlock.Length),
-                2 => Mathf.Min(13, _prefabBlock.Length),
-                _ => _prefabBlock.Length
-            };
-        }
-
         private void SpawnAllSlots()
         {
             for (int i = 0; i < _posSpawn.Length; i++)
@@ -98,29 +79,63 @@ namespace Sand
             _currentBlocks[slot] = obj;
         }
 
-        private GameObject GetBlockByLevel()
-        {
-            int maxPrefabIndex = BlockMaxInLevel();
-            if (maxPrefabIndex <= 0) return null;
-
-            // int randomPrefabIndex = Random.Range(0, maxPrefabIndex);
-            var randomPrefabIndex = GetRandomPrefabIndex(maxPrefabIndex);
-            var pooledObject = GetFromPoolByPrefabIndex(randomPrefabIndex);
-            if (pooledObject != null)
+            private GameObject GetBlockByLevel()
             {
-                return pooledObject;
+                int currentLevel = _checkLevelScore != null ? _checkLevelScore.CurrentLevel : 0;
+                var availableIndices = new List<int>();
+                for (int i = 0; i < _prefabBlock.Length; i++)
+                {
+                    var blockInfo = _prefabBlock[i].GetComponent<BlockInfo>();
+                    if (blockInfo != null && blockInfo.IsAvailableAtLevel(currentLevel))
+                    {
+                        availableIndices.Add(i);
+                    }
+                }
+
+                if (availableIndices.Count == 0) return null;
+                var randomPrefabIndex = GetRandomPrefabIndexFromList(availableIndices);
+                var pooledObject = GetFromPoolByPrefabIndex(randomPrefabIndex);
+                if (pooledObject != null) return pooledObject;
+
+                var newObj = Instantiate(_prefabBlock[randomPrefabIndex], transform.position, Quaternion.identity);
+                newObj.transform.SetParent(_posParentSpawn.transform);
+                newObj.transform.localScale = Vector3.one * 7;
+
+                var instance = newObj.GetComponent<BlockInfo>();
+                if (instance == null) instance = newObj.AddComponent<BlockInfo>();
+                instance.PrefabIndex = randomPrefabIndex;
+
+                return newObj;
             }
 
-            var newObj = Instantiate(_prefabBlock[randomPrefabIndex], transform.position, Quaternion.identity);
-            newObj.transform.SetParent(_posParentSpawn.transform);
-            newObj.transform.localScale = Vector3.one * 7;
+            private int GetRandomPrefabIndexFromList(List<int> indices)
+            {
+                if (indices == null || indices.Count == 0)
+                    return 0;
 
-            var instance = newObj.GetComponent<BlockInfo>();
-            if (instance == null) instance = newObj.AddComponent<BlockInfo>();
-            instance.PrefabIndex = randomPrefabIndex;
+                var totalWeight = 0f;
+                foreach (var index in indices)
+                {
+                    var weight = GetPrefabRateSpawn(index);
+                    totalWeight += weight;
+                }
 
-            return newObj;
-        }
+                if (totalWeight <= 0f)
+                    return indices[Random.Range(0, indices.Count)];
+
+                float randomValue = Random.Range(0f, totalWeight);
+                float currentWeight = 0f;
+
+                foreach (var index in indices)
+                {
+                    float weight = GetPrefabRateSpawn(index);
+                    currentWeight += weight;
+                    if (randomValue <= currentWeight) 
+                        return index;
+                }
+
+                return indices[indices.Count - 1];
+            }
 
         private GameObject GetFromPoolByPrefabIndex(int prefabIndex)
         {
@@ -187,41 +202,16 @@ namespace Sand
             SpawnAllSlots();
         }
 
-        // lấy tỉ leej của các khối
-        // sau đó cộng tổng các khối 
-        // lấy tỉ lệ của các khối
-        // random lấy ra 1 khối
-        public int GetRandomPrefabIndex(int maxIndex)
-        {
-            var totalWeight = 0f;
-            for (int i = 0; i < maxIndex; i++)
-            {
-                var weight = GetPrefabRateSpawn(i);
-                totalWeight += weight;
-            }
-
-            if (totalWeight <= 0f)
-                return Random.Range(0, maxIndex);
-
-            float randomValue = Random.Range(0f, totalWeight);
-            float currentWeight = 0f;
-
-            for (int i = 0; i < maxIndex; i++)
-            {
-                float weight = GetPrefabRateSpawn(i);
-                currentWeight += weight;
-                if (randomValue <= currentWeight) return i;
-            }
-
-            return maxIndex - 1;
-        }
-
         public float GetPrefabRateSpawn(int prefabIndex)
         {   
             var prefab = _prefabBlock[prefabIndex].GetComponent<BlockInfo>();
-            if (prefab != null & prefab.RateSpawn > 0)
-                return prefab.RateSpawn;
-            return 1;
+            if (prefab != null)
+            {
+                int currentLevel = _checkLevelScore != null ? _checkLevelScore.CurrentLevel : 0;
+                if (!prefab.IsAvailableAtLevel(currentLevel)) return 0f;
+                return prefab.GetRateAtLevel(currentLevel);
+            }
+            return 1f;
         }
 
         // ----------------- KHO DỰ TRỮ -----------------
@@ -234,22 +224,7 @@ namespace Sand
             }
             return false;
         }
-
-        public List<Transform> ReserveSlots
-        {
-            get
-            {
-                var list = new List<Transform>();
-                if (_posSpawn == null) return list;
-                
-                foreach (var index in _reserveSlotIndices)
-                {
-                    if (index >= 0 && index < _posSpawn.Length)
-                        list.Add(_posSpawn[index]);
-                }
-                return list;
-            }
-        }
+        
         public bool IsPointInReserve(Vector3 worldPos)
         {
             if (_posSpawn == null || _posSpawn.Length == 0) return false;
@@ -281,12 +256,9 @@ namespace Sand
             Vector3 dropPosition = obj.transform.position;
             int closestReserveSlot = -1;
             float closestDistance = float.MaxValue;
-
-            // Tìm slot reserve trống **gần nhất** với vị trí thả
             foreach (var reserveIndex in _reserveSlotIndices)
             {
-                if (reserveIndex < 0 || reserveIndex >= _currentBlocks.Length)
-                    continue;
+                if (reserveIndex < 0 || reserveIndex >= _currentBlocks.Length) continue;
 
                 var slotTransform = _posSpawn[reserveIndex];
                 if (slotTransform != null)

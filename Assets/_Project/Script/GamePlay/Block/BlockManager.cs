@@ -48,40 +48,6 @@ namespace Sand
             _sprites = spriteList.ToArray();
         }
 
-        private int GetMaxSpritesForLevel()
-        {
-            if (_sprites == null || _sprites.Length == 0) return 0;
-            if (_checkLevelScore == null) return _sprites.Length;
-            int level = _checkLevelScore.CurrentLevel;
-
-            return level switch
-            {
-                0 => Mathf.Min(5, _sprites.Length),
-                1 => Mathf.Min(9, _sprites.Length),
-                2 => Mathf.Min(13, _sprites.Length),
-                _ => _sprites.Length
-            };
-        }
-
-        // Spawn random shape theo level
-        public void SpawnSandWithRandomShape(Map map, SpriteRenderer mapRenderer)
-        {
-            if (map == null || mapRenderer == null)
-                return;
-
-            if (_sprites == null || _sprites.Length == 0)
-                return;
-
-            var maxSpritesForLevel = GetMaxSpritesForLevel();
-            if (maxSpritesForLevel <= 0)
-                return;
-
-            var randomIndex = Random.Range(0, maxSpritesForLevel);
-            var selectedSprite = _sprites[randomIndex];
-
-            SpawnSandWithSprite(map, mapRenderer, selectedSprite);
-        }
-
         // Sprite từ prefab block, check va chạm, rồi vẽ block xuống Map.
         public bool SpawnSandWithSprite(Map map, SpriteRenderer mapRenderer, Sprite sprite)
         {

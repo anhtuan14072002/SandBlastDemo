@@ -128,8 +128,7 @@ namespace Sand
         {
             if (_nextLevelScoreValue > _currentLevelScoreValue)
             {
-                float targetProgress = (float)(_userData.CurrentScoreValue - _currentLevelScoreValue) /
-                                       (_nextLevelScoreValue - _currentLevelScoreValue);
+                float targetProgress = (float)(_userData.CurrentScoreValue - _currentLevelScoreValue) / (_nextLevelScoreValue - _currentLevelScoreValue);
                 targetProgress = Mathf.Clamp01(targetProgress);
                 _currentFillTween.Stop();
                 _currentFillTween = Tween.Custom(_fillScoreBar.fillAmount, targetProgress, _fillTweenDuration,

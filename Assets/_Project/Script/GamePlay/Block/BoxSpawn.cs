@@ -1,4 +1,5 @@
-﻿using HadesSDK.Ads.Runtime;
+﻿using System.Collections.Generic;
+using HadesSDK.Ads.Runtime;
 using UnityEngine;
 using Zenject;
 
@@ -9,6 +10,9 @@ namespace Sand
         [SerializeField] private bool _isLock;
         [SerializeField] private GameObject _iconAds;
         [SerializeField] private int _boxIndex;
+        private readonly List<int> _availablePrefabIndices = new();
+        private readonly List<float> _availableWeights = new();
+        
         public bool IsLock => _isLock;
         private Camera _cam;
         private UserData _userData;

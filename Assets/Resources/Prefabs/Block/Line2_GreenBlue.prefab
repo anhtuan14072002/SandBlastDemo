@@ -125,7 +125,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PrefabIndex: 8
-  RateSpawn: 2
+  MinLevelToAppear: 3
+  MaxLevelToAppear: -1
+  RateSpawn: 4
 --- !u!61 &5401951504890856008
 BoxCollider2D:
   m_ObjectHideFlags: 0
